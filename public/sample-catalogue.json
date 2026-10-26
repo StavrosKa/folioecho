@@ -1,0 +1,60 @@
+[
+  {
+    "id": "b1",
+    "title": "Invisible Cities",
+    "author": "Italo Calvino",
+    "stock": 4,
+    "tags": [
+      "cities",
+      "imagination",
+      "travel"
+    ],
+    "hiddenGem": true
+  },
+  {
+    "id": "b2",
+    "title": "The Book of Disquiet",
+    "author": "Fernando Pessoa",
+    "stock": 3,
+    "tags": [
+      "introspection",
+      "cities",
+      "solitude"
+    ],
+    "hiddenGem": true
+  },
+  {
+    "id": "b3",
+    "title": "The Waves",
+    "author": "Virginia Woolf",
+    "stock": 2,
+    "tags": [
+      "memory",
+      "nature",
+      "introspection"
+    ],
+    "hiddenGem": true
+  },
+  {
+    "id": "b4",
+    "title": "A Room of One’s Own",
+    "author": "Virginia Woolf",
+    "stock": 5,
+    "tags": [
+      "identity",
+      "creativity"
+    ],
+    "hiddenGem": false
+  },
+  {
+    "id": "b5",
+    "title": "The Odyssey",
+    "author": "Homer",
+    "stock": 0,
+    "tags": [
+      "travel",
+      "memory"
+    ],
+    "hiddenGem": false
+  }
+]
