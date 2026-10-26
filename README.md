@@ -12,6 +12,10 @@ npm run dev
 Open http://localhost:4321. Check with `npm run check`, `npm test`, and `npm run build`.
 
 ## Current MVP
+- Discovery Studio follows the approved mockup: grouped sidebar, detailed bookshop profile, book cards, illustrated cultural map, evidence inspector, and a slim status strip immediately above the event draft.
+- Every navigation section has sample content: Overview, Catalogue, Discovery Studio, Event Planner, Cultural Map, Compare Results, Reports & Exports, Settings, and Help.
+- The sample collection contains 12 titles and two editable event drafts. Counts derive from the actual sample inventory rather than fabricated dashboard totals.
+- Profile edits, event draft editing, catalogue filters, alternative music directions, and JSON report downloads work within the current browser session.
 - Import validated JSON inventory; search title, author and tags; edit stock; export catalogue.
 - Derive category counts from supplied tags. These are reviewable signals, not autonomous metadata enrichment.
 - Select 3–5 hidden gems. Only in-stock selections enter the demo plan.
@@ -40,3 +44,10 @@ The optional `.env.example` documents the future server secret only; this static
 
 ## Branding
 The chosen FolioEcho logo is preserved unchanged in `public/folioecho-logo.png`, recovered from the prior project conversation attachment.
+The original illustrative cover and music artwork atlas is `public/discovery-artwork.png`. It was generated with the built-in image generation tool for this design; these are concept illustrations, not official publisher covers. No remote image service is required at runtime.
+
+Artwork generation prompt: create a four-panel editorial atlas with illustrated Mediterranean cities for Invisible Cities, Lisbon rooftops for The Book of Disquiet, ocean waves for The Waves, and a geometric forest-green/ochre jazz composition. Use flat front-facing artwork, elegant book-title typography, print textures, no gaps or outer margins, and no text in the music panel.
+
+## Visual review
+The default view is Discovery Studio. Use the grouped left navigation to inspect all sample screens. On shorter desktop windows the navigation scrolls independently while the profile stays anchored below it. Narrow screens use a horizontal navigation bar; account details remain editable from Settings.
+All external evidence states remain explicitly pending. Compare Results shows the evaluation layout without fabricated performance measurements. The application is still an Astro static build; this update does not deploy it to any hosting service.

@@ -56,5 +56,89 @@
       "memory"
     ],
     "hiddenGem": false
+  },
+  {
+    "id": "b6",
+    "title": "The Summer Book",
+    "author": "Tove Jansson",
+    "stock": 6,
+    "tags": [
+      "nature",
+      "memory",
+      "family"
+    ],
+    "hiddenGem": false
+  },
+  {
+    "id": "b7",
+    "title": "Ways of Seeing",
+    "author": "John Berger",
+    "stock": 4,
+    "tags": [
+      "art",
+      "identity",
+      "creativity"
+    ],
+    "hiddenGem": false
+  },
+  {
+    "id": "b8",
+    "title": "The City & the City",
+    "author": "China Miéville",
+    "stock": 2,
+    "tags": [
+      "cities",
+      "imagination",
+      "mystery"
+    ],
+    "hiddenGem": false
+  },
+  {
+    "id": "b9",
+    "title": "A Field Guide to Getting Lost",
+    "author": "Rebecca Solnit",
+    "stock": 3,
+    "tags": [
+      "travel",
+      "nature",
+      "identity"
+    ],
+    "hiddenGem": false
+  },
+  {
+    "id": "b10",
+    "title": "Bluets",
+    "author": "Maggie Nelson",
+    "stock": 0,
+    "tags": [
+      "art",
+      "introspection",
+      "memory"
+    ],
+    "hiddenGem": false
+  },
+  {
+    "id": "b11",
+    "title": "Just Kids",
+    "author": "Patti Smith",
+    "stock": 7,
+    "tags": [
+      "music",
+      "cities",
+      "creativity"
+    ],
+    "hiddenGem": false
+  },
+  {
+    "id": "b12",
+    "title": "The Little Prince",
+    "author": "Antoine de Saint-Exupéry",
+    "stock": 8,
+    "tags": [
+      "imagination",
+      "travel",
+      "friendship"
+    ],
+    "hiddenGem": false
   }
 ]
