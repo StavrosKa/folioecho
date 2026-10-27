@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ReactFlow,
   Background,
@@ -20,8 +20,16 @@ import {
 import { sampleBooks, initialEvents, bookNotes } from "../lib/workspace";
 import Icon from "./Icon";
 import "./catalogue.css";
+import LiveStudio from "./LiveStudio";
+import { downloadPDF } from "../lib/export";
+import HelpGuide from "./HelpGuide";
+import OpenAISettings from "./OpenAISettings";
+import CategoryArt from "./CategoryArt";
+import EveningProgramme from './EveningProgramme';
+import { createProgramme } from '../lib/programme';
 
 type Page =
+  | "live"
   | "overview"
   | "catalogue"
   | "discovery"
@@ -32,6 +40,7 @@ type Page =
   | "settings"
   | "help";
 const pageNames: Record<Page, string> = {
+  live: "Event Studio",
   overview: "Overview",
   catalogue: "Catalogue",
   discovery: "Discovery Studio",
@@ -49,6 +58,7 @@ const navGroups: { label: string; items: { page: Page; icon: string }[] }[] = [
       { page: "overview", icon: "home" },
       { page: "catalogue", icon: "book" },
       { page: "discovery", icon: "compass" },
+      { page: "live", icon: "network" },
     ],
   },
   {
@@ -145,18 +155,11 @@ function Panel({
   );
 }
 function saveFile(name: string, value: unknown) {
-  const url = URL.createObjectURL(
-    new Blob([JSON.stringify(value, null, 2)], { type: "application/json" }),
-  );
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  void downloadPDF(name, value);
 }
 
 export default function Catalogue() {
-  const [page, setPage] = useState<Page>("discovery");
+  const [page, setPage] = useState<Page>("live");
   const [books, setBooks] = useState<Book[]>(sampleBooks);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
@@ -171,8 +174,46 @@ export default function Catalogue() {
     shop: "The Reading Room",
     city: "Athens, Greece",
     email: "anna@example.com",
+    photo: "",
   });
   const [profileDraft, setProfileDraft] = useState(profile);
+  const [loaded, setLoaded] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('Loading workspace…');
+  useEffect(() => {
+    let active = true;
+    void fetch('/api/workspace').then(r => { if (!r.ok) throw new Error('Workspace unavailable'); return r.json(); }).then(({ workspace }) => {
+      if (!active) return;
+      if (workspace) { setBooks(workspace.books); setEvents(workspace.events); setProfile(workspace.profile); setProfileDraft(workspace.profile); }
+      setLoaded(true);
+    }).catch(() => { if (active) { setError('Could not load saved workspace. Reload before editing to avoid overwriting it.'); setSaveStatus('Storage unavailable'); } });
+    const errorListener = (event: Event) => setError((event as CustomEvent<string>).detail);
+    window.addEventListener('folioecho-error', errorListener);
+    return () => { active = false; window.removeEventListener('folioecho-error', errorListener); };
+  }, []);
+  useEffect(() => {
+    if (!loaded) return;
+    setSaveStatus('Saving…');
+    const timer = setTimeout(() => {
+      void fetch('/api/workspace', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ books, profile, events }) }).then(async response => {
+        if (!response.ok) throw new Error((await response.json()).error ?? 'Save failed');
+        setSaveStatus('Saved locally');
+      }).catch(e => { setSaveStatus('Not saved'); setError(e.message); });
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [loaded, books, profile, events]);
+  async function uploadShopPhoto(file?: File) {
+    if (!file) return;
+    try {
+      if (file.size > 2 * 1024 * 1024) throw new Error('Choose a photo up to 2 MB.');
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Choose a JPEG, PNG or WebP photo.');
+      const image = await createImageBitmap(file);
+      const scale = Math.min(1, 1000 / Math.max(image.width, image.height));
+      const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(image.width * scale)); canvas.height = Math.max(1, Math.round(image.height * scale));
+      const context = canvas.getContext('2d'); if (!context) throw new Error('Image processing is unavailable.');
+      context.drawImage(image, 0, 0, canvas.width, canvas.height); image.close();
+      setProfileDraft(current => ({ ...current, photo: canvas.toDataURL('image/webp', .85) }));
+    } catch (e) { setError(e instanceof Error ? e.message : 'Invalid image.'); }
+  }
   const [notifications, setNotifications] = useState(false);
   const [kept, setKept] = useState<string[]>([]);
   const results = useMemo(() => plan(books, rejected), [books, rejected]);
@@ -181,7 +222,8 @@ export default function Catalogue() {
   const clusters = categories(books);
   const ready = gems.length >= 3 && gems.length <= 5;
   const selected = results.find((r) => r.book.id === selectedId) ?? results[0];
-  const selectedEvent = events.find((e) => e.id === eventId) ?? events[0];
+  const selectedEvent = events.find((e) => e.id === eventId) ?? events[0] ?? initialEvents[0];
+  const selectedProgramme = selectedEvent.programme ?? createProgramme(results.map(row => row.book));
   const flowNodes: Node[] = [
     ...results.map((r, i) => ({
       id: "book:" + r.book.id,
@@ -581,18 +623,13 @@ export default function Catalogue() {
         <div className="profile-zone">
           <p className="nav-label">Your bookshop</p>
           <div className="profile-person">
-            <div className="avatar" aria-hidden="true">
-              {profile.name
-                .split(" ")
-                .map((x) => x[0])
-                .slice(0, 2)
-                .join("")}
-            </div>
+            <img className="avatar user-avatar" src="/sample-avatar.svg" alt="Illustrative profile avatar" width="36" height="36" />
             <div>
               <strong>{profile.name}</strong>
               <small>Owner · Administrator</small>
             </div>
           </div>
+          {profile.photo && <img className="sidebar-shop-photo" src={profile.photo} alt={profile.shop} />}
           <strong className="shop-name">{profile.shop}</strong>
           <span className="location">
             <Icon name="pin" size={13} />
@@ -600,15 +637,15 @@ export default function Catalogue() {
           </span>
           <div className="profile-stats">
             <span>
-              Catalogue<strong>{books.length} titles</strong>
+              Catalogue<strong>{books.length} titles · {books.reduce((n,b) => n+b.stock, 0)} copies</strong>
             </span>
             <span>
-              Workspace<strong>Demo</strong>
+              Workspace<strong>Local</strong>
             </span>
           </div>
           <p className="session-status">
             <i />
-            Session only · not synced
+            {saveStatus}
           </p>
           <button className="account-link" onClick={() => go("settings")}>
             <Icon name="settings" size={16} />
@@ -624,7 +661,7 @@ export default function Catalogue() {
             <b>{pageNames[page]}</b>
           </div>
           <div className="top-actions">
-            <Chip tone="gold">Demo workspace</Chip>
+            <Chip tone="gold">{page === "live" ? "Local Qloo pilot" : "Demo workspace"}</Chip>
             <button
               className="icon-button"
               aria-label="Show workspace notices"
@@ -651,8 +688,8 @@ export default function Catalogue() {
         {notifications && (
           <div className="notification-panel">
             <b>Workspace notices</b>
-            <p>This is a sample workspace. Changes last until refresh.</p>
-            <p>Qloo and LLM services are not connected.</p>
+            <p>Workspace changes are saved privately on this computer.</p>
+            <p>Event Studio uses the local backend. Other screens use demo data. LLM services are not connected.</p>
             <button onClick={() => setNotifications(false)}>Dismiss</button>
           </div>
         )}
@@ -670,10 +707,10 @@ export default function Catalogue() {
                       : "Your bookshop, connected through culture."}
               </p>
             </div>
-            <button className="primary create-event" onClick={createEvent}>
+            {page !== "live" && <button className="primary create-event" onClick={createEvent}>
               Create event
               <Icon name="arrow" size={18} />
-            </button>
+            </button>}
           </div>
           {notice && (
             <div className="notice" role="status">
@@ -689,6 +726,7 @@ export default function Catalogue() {
               {error}
             </div>
           )}
+          <div hidden={page !== "live"}><LiveStudio books={books} setBooks={setBooks} /></div>
           {page === "discovery" && (
             <>
               <div className="workflow" aria-label="Discovery workflow">
@@ -781,7 +819,7 @@ export default function Catalogue() {
                 title="Your collection"
                 subtitle={
                   books.length +
-                  " sample titles · " +
+                  " distinct titles · " + books.reduce((sum, book) => sum + book.stock, 0) + " copies in stock · " +
                   available.length +
                   " available · " +
                   (books.length - available.length) +
@@ -792,7 +830,7 @@ export default function Catalogue() {
                     onClick={() => saveFile("folioecho-catalogue.json", books)}
                   >
                     <Icon name="download" size={16} />
-                    Export JSON
+                    Export PDF
                   </button>
                 }
               >
@@ -924,6 +962,7 @@ export default function Catalogue() {
                         setFilter("all");
                       }}
                     >
+                      <CategoryArt name={name} />
                       <span>{name}</span>
                       <b>{count}</b>
                       <small>catalogue titles</small>
@@ -973,6 +1012,7 @@ export default function Catalogue() {
               <div className="overview-metrics">
                 {[
                   [books.length, "Catalogue titles", "book"],
+                  [books.reduce((n,b) => n+b.stock, 0), "Total copies in stock", "inventory"],
                   [available.length, "Available titles", "check"],
                   [clusters.length, "Category signals", "network"],
                   [events.length, "Event drafts", "calendar"],
@@ -1061,9 +1101,10 @@ export default function Catalogue() {
           )}
           {page === "planner" && (
             <div className="planner-layout">
+              <div className="planner-sidebar">
               <Panel
                 title="Your event drafts"
-                subtitle="Sample events · editable for this session"
+                subtitle="Editable drafts · saved locally"
                 action={
                   <button
                     className="icon-button"
@@ -1092,7 +1133,6 @@ export default function Catalogue() {
                   </button>
                 ))}
               </Panel>
-              <div>
                 <Panel
                   title="Shape your evening"
                   subtitle="Draft planning — no booking or invitation is sent."
@@ -1189,62 +1229,27 @@ export default function Catalogue() {
                     </label>
                   </div>
                 </Panel>
+              </div>
+              <div className="planner-programme">
                 <Panel
                   title="Evening programme"
-                  subtitle="Illustrative running order · review before use"
+                  subtitle="A practical, editable running order for your bookshop"
                 >
-                  <div className="timeline">
-                    {[
-                      [
-                        "00:00",
-                        "Welcome & introductions",
-                        "Set the scene with a short introduction to the selected books.",
-                        "people",
-                      ],
-                      [
-                        "00:10",
-                        "Readings from the shelves",
-                        results.map((r) => r.book.title).join(" · ") ||
-                          "Choose available books in your catalogue.",
-                        "book",
-                      ],
-                      [
-                        "00:35",
-                        "Listening & cultural connections",
-                        "Explore the demo music directions and invite reader responses.",
-                        "music",
-                      ],
-                      [
-                        "00:55",
-                        "Conversation & discovery",
-                        "An open discussion, followed by browsing the featured books.",
-                        "compass",
-                      ],
-                    ].map(([time, title, detail, icon]) => (
-                      <div key={time}>
-                        <span>{time}</span>
-                        <Icon name={icon} />
-                        <div>
-                          <h3>{title}</h3>
-                          <p>{detail}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <EveningProgramme event={{ ...selectedEvent, programme: selectedProgramme }} books={books} onChange={programme => setEvents(events.map(event => event.id === selectedEvent.id ? { ...event, programme } : event))} />
                   <div className="panel-footer">
                     <span>
-                      {results.length} in-stock titles · Qloo evidence pending
+                      {results.length} in-stock titles · Editorial draft; review cultural references
                     </span>
                     <button
                       className="primary"
                       onClick={() => {
                         saveFile("folioecho-event-draft.json", {
-                          event: selectedEvent,
+                          event: { ...selectedEvent, programme: selectedProgramme },
                           books: results.map((r) => r.book),
                           source: "demo",
                           qlooEvidence: null,
                         });
-                        setNotice("Event draft exported as JSON.");
+                        setNotice("Preparing your event draft PDF.");
                       }}
                     >
                       Export draft
@@ -1436,7 +1441,7 @@ export default function Catalogue() {
                       <Icon name={r.icon} size={30} />
                     </div>
                     <p>{r.detail}</p>
-                    <Chip>JSON export</Chip>
+                    <Chip>PDF report</Chip>
                     <button
                       className="primary"
                       onClick={() => {
@@ -1479,18 +1484,24 @@ export default function Catalogue() {
             <div className="two-col">
               <Panel
                 title="Bookshop profile"
-                subtitle="Sample details · edits apply only to this browser session."
+                subtitle="Your profile and photo are saved in this local workspace."
               >
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     setProfile(profileDraft);
                     setNotice(
-                      "Profile updated for this session. Refresh restores the sample details.",
+                      "Profile updated. Saving to your local workspace.",
                     );
                   }}
                 >
                   <div className="form-grid">
+                    <div className="full bookshop-photo-editor">
+                      {profileDraft.photo ? <img src={profileDraft.photo} alt="Bookshop photo preview" /> : <div className="photo-placeholder">Your bookshop, in a picture</div>}
+                      <label className="upload-button">{profileDraft.photo ? 'Change bookshop photo' : 'Upload bookshop photo'}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e => { void uploadShopPhoto(e.target.files?.[0]); e.target.value = ''; }} /></label>
+                      <small>JPEG, PNG or WebP · maximum 2 MB. Apply profile changes to save.</small>
+                      {profileDraft.photo && <button type="button" onClick={() => setProfileDraft({ ...profileDraft, photo: '' })}>Remove photo</button>}
+                    </div>
                     <label className="full">
                       Owner name
                       <input
@@ -1561,27 +1572,17 @@ export default function Catalogue() {
                       <b>Qloo</b>
                       <small>Cultural evidence and entity discovery</small>
                     </span>
-                    <Chip>Not connected</Chip>
+                    <Chip>Server managed</Chip>
                   </div>
-                  <div className="service-row">
-                    <span>
-                      <b>Language model</b>
-                      <small>Reasoning and comparison baseline</small>
-                    </span>
-                    <Chip>Not connected</Chip>
-                  </div>
-                  <p className="muted">
-                    API credentials will be managed server-side. Do not enter
-                    secrets into catalogue files.
-                  </p>
+                  <OpenAISettings />
                 </Panel>
                 <Panel
                   title="Workspace storage"
-                  subtitle="This demo runs in browser memory."
+                  subtitle="Private local SQLite storage."
                 >
                   <p>
-                    Catalogue imports, profile edits and event changes are lost
-                    on refresh. Export JSON to keep a snapshot.
+                    Catalogue imports, profile edits and event drafts are saved
+                    privately on this computer. Export a PDF to share a snapshot.
                   </p>
                   <button
                     onClick={() =>
@@ -1606,12 +1607,14 @@ export default function Catalogue() {
                         shop: "The Reading Room",
                         city: "Athens, Greece",
                         email: "anna@example.com",
+                        photo: "",
                       });
                       setProfileDraft({
                         name: "Anna Papadopoulou",
                         shop: "The Reading Room",
                         city: "Athens, Greece",
                         email: "anna@example.com",
+                        photo: "",
                       });
                       setRejected([]);
                       setKept([]);
@@ -1624,64 +1627,11 @@ export default function Catalogue() {
               </div>
             </div>
           )}
-          {page === "help" && (
-            <>
-              <Panel
-                title="From your shelves to a cultural evening"
-                subtitle="A short guide to the FolioEcho demo"
-              >
-                <div className="guide-grid">
-                  {[
-                    [
-                      "book",
-                      "1. Bring your catalogue",
-                      "Import JSON or explore the sample titles. Every book needs an ID, author, stock, tags and a hiddenGem flag.",
-                    ],
-                    [
-                      "gem",
-                      "2. Choose hidden gems",
-                      "Select 3–5 titles you would like to introduce to new readers. Only titles with stock enter a plan.",
-                    ],
-                    [
-                      "network",
-                      "3. Explore and question",
-                      "Select a book to inspect the shared tags and editorial explanation. Find alternative excludes a music direction and repairs affected matches.",
-                    ],
-                    [
-                      "calendar",
-                      "4. Shape an evening",
-                      "Edit a sample event, review the running order and export a draft. No invitation or booking is sent.",
-                    ],
-                  ].map(([icon, title, detail]) => (
-                    <div key={title}>
-                      <Icon name={icon} size={27} />
-                      <h3>{title}</h3>
-                      <p>{detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-              <Panel title="What is real in this demo?">
-                <p>
-                  Inventory validation, stock filtering, catalogue imports and
-                  exports, tag grouping, selection and deterministic demo
-                  matching work locally. Book artwork, profile details and event
-                  examples are illustrative.
-                </p>
-                <p>
-                  Qloo integration, model reasoning, persistent accounts and
-                  measured comparison results are future milestones.
-                </p>
-                <a className="text-link" href="/sample-catalogue.json" download>
-                  Download a sample catalogue JSON →
-                </a>
-              </Panel>
-            </>
-          )}
+          {page === "help" && <HelpGuide />}
           <footer className="page-footer">
             <span>
               <i />
-              Sample workspace · illustrative artwork & connections
+              {page === "live" ? "Local Qloo evidence · review recommendations before use" : "Sample workspace · illustrative artwork & connections"}
             </span>
             <span>FolioEcho · Where books find their audience.</span>
           </footer>

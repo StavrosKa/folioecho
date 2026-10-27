@@ -1,4 +1,5 @@
 import { demoBooks, type Book } from "./catalogue.ts";
+import type { EventDraft } from './programme.ts';
 
 // Fixed sample data keeps design reviews repeatable. All figures are illustrative.
 export const sampleBooks: Book[] = [
@@ -60,7 +61,7 @@ export const sampleBooks: Book[] = [
     hiddenGem: false,
   },
 ];
-export const initialEvents = [
+export const initialEvents: EventDraft[] = [
   {
     id: "e1",
     title: "An evening of imagined cities",

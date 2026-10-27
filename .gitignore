@@ -5,3 +5,14 @@ dist/
 .env.*
 !.env.example
 *.log
+experiments/qloo/results/
+.folioecho/
+output/
+tmp/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.pem
+*.key
+openai.json

@@ -1,0 +1,44 @@
+.programme-summary { display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:18px; background:#e9efdf; border:1px solid #d6dfc9; border-radius:12px; color:#3a5236; }
+.programme-summary b { display:block; font-family:Georgia,serif; font-size:25px; font-weight:400; }
+.programme-summary small { display:block; margin-top:5px; }
+.programme-summary > span:nth-child(2) { flex:1; font-size:12px; }
+.programme-summary button { font-size:11px; background:#fbfcf7; }
+.programme-disclosure { font-size:11px; line-height:1.6; color:#7b846e; margin:14px 0 24px; }
+.programme-track { border-left:2px solid #d9e1ce; margin-left:17px; padding-left:27px; }
+.programme-segment { position:relative; padding:23px; margin:0 0 22px; border:1px solid #dce3d1; border-radius:14px; background:linear-gradient(125deg,#f3f6eb,#fcfcf8); }
+.programme-segment:nth-child(even) { background:linear-gradient(125deg,#f4eddd,#fcf9f1); border-color:#e9e0cb; }
+.programme-marker { position:absolute; left:-46px; top:24px; width:34px; height:34px; border:1px solid #d4ddc7; border-radius:50%; display:grid; place-items:center; background:#f7f9f1; color:#617c4e; }
+.programme-segment-top { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.programme-kicker { font-size:11px; font-weight:700; letter-spacing:1px; color:#788565; }
+.programme-title { display:flex; justify-content:space-between; gap:12px; align-items:center; margin:13px 0; }
+.programme-title h3 { margin:0; font-family:Georgia,serif; font-size:24px; font-weight:400; color:#2e492f; }
+.programme-title button { display:flex; align-items:center; gap:6px; font-size:11px; padding:6px 10px; background:#ffffffa0; }
+.programme-description { font-size:13px; line-height:1.75; color:#5a6751; }
+.programme-books { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0; }
+.programme-books span { background:#ffffffb0; border:1px solid #dfe5d4; border-radius:7px; padding:8px 10px; font-size:11px; color:#48633c; }
+.programme-books small { display:block; margin-top:4px; color:#879176; font-size:10px; }
+.programme-ideas { margin-top:18px; padding-top:15px; border-top:1px solid #9aab7c30; }
+.programme-ideas h4 { text-transform:uppercase; letter-spacing:1.4px; font-size:10px; color:#7a8766; margin:0 0 12px; }
+.programme-ideas ul { margin:0; padding-left:18px; }
+.programme-ideas li { color:#596650; font-size:12px; line-height:1.75; margin-bottom:10px; padding-left:4px; }
+.programme-ideas summary { cursor:pointer; font-size:11px; color:#6e8059; margin:15px 0 8px; }
+.programme-idea-option { padding:12px 0; border-top:1px solid #dce3d130; }
+.programme-idea-option p { font-size:12px; line-height:1.7; }
+.programme-idea-option button { font-size:10px; background:#fff9; }
+.programme-preparation { display:flex; gap:8px; background:#e8eddd9c; border-radius:8px; padding:12px; margin-top:17px; color:#6e7c5f; }
+.programme-preparation svg { flex-shrink:0; margin-top:2px; }
+.programme-preparation p { margin:0; font-size:11px; line-height:1.65; }
+.programme-preparation b { display:block; color:#536645; margin-bottom:3px; }
+.programme-editor { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.programme-editor label { display:grid; gap:6px; font-size:11px; color:#627451; }
+.programme-editor input:not([type=checkbox]), .programme-editor textarea { width:100%; min-width:0; padding:9px; border:1px solid #d0dbc3; background:#fffdf8; border-radius:6px; color:#344d2b; font:inherit; }
+.programme-editor textarea { resize:vertical; min-height:85px; line-height:1.65; }
+.programme-full { grid-column:1/-1; }
+.programme-editor fieldset { border:1px solid #d7e0cc; border-radius:8px; padding:12px; }
+.programme-editor .programme-book-option { display:flex; flex-direction:row; align-items:center; gap:7px; margin-bottom:8px; }
+.programme-remove { color:#98694b; font-size:11px; }
+.planner-sidebar { display:grid; gap:16px; min-width:0; }
+.planner-sidebar > .panel { margin-bottom:0; }
+.planner-sidebar .form-grid { grid-template-columns:1fr; }
+.planner-programme { min-width:0; }
+@media(max-width:700px) { .programme-track { padding-left:19px; margin-left:12px; } .programme-marker { left:-35px; width:28px; height:28px; } .programme-segment { padding:16px; } .programme-title h3 { font-size:21px; } .programme-editor { grid-template-columns:1fr; } }

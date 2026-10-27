@@ -1,0 +1,6 @@
+id,title,author,stock,tags,hiddenGem
+b1,Invisible Cities,Italo Calvino,4,cities;imagination;travel,true
+b2,The Book of Disquiet,Fernando Pessoa,3,introspection;cities;solitude,true
+b3,The Waves,Virginia Woolf,2,memory;nature;introspection,true
+b4,A Room of One's Own,Virginia Woolf,5,identity;creativity,false
+b5,The Odyssey,Homer,0,travel;memory,false
