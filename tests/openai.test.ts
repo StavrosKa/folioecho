@@ -6,7 +6,7 @@ test('OpenAI keeps the key in server headers, disables storage and parses struct
   const priorKey = process.env.OPENAI_API_KEY; const priorModel = process.env.OPENAI_MODEL;
   process.env.OPENAI_API_KEY = 'test-secret-never-in-prompts'; process.env.OPENAI_MODEL = 'test-model';
   try {
-    assert.deepEqual(modelStatus(), { provider: 'OpenAI', configured: true });
+    assert.deepEqual(modelStatus(), { provider: 'OpenAI', configured: true, hosted: false });
     const transport = (async (url: any, options: any) => {
       assert.equal(url, 'https://api.openai.com/v1/responses');
       assert.equal(options.headers.Authorization, 'Bearer test-secret-never-in-prompts');

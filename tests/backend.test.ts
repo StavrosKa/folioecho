@@ -24,15 +24,15 @@ test('workspace rejects cross-origin writes, oversized photos and SVG content', 
 test('SQLite survives a separate process and preserves revision objects', () => {
   const directory = path.resolve('.folioecho', 'tests', randomUUID());
   const options = { env: { ...process.env, FOLIOECHO_DATA_DIR: directory }, encoding: 'utf8' as const };
-  execFileSync(process.execPath, ['--input-type=module', '-e', "import {put} from './src/server/store.ts'; put('revision','run:2',{revision:2,references:{context:[.2,.5]}})"], options);
-  const result = execFileSync(process.execPath, ['--input-type=module', '-e', "import {get} from './src/server/store.ts'; console.log(JSON.stringify(get('revision','run:2')))"], options);
+  execFileSync(process.execPath, ['--input-type=module', '-e', "import {put} from './src/server/store.ts'; await put('revision','run:2',{revision:2,references:{context:[.2,.5]}})"], options);
+  const result = execFileSync(process.execPath, ['--input-type=module', '-e', "import {get} from './src/server/store.ts'; console.log(JSON.stringify(await get('revision','run:2')))"], options);
   assert.deepEqual(JSON.parse(result), { revision: 2, references: { context: [.2,.5] } });
 });
-test('interrupted jobs report restart and malformed requests never call Qloo', () => {
-  const id = randomUUID(); put('job', id, { id, status: 'running', completed: 2, total: 5 });
-  const job = readJob(id)!;
+test('interrupted jobs report restart and malformed requests never call Qloo', async () => {
+  const id = randomUUID(); await put('job', id, { id, status: 'running', completed: 2, total: 5 });
+  const job = (await readJob(id))!;
   assert.equal(job.status, 'error'); assert.match(job.error!, /restarted/);
-  assert.throws(() => startJob({ action: 'create', input: {} }), /Invalid catalogue/);
+  await assert.rejects(() => startJob({ action: 'create', input: {} }), /Invalid catalogue/);
 });
 test('branded PDF paginates twelve titles without generating blank footer pages', async () => {
   const pdf = await createReport('folioecho-workspace.pdf', workspace, workspace);

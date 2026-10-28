@@ -41,7 +41,7 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
           if (job.status === 'error') throw new Error(job.error ?? 'Planning failed.');
           break;
         }
-        await new Promise(resolve => setTimeout(resolve, 1200));
+        await new Promise(resolve => setTimeout(resolve, 4000));
       }
     } finally { if (mounted.current) { setBusy(false); setJobId(''); } }
   }

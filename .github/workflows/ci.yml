@@ -13,3 +13,6 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+      - run: npm run build
+        env:
+          FOLIOECHO_NETLIFY_BUILD: '1'

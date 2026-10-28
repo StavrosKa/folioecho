@@ -1,3 +1,5 @@
+import { hosted } from './context.ts';
+import { hostedSearch, hostedRecommend } from './qloo-http.ts';
 import { spawn } from 'node:child_process';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -56,32 +58,32 @@ async function cli(args: string[], input?: unknown): Promise<any> {
   }
 }
 async function cached(key: string, work: () => Promise<unknown>): Promise<any> {
-  const prior = cache.get(key) ?? get<{ expires: number; data: unknown }>('qloo-cache', key);
+  const prior = cache.get(key) ?? await get<{ expires: number; data: unknown }>('qloo-cache', key);
   if (prior && prior.expires > Date.now()) return structuredClone(prior.data);
   const data = await work();
   if (cache.size >= 500) cache.delete(cache.keys().next().value!);
   const record = { expires: Date.now() + (key.startsWith('search:') ? 7 * 24 * 60 : 30) * 60_000, data };
-  cache.set(key, record); put('qloo-cache', key, record);
+  cache.set(key, record); await put('qloo-cache', key, record);
   return structuredClone(data);
 }
 export async function resolveBook(book: Book, chosen?: string): Promise<{ resolution: Resolution; tags: string[] }> {
-  const raw = await cached(`search:${book.title}:${book.author}`, () => cli(['api', 'search', '--query', `${book.title}`, '--type', 'book', '--take', '3', '--json']));
+  const raw = await cached(`search:${book.title}:${book.author}`, () => hosted() ? hostedSearch(book.title) : cli(['api', 'search', '--query', `${book.title}`, '--type', 'book', '--take', '3', '--json']));
   if (!Array.isArray(raw)) throw new QlooFailure('Unexpected Qloo search response.');
   const candidates = raw.filter(value => {
     const row = object(value);
     return typeof row.entity_id === 'string' && typeof row.name === 'string' && Array.isArray(row.types) && row.types.includes('urn:entity:book');
   }).map(value => ({ id: value.entity_id as string, name: value.name as string, detail: typeof value.disambiguation === 'string' ? value.disambiguation : '' }));
   const exact = candidates.filter(c => tidy(c.name) === tidy(book.title) && tidy(c.detail).includes(tidy(book.author)));
-  const savedChoice = get<string>('entity-choice', `${book.title}:${book.author}`);
+  const savedChoice = await get<string>('entity-choice', `${book.title}:${book.author}`);
   const match = chosen ? candidates.find(c => c.id === chosen) : candidates.find(c => c.id === savedChoice) ?? (exact.length === 1 ? exact[0] : undefined);
   if (chosen && !match) throw new QlooFailure('The selected book match is not one of the returned Qloo candidates.');
-  if (chosen && match) put('entity-choice', `${book.title}:${book.author}`, match.id);
+  if (chosen && match) await put('entity-choice', `${book.title}:${book.author}`, match.id);
   const matched = match ? raw.find(row => row.entity_id === match.id) : undefined;
   const tags = Array.isArray(matched?.tags) ? matched.tags.flatMap((t: any) => typeof t?.name === 'string' ? [t.name.toLowerCase()] : []) : [];
   return { resolution: { bookId: book.id, status: match ? 'confirmed' : candidates.length ? 'needs_input' : 'missing', candidates, ...(match ? { entityId: match.id } : {}) }, tags };
 }
 export async function recommend(bookId: string, entityId: string, type: Evidence['type'], take = 10): Promise<{ edges: Evidence[]; warning?: string }> {
-  const cachedResult = await cached(`recommend:${entityId}:${type}:${take}`, async () => ({ data: await cli(['exec', 'recommend'], { target_type: type, signals: [entityId], limit: take, explain: true }), retrievedAt: new Date().toISOString() }));
+  const cachedResult = await cached(`recommend:${entityId}:${type}:${take}`, async () => ({ data: hosted() ? await hostedRecommend(entityId,type,take) : await cli(['exec', 'recommend'], { target_type: type, signals: [entityId], limit: take, explain: true }), retrievedAt: new Date().toISOString() }));
   const data = cachedResult.data;
   if (data.status === 'needs_input') return { edges: [], warning: 'Qloo requires clarification for the supplied entity.' };
   if (!['ok', 'empty', 'partial', 'degraded'].includes(data.status) || !Array.isArray(data.results)) throw new QlooFailure('Unexpected Qloo recommendation response.');

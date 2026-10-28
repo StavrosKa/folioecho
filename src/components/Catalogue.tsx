@@ -196,7 +196,7 @@ export default function Catalogue() {
     const timer = setTimeout(() => {
       void fetch('/api/workspace', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ books, profile, events }) }).then(async response => {
         if (!response.ok) throw new Error((await response.json()).error ?? 'Save failed');
-        setSaveStatus('Saved locally');
+        setSaveStatus('Saved');
       }).catch(e => { setSaveStatus('Not saved'); setError(e.message); });
     }, 600);
     return () => clearTimeout(timer);
@@ -688,8 +688,8 @@ export default function Catalogue() {
         {notifications && (
           <div className="notification-panel">
             <b>Workspace notices</b>
-            <p>Workspace changes are saved privately on this computer.</p>
-            <p>Event Studio uses the local backend. Other screens use demo data. LLM services are not connected.</p>
+            <p>Changes are saved in your workspace. Use sample data when trying the public demo.</p>
+            <p>Event Studio uses Qloo evidence. Other discovery screens include labelled demo data. Check Settings for AI availability.</p>
             <button onClick={() => setNotifications(false)}>Dismiss</button>
           </div>
         )}
@@ -1104,7 +1104,7 @@ export default function Catalogue() {
               <div className="planner-sidebar">
               <Panel
                 title="Your event drafts"
-                subtitle="Editable drafts · saved locally"
+                subtitle="Editable drafts · saved to your workspace"
                 action={
                   <button
                     className="icon-button"
@@ -1484,14 +1484,14 @@ export default function Catalogue() {
             <div className="two-col">
               <Panel
                 title="Bookshop profile"
-                subtitle="Your profile and photo are saved in this local workspace."
+                subtitle="Your profile and photo are saved in this workspace."
               >
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                     setProfile(profileDraft);
                     setNotice(
-                      "Profile updated. Saving to your local workspace.",
+                      "Profile updated. Saving to your workspace.",
                     );
                   }}
                 >
@@ -1582,7 +1582,7 @@ export default function Catalogue() {
                 >
                   <p>
                     Catalogue imports, profile edits and event drafts are saved
-                    privately on this computer. Export a PDF to share a snapshot.
+                    in your workspace. Export a PDF when you want to share a snapshot.
                   </p>
                   <button
                     onClick={() =>

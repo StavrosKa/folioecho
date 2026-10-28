@@ -1,9 +1,11 @@
 import type { APIRoute } from 'astro';
 import { createRun, InputError, parseInput, repairRun } from '../../server/planner.ts';
+import { hosted } from '../../server/context.ts';
 import { QlooFailure } from '../../server/qloo.ts';
 export const prerender = false;
 export const POST: APIRoute = async ({ request, url }) => {
   const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  if (hosted()) return json({ error: 'Use the background planning endpoint.' }, 409);
   // This pilot has no account system: bind locally and reject public hosts.
   if (!['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)) return json({ error: 'The Qloo pilot is available locally only.' }, 403);
   if (request.headers.get('origin') !== url.origin) return json({ error: 'Same-origin browser access is required.' }, 403);

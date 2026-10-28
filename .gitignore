@@ -16,3 +16,4 @@ tmp/
 *.pem
 *.key
 openai.json
+.netlify/

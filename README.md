@@ -7,8 +7,11 @@ event ideas. It combines catalogue constraints with real Qloo music/film affinit
 an explainable ranking pipeline, and an editable evening programme. Optional OpenAI
 features provide owner-reviewed tags, editorial copy, and an LLM-only baseline.
 
-This is a **local, single-workspace pilot**, built with Astro, TypeScript, React,
-React Flow and Node.js SQLite. It is not a public multi-user deployment.
+Built with Astro, TypeScript, React and React Flow. Local development uses Node.js
+SQLite; the Netlify demo target uses Postgres, isolated anonymous visitor workspaces
+and Background Functions. See [Netlify deployment](docs/NETLIFY.md) for runtime
+secrets, database provisioning, usage limits and the required online smoke test.
+The hosted deployment has not yet been verified live.
 
 ## Quick start
 
@@ -36,11 +39,11 @@ and OpenAI actions require their respective private server configuration.
 | Settings | Saved bookshop profile, replaceable JPEG/PNG/WebP photo up to 2 MiB, compact illustrative owner avatar and private OpenAI setup status. |
 | Reports | Branded PDF downloads for catalogue snapshots, event drafts/programmes and live Event Studio evidence. PDF reports are not re-importable backups. |
 | Help | Five concise practical steps in styled cards, plus expandable troubleshooting notes. |
-| Storage | Private local SQLite persistence for catalogue, profile, drafts, completed runs, revision history and query caches. |
+| Storage | SQLite locally; Postgres with isolated visitor workspaces on Netlify. Catalogue, profile, drafts, runs, revisions and query caches persist server-side. |
 
 The Event Planner places **Your event drafts** and **Shape your evening** in the
 left column, with **Evening programme** on the right on desktop. Narrow layouts
-stack the sections. Programme edits are saved locally and included when the owner
+stack the sections. Programme edits are saved server-side and included when the owner
 explicitly exports a draft; routine UI edits do not generate PDFs or screenshots.
 
 ## Private Qloo setup
@@ -150,25 +153,27 @@ results appear only after an actual baseline execution. No metrics are prefilled
 
 ## Storage, jobs and privacy
 
-- Private data is stored in `.folioecho/workspace.sqlite` (including SQLite sidecar
+- Local data is stored in `.folioecho/workspace.sqlite` (including SQLite sidecar
   files), excluded from Git. Set `FOLIOECHO_DATA_DIR` to override the directory.
+  Online, the equivalent records are stored in Netlify Postgres and scoped to a
+  signed visitor cookie; existing local records are not uploaded.
 - Qloo book searches cache for seven days; recommendation results cache for
   30 minutes. Confirmed entity choices are rechecked before reuse.
 - Background planning jobs expose progress and cooperative cancellation. A current
   bounded Qloo request may finish before cancellation reaches its checkpoint.
 - After an interrupted job, a new run can reuse completed cached queries. Completed
   runs, programme edits and other saved workspace data survive restart.
-- The API requires local hostnames and same-origin writes. Keep the server bound
-  to loopback. Authentication, per-user isolation and operational quotas are still
-  required before public hosting.
+- Local mode requires loopback hostnames and same-origin writes. Hosted mode
+  checks the configured deployment origin, isolates anonymous visitors, and uses
+  atomic provider quotas and worker leases. This is a demo, not account-based
+  authentication; do not use it for sensitive business data.
 - Keys, local databases, API responses, uploaded photos, PDF exports and temporary
   review files are not source assets and must never be committed.
 
 ## PDF export requirements
 
-Reports use PDFKit and embed server-installed fonts: Arial on Windows or DejaVu Sans
-on Linux. On other systems set `FOLIOECHO_FONT_REGULAR` and `FOLIOECHO_FONT_BOLD` to
-suitable font files. Exports contain readable reports rather than raw JSON.
+Reports use PDFKit and bundle openly licensed Noto Sans fonts for portable exports.
+Set `FOLIOECHO_FONT_REGULAR` and `FOLIOECHO_FONT_BOLD` to use alternative fonts. Exports contain readable reports rather than raw JSON.
 
 ## Validation and server build
 
@@ -192,8 +197,7 @@ $env:PORT = "4321"
 node dist/server/entry.mjs
 ```
 
-The existing GitHub workflow runs installation, checks, tests and a server build;
-it does not deploy the app or require provider credentials.
+The GitHub workflow runs installation, checks, tests and both Node and Netlify builds; it does not deploy the app or require provider credentials.
 
 The dependency overrides pin patched `brace-expansion` and `undici` versions used
 by the harness dependency tree. Run `npm audit` when reviewing future dependency
@@ -220,3 +224,11 @@ image service is needed.
 Live-validate optional OpenAI features with owner credentials, evaluate ranking
 quality with booksellers, extend comparison metrics, review dependency security,
 and add authentication/deployment hardening before any public release.
+
+## Netlify demo target
+
+Run `FOLIOECHO_NETLIFY_BUILD=1 npm run build` in a shell that supports this syntax
+(or set the environment variable in PowerShell before running the build). The
+Netlify platform selects its adapter automatically. See [the deployment guide](docs/NETLIFY.md).
+No private local database or API credential is deployed. The repository includes
+an ISC license; bundled category art and fonts retain their own license notices.

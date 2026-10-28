@@ -4,7 +4,7 @@ import { get, put, latest } from '../../server/store.ts';
 import { parseCatalogue } from '../../lib/catalogue.ts';
 import { validProgramme } from '../../lib/programme.ts';
 export const prerender = false;
-export const GET: APIRoute = ({ request, url }) => guard(request, url) ?? json({ workspace: get('workspace', 'local') ?? null, run: latest('run') ?? null });
+export const GET: APIRoute = async ({ request, url }) => guard(request, url) ?? json({ workspace: await get('workspace', 'local') ?? null, run: await latest('run') ?? null });
 export const POST: APIRoute = async ({ request, url }) => {
   const blocked = guard(request, url, true); if (blocked) return blocked;
   try {
@@ -23,7 +23,7 @@ export const POST: APIRoute = async ({ request, url }) => {
     }
     if (!Array.isArray(value.events) || value.events.length > 100 || value.events.some((e: any) => !e || typeof e.title !== 'string' || e.title.length > 300)) throw new Error('Invalid event drafts.');
     if (value.events.some((e: any) => e.programme !== undefined && !validProgramme(e.programme))) throw new Error('Invalid event programme. Check segment titles, times and durations.');
-    put('workspace', 'local', { books: catalogue, profile: { name: profile.name, shop: profile.shop, city: profile.city, email: profile.email, photo }, events: value.events });
+    await put('workspace', 'local', { books: catalogue, profile: { name: profile.name, shop: profile.shop, city: profile.city, email: profile.email, photo }, events: value.events });
     return json({ saved: true });
   } catch (e) { return json({ error: e instanceof Error ? e.message : 'Invalid workspace.' }, 400); }
 };

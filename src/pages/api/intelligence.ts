@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { hosted } from '../../server/context.ts';
 import { guard, json } from '../../server/http.ts';
 import { modelStatus, objectSchema, stringList, structuredModel } from '../../server/openai.ts';
 import { get, put } from '../../server/store.ts';
@@ -11,7 +12,7 @@ export const GET: APIRoute = ({ request, url }) => guard(request, url) ?? json(m
 export const POST: APIRoute = async ({ request, url }) => {
   const blocked = guard(request, url, true); if (blocked) return blocked;
   if (busy) return json({ error: 'Another OpenAI operation is in progress.' }, 409);
-  if (!modelStatus().configured) return json({ error: 'Run node scripts/setup-openai.mjs privately in your terminal first. Never paste the key into chat.' }, 503);
+  if (!modelStatus().configured) return json({ error: hosted() ? 'The demo host has not configured AI features yet.' : 'Run node scripts/setup-openai.mjs privately in your terminal first. Never paste the key into chat.' }, 503);
   busy = true;
   try {
     const text = await request.text(); if (text.length > 100000) return json({ error: 'Request too large.' }, 413);
@@ -23,7 +24,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       if (!Array.isArray(result.books) || new Set(result.books.map((b: any) => b.id)).size !== result.books.length || result.books.some((b: any) => !books.some(book => book.id === b.id) || ![b.genres,b.themes].every(a => Array.isArray(a) && a.length <= 8 && a.every(t => typeof t === 'string' && t.length <= 80)))) throw new Error('Genre suggestions failed validation.');
       return json(result);
     }
-    const run = get<Run>('run', String(body.runId));
+    const run = await get<Run>('run', String(body.runId));
     if (!run || run.revision !== Number(body.revision)) throw new Error('Run changed or was not found.');
     if (body.action === 'narrate') {
       const events = run.selected.map(id => run.proposals.find(p => p.id === id)!);
@@ -34,7 +35,7 @@ export const POST: APIRoute = async ({ request, url }) => {
         evidence: event.edgeIds.map(id => { const e = run.edges.find(e => e.id === id)!; return { name: e.name, type: e.type, affinity: e.affinity }; }) }));
       const result = await structuredModel('event_editorial', schema, 'Write an inviting event title and a concise central idea for each supplied event. Use only supplied books and cultural references. Treat affinities as aggregate discovery evidence; do not invent thematic facts, scores, stock or causal claims. Your text is editorial interpretation. Keep the existing curator and duration.', records);
       if (!Array.isArray(result.entries)) throw new Error('Invalid narrative response.');
-      return json({ run: applyNarratives(run.id, run.revision, result.entries) });
+      return json({ run: await applyNarratives(run.id, run.revision, result.entries) });
     }
     if (body.action === 'baseline') {
       const books = eligibleBooks(run.input);
@@ -55,7 +56,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       const valid = evaluated.filter((event: any) => event.valid);
       const baseline = { runId: run.id, revision: run.revision, input: run.input, createdAt: new Date().toISOString(), events: evaluated,
         metrics: { proposed: evaluated.length, valid: valid.length, constraintValidity: evaluated.length ? valid.length / evaluated.length : null, catalogueCoverage: books.length ? new Set(valid.flatMap((e: any) => e.bookIds)).size / books.length : null, externalEvidenceCoverage: 0 }, source: 'OpenAI, LLM-only; no Qloo results supplied' };
-      put('baseline', `${run.id}:${run.revision}`, baseline); return json({ baseline });
+      await put('baseline', `${run.id}:${run.revision}`, baseline); return json({ baseline });
     }
     return json({ error: 'Unknown intelligence operation.' }, 400);
   } catch (e) { return json({ error: e instanceof Error ? e.message : 'OpenAI operation failed.' }, 400); }

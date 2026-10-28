@@ -1,12 +1,13 @@
 import PDFDocument from 'pdfkit';
+import path from 'node:path';
 import { existsSync } from 'node:fs';
 import type { Book } from '../lib/catalogue.ts';
 import type { Run } from '../lib/curator.ts';
 import { clockAt, createProgramme, programmeTiming, segmentIdeas } from '../lib/programme.ts';
 
 export async function createReport(name: string, data: any, workspace: any, run?: Run): Promise<Buffer> {
-  const font = process.env.FOLIOECHO_FONT_REGULAR ?? ['C:/Windows/Fonts/arial.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'].find(existsSync);
-  const bold = process.env.FOLIOECHO_FONT_BOLD ?? ['C:/Windows/Fonts/arialbd.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'].find(existsSync);
+  const font = process.env.FOLIOECHO_FONT_REGULAR ?? [path.resolve('assets/fonts/NotoSans-Regular.ttf'), 'C:/Windows/Fonts/arial.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'].find(existsSync);
+  const bold = process.env.FOLIOECHO_FONT_BOLD ?? [path.resolve('assets/fonts/NotoSans-Bold.ttf'), 'C:/Windows/Fonts/arialbd.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'].find(existsSync);
   if (!font || !bold) throw new Error('Configure report fonts on this server before exporting.');
   const doc = new PDFDocument({ size: 'A4', margin: 46, bufferPages: true, info: { Title: 'FolioEcho - Bookshop Intelligence', Author: 'FolioEcho' } });
   doc.registerFont('Body', font); doc.registerFont('Bold', bold);

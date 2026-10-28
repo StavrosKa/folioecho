@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { parseCatalogue } from '../lib/catalogue.ts';
 import { clustersFor, defaultConstraints, diverseSelection, eligibleBooks, generateProposals, type PlanningInput, type Run, type Evidence } from '../lib/curator.ts';
 import { recommend, resolveBook } from './qloo.ts';
+import { owner } from './context.ts';
 import { get, saveRun } from './store.ts';
 
 export class InputError extends Error {}
@@ -40,10 +41,10 @@ function targetTypes(input: PlanningInput): Evidence['type'][] {
   const types = input.preferences.curatorTypes;
   return [...(types.some(t => t !== 'cinema') ? ['artist' as const] : []), ...(types.some(t => t !== 'listening') ? ['movie' as const] : [])];
 }
-export function applyNarratives(id: string, revision: number, entries: { id: string; title: string; idea: string }[]): Run {
-  const run = get<Run>('run', id);
+export async function applyNarratives(id: string, revision: number, entries: { id: string; title: string; idea: string }[]): Promise<Run> {
+  const run = await get<Run>('run', id);
   if (!run || run.revision !== revision) throw new InputError('Run changed. Refresh before applying AI narratives.');
-  if (creating || sessions.get(id)?.busy) throw new InputError('Planning is in progress. Try again after it finishes.');
+  if (creating || sessions.get(`${owner()}:${id}`)?.busy) throw new InputError('Planning is in progress. Try again after it finishes.');
   const allowed = new Set(run.selected);
   if (!entries.length || new Set(entries.map(e => e.id)).size !== entries.length || entries.some(e => !allowed.has(e.id) || typeof e.title !== 'string' || !e.title.trim() || e.title.length > 180 || typeof e.idea !== 'string' || !e.idea.trim() || e.idea.length > 1500)) throw new InputError('Model narratives failed validation.');
   run.revision++;
@@ -51,10 +52,10 @@ export function applyNarratives(id: string, revision: number, entries: { id: str
     const narrative = entries.find(e => e.id === proposal.id);
     return narrative ? { ...proposal, title: narrative.title, interpretation: narrative.idea, narrativeSource: 'OpenAI' } : proposal;
   });
-  saveRun(run); sessions.set(id, { run: structuredClone(run), touched: Date.now(), busy: false });
+  await saveRun(run); sessions.set(`${owner()}:${id}`, { run: structuredClone(run), touched: Date.now(), busy: false });
   return run;
 }
-export async function createRun(input: PlanningInput, provider: Provider = liveProvider, progress: (message: string, completed: number, total: number) => void = () => {}): Promise<Run> {
+export async function createRun(input: PlanningInput, provider: Provider = liveProvider, progress: (message: string, completed: number, total: number) => void | Promise<void> = () => {}): Promise<Run> {
   prune();
   if (creating || [...sessions.values()].some(s => s.busy)) throw new InputError('Another Qloo run is in progress. Try again when it finishes.');
   if (sessions.size >= 20) throw new InputError('Pilot session limit reached. Wait for old sessions to expire.');
@@ -66,7 +67,7 @@ export async function createRun(input: PlanningInput, provider: Provider = liveP
     let completed = 0;
     const total = input.catalogue.length + eligibleBooks(input).length * targetTypes(input).length + 1;
     for (const book of input.catalogue) {
-      progress(`Matching ${book.title}`, completed, total);
+      await progress(`Matching ${book.title}`, completed, total);
       const result = await provider.resolveBook(book, input.matches[book.id]);
       run.resolutions.push(result.resolution); tags[book.id] = result.tags;
       completed++;
@@ -76,7 +77,7 @@ export async function createRun(input: PlanningInput, provider: Provider = liveP
       const resolution = run.resolutions.find(r => r.bookId === book.id)!;
       if (!resolution.entityId) { run.warnings.push(`${book.title}: entity match needs review; no recommendations requested.`); continue; }
       for (const type of targetTypes(input)) {
-        progress(`Retrieving ${type === 'artist' ? 'music' : 'films'} for ${book.title}`, completed, total);
+        await progress(`Retrieving ${type === 'artist' ? 'music' : 'films'} for ${book.title}`, completed, total);
         const response = await provider.recommend(book.id, resolution.entityId, type);
         run.edges.push(...response.edges);
         const context = `${book.id}:${type}`;
@@ -86,20 +87,20 @@ export async function createRun(input: PlanningInput, provider: Provider = liveP
         completed++;
       }
     }
-    progress('Validating constraints and ranking events', total - 1, total);
+    await progress('Validating constraints and ranking events', total - 1, total);
     run.proposals = generateProposals(run);
     run.selected = diverseSelection(run.proposals, input.constraints.maxEvents);
-    sessions.set(run.id, { run: structuredClone(run), touched: Date.now(), busy: false });
-    if (provider === liveProvider) saveRun(run);
+    sessions.set(`${owner()}:${run.id}`, { run: structuredClone(run), touched: Date.now(), busy: false });
+    if (provider === liveProvider) await saveRun(run);
     return run;
   } finally { creating = false; }
 }
-export async function repairRun(id: string, excludedId: string, revision: number, stock?: Record<string, number>, provider: Provider = liveProvider, checkpoint: () => void = () => {}): Promise<Run> {
+export async function repairRun(id: string, excludedId: string, revision: number, stock?: Record<string, number>, provider: Provider = liveProvider, checkpoint: () => void | Promise<void> = () => {}): Promise<Run> {
   prune();
-  let session = sessions.get(id);
-  if (!session && provider === liveProvider) {
-    const saved = get<Run>('run', id);
-    if (saved) { session = { run: saved, touched: Date.now(), busy: false }; sessions.set(id, session); }
+  let session = sessions.get(`${owner()}:${id}`);
+  if (provider === liveProvider) {
+    const saved = await get<Run>('run', id);
+    if (saved) { session = { run: saved, touched: Date.now(), busy: false }; sessions.set(`${owner()}:${id}`, session); }
   }
   if (!session) throw new InputError('Run expired or server restarted. Generate a new plan.');
   if (session.busy || creating || [...sessions.values()].some(s => s.busy)) throw new InputError('A Qloo operation is already in progress.');
@@ -129,7 +130,7 @@ export async function repairRun(id: string, excludedId: string, revision: number
         if (!run.edges.some(e => e.bookId === book.id && e.type === type && e.active)) contexts.add(`${book.id}:${type}`);
     // Fetch alternatives only for contexts affected by the excluded node.
     for (const context of contexts) {
-      checkpoint();
+      await checkpoint();
       const bookId = context.slice(0, context.lastIndexOf(':'));
       const type = context.slice(context.lastIndexOf(':') + 1) as Evidence['type'];
       if (!eligibleBooks(run.input).some(b => b.id === bookId)) continue;
@@ -152,9 +153,9 @@ export async function repairRun(id: string, excludedId: string, revision: number
       return JSON.stringify(before) === JSON.stringify(after) ? [] : [{ eventId: before.id, before, after, reason: excludedId ? 'Cultural node excluded; affected evidence invalidated and alternatives evaluated against the original reference pool.' : 'Inventory changed; stock constraints and utilization re-evaluated.' }];
     });
     run.selected = diverseSelection(run.proposals, run.input.constraints.maxEvents);
-    checkpoint();
+    await checkpoint();
     session.run = structuredClone(run); session.touched = Date.now();
-    if (provider === liveProvider) saveRun(run);
+    if (provider === liveProvider) await saveRun(run);
     return run;
   } finally { session.busy = false; }
 }
