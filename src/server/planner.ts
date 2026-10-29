@@ -41,7 +41,7 @@ function targetTypes(input: PlanningInput): Evidence['type'][] {
   const types = input.preferences.curatorTypes;
   return [...(types.some(t => t !== 'cinema') ? ['artist' as const] : []), ...(types.some(t => t !== 'listening') ? ['movie' as const] : [])];
 }
-export async function applyNarratives(id: string, revision: number, entries: { id: string; title: string; idea: string }[]): Promise<Run> {
+export async function applyNarratives(id: string, revision: number, entries: { id: string; title: string; idea: string }[], provider: 'OpenAI' | 'Gemini' = 'OpenAI', model?: string): Promise<Run> {
   const run = await get<Run>('run', id);
   if (!run || run.revision !== revision) throw new InputError('Run changed. Refresh before applying AI narratives.');
   if (creating || sessions.get(`${owner()}:${id}`)?.busy) throw new InputError('Planning is in progress. Try again after it finishes.');
@@ -50,7 +50,7 @@ export async function applyNarratives(id: string, revision: number, entries: { i
   run.revision++;
   run.proposals = run.proposals.map(proposal => {
     const narrative = entries.find(e => e.id === proposal.id);
-    return narrative ? { ...proposal, title: narrative.title, interpretation: narrative.idea, narrativeSource: 'OpenAI' } : proposal;
+    return narrative ? { ...proposal, title: narrative.title, interpretation: narrative.idea, narrativeSource: provider, narrativeModel: model } : proposal;
   });
   await saveRun(run); sessions.set(`${owner()}:${id}`, { run: structuredClone(run), touched: Date.now(), busy: false });
   return run;

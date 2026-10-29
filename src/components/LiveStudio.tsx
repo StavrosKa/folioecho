@@ -1,13 +1,39 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { ReactFlow, Background, Controls, type Node, type Edge } from '@xyflow/react';
+import { notify } from '../lib/notifications';
+import { useEffect, useMemo, useRef, useState, type RefObject, type KeyboardEvent } from 'react';
+import { ReactFlow, Background, Controls, useNodesInitialized, useReactFlow, getNodesBounds, getViewportForBounds, type Node, type Edge } from '@xyflow/react';
 import type { Book } from '../lib/catalogue';
 import { readCatalogueFile, catalogueFileTypes } from '../lib/import-catalogue';
 import { defaultConstraints, percentile, type CuratorType, type Run, type Proposal } from '../lib/curator';
 import './live-studio.css';
 import { downloadPDF } from '../lib/export';
 import Intelligence from './Intelligence';
+import type { EventDraft } from '../lib/programme';
 
-export default function LiveStudio({ books, setBooks }: { books: Book[]; setBooks: (books: Book[]) => void }) {
+type StudioTab='setup'|'matching'|'graph'|'events'|'editorial'|'changes';
+function CenterGraph({signature,container,nodeIds}:{signature:string;container:RefObject<HTMLDivElement|null>;nodeIds:string[]}){
+  const ready=useNodesInitialized();const {getNodes,setViewport}=useReactFlow();
+  useEffect(()=>{
+    if(!ready||!container.current)return;
+    let timer:ReturnType<typeof setTimeout>;
+    const fit=()=>{
+      clearTimeout(timer);
+      timer=setTimeout(()=>{
+        const host=container.current;if(!host||!host.clientWidth||!host.clientHeight)return;
+        const visible=new Set(nodeIds),nodes=getNodes().filter(node=>visible.has(node.id));if(!nodes.length)return;
+        const bounds=getNodesBounds(nodes);
+        void setViewport(getViewportForBounds(bounds,host.clientWidth,host.clientHeight,.1,1.15,.18),{duration:0});
+      },80);
+    };
+    const observer=new ResizeObserver(fit);observer.observe(container.current);fit();const settle=setTimeout(fit,180);
+    return()=>{observer.disconnect();clearTimeout(timer);clearTimeout(settle);};
+  },[ready,signature,container,getNodes,setViewport]);
+  return null;
+}
+
+export default function LiveStudio({ books, setBooks, onPlanEvent, active=true }: { books: Book[]; setBooks: (books: Book[]) => void; onPlanEvent: (draft:EventDraft)=>void; active?:boolean }) {
+  const [studioTab,setStudioTab]=useState<StudioTab>('setup');
+  const graphContainer=useRef<HTMLDivElement>(null);
+  const evidenceDialog=useRef<HTMLDialogElement>(null);
   const [types, setTypes] = useState<CuratorType[]>(['listening']);
   const [constraints, setConstraints] = useState({ ...defaultConstraints });
   const [genres, setGenres] = useState('');
@@ -15,8 +41,10 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
   const [run, setRun] = useState<Run | null>(null);
   const [qlooBusy, setBusy] = useState(false);
   const [modelBusy, setModelBusy] = useState(false);
-  const busy = qlooBusy || modelBusy;
+  const [draftBusy,setDraftBusy]=useState(false);
+  const busy = qlooBusy || modelBusy || draftBusy;
   const [error, setError] = useState('');
+  useEffect(() => { if (error) notify('Event Studio needs attention', 'Review the error shown in Event Studio.', 'error', 'studio-error'); }, [error]);
   const [edgeId, setEdgeId] = useState('');
   const [graphBook, setGraphBook] = useState('all');
   const [graphType, setGraphType] = useState('all');
@@ -35,7 +63,8 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
         if (job.status !== 'running') {
           localStorage.removeItem('folioecho-job');
           if (job.status === 'done') {
-            setRun(job.run); setEdgeId(''); setTypes(job.run.input.preferences.curatorTypes);
+            notify('Event Studio results ready', 'Your cultural evidence and event proposals have been updated.', 'success', `studio-${id}`);
+            setRun(job.run); setEdgeId(''); setStudioTab(job.run.changes.length?'changes':job.run.selected.length?'events':'matching'); setTypes(job.run.input.preferences.curatorTypes);
             setConstraints(job.run.input.constraints); setGenres(job.run.input.selectedGenres.join(', ')); setMatches(job.run.input.matches);
           }
           if (job.status === 'error') throw new Error(job.error ?? 'Planning failed.');
@@ -49,7 +78,7 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
     mounted.current = true;
     void fetch('/api/workspace').then(r => r.json()).then(data => {
       if (!mounted.current) return;
-      if (data.run) { setRun(data.run); setTypes(data.run.input.preferences.curatorTypes); setConstraints(data.run.input.constraints); setGenres(data.run.input.selectedGenres.join(', ')); setMatches(data.run.input.matches); }
+      if (data.run) { setRun(data.run); setStudioTab(data.run.selected.length?'events':'matching'); setTypes(data.run.input.preferences.curatorTypes); setConstraints(data.run.input.constraints); setGenres(data.run.input.selectedGenres.join(', ')); setMatches(data.run.input.matches); }
       const job = localStorage.getItem('folioecho-job');
       if (job) void poll(job).catch(e => setError(e.message));
     }).catch(() => setError('Could not restore the last saved run.'));
@@ -68,6 +97,24 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
       await poll(data.id);
     } catch (e) { setError(e instanceof Error ? e.message : 'Request failed.'); }
     finally { setBusy(false); }
+  }
+  function studioTabKeys(event:KeyboardEvent<HTMLDivElement>){
+    if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+    const buttons=Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button:not(:disabled)'));
+    const current=buttons.findIndex(button=>button===document.activeElement);if(current<0)return;
+    event.preventDefault();
+    const index=event.key==='Home'?0:event.key==='End'?buttons.length-1:(current+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
+    buttons[index].focus();buttons[index].click();
+  }
+  async function planEvent(proposal:Proposal){
+    if(!run||busy||stale)return;
+    setDraftBusy(true);setError('');
+    try{
+      const response=await fetch('/api/event-draft',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({runId:run.id,revision:run.revision,proposalId:proposal.id})});
+      const data=await response.json();if(!response.ok)throw new Error(data.error??'Could not create draft.');
+      onPlanEvent(data.draft);
+    }catch(error){setError(error instanceof Error?error.message:'Could not create draft.');}
+    finally{setDraftBusy(false);}
   }
   async function importCSV(file?: File) {
     if (!file) return;
@@ -92,6 +139,13 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
     return { nodes, edges };
   }, [run, edgeId, graphBook, graphType, graphLimit]);
   const selectedEdge = run?.edges.find(e => e.id === edgeId);
+  useEffect(()=>setEdgeId(''),[graphBook,graphType,graphLimit]);
+  useEffect(()=>{
+    const dialog=evidenceDialog.current;if(!dialog||!selectedEdge||!active||studioTab!=='graph')return;
+    if(!dialog.open)dialog.showModal();
+    return()=>{if(dialog.open)dialog.close();};
+  },[selectedEdge,active,studioTab]);
+  function closeEvidence(){evidenceDialog.current?.close();setEdgeId('');graphContainer.current?.focus({preventScroll:true});}
   function eventCard(event: Proposal) {
     return <article className="live-event" key={event.id}>
       <div className="live-event-head"><h3>{event.title}</h3><span className="chip">{event.score === null ? event.status : `${event.score.toFixed(1)} / 100`}</span></div>
@@ -101,18 +155,26 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
       {event.reasons.length > 0 && <p className="live-warning">{event.reasons.join(' ')}</p>}
       <details className="event-explanation"><summary>Why recommended</summary><p>{event.interpretation}</p>{event.factors && <div className="live-factors">{Object.entries(event.factors).map(([name, value]) => <span key={name}>{name} <b>{value.toFixed(3)}</b></span>)}</div>}<p>Score = 100 × (0.40R + 0.25N + 0.25U + 0.10F). Qloo affinity supports discovery; it does not establish thematic suitability.</p></details>
       <h4>Cultural references</h4>
-      <ul>{event.edgeIds.map(id => {
+      <div className="studio-reference-preview">{[...new Set(event.edgeIds.map(id=>run?.edges.find(edge=>edge.id===id)?.name).filter(Boolean))].join(' · ')}</div>
+      <details><summary>Inspect references &amp; what-if</summary><ul>{event.edgeIds.map(id => {
         const edge = run?.edges.find(e => e.id === id);
-        return edge ? <li key={id}><button className="small-button" onClick={() => setEdgeId(id)}>{edge.name} · Qloo affinity {edge.affinity.toFixed(3)}</button>{' '}<button disabled={busy || stale || !edge.active} onClick={() => void request({ action: 'repair', runId: run!.id, revision: run!.revision, exclude: edge.entityId })}>Exclude & repair</button></li> : null;
-      })}</ul>
+        return edge ? <li key={id}><button className="small-button" onClick={() => {setEdgeId(id);setStudioTab('graph');}}>{edge.name} · Qloo affinity {edge.affinity.toFixed(3)}</button>{' '}<button disabled={busy || stale || !edge.active} onClick={() => void request({ action: 'repair', runId: run!.id, revision: run!.revision, exclude: edge.entityId })}>Exclude & repair</button></li> : null;
+      })}</ul></details>
+      {event.status==='valid'&&run?.selected.includes(event.id)&&<button disabled={busy||stale} onClick={()=>void planEvent(event)}>{draftBusy?'Preparing draft…':'Plan this event'}</button>}
     </article>;
   }
   return <div className="live-studio">
-    <div className="live-banner"><b>Event Studio · local pilot</b><span>Real Qloo evidence · validated ranking · optional private OpenAI intelligence</span></div>
+    <div className="studio-header"><div><span className="studio-eyebrow">BOOKSHOP EVENT WORKSPACE</span><h1>Event Studio</h1><p>Choose books, explore Qloo evidence and turn a validated proposal into a plan.</p></div><div className="studio-metrics"><span><b>{books.filter(book=>book.hiddenGem).length}</b> hidden gems</span><span><b>{run?.selected.length??0}</b> event ideas</span>{run&&<span><b>R{run.revision}</b> saved snapshot</span>}</div></div>
+    <div className="studio-tabs" role="tablist" aria-label="Event Studio sections" onKeyDown={studioTabKeys}>{([
+      ['setup','Set up',false],['matching','Book matches',!run],['graph','Cultural graph',!run],['events','Event ideas',!run],['editorial','AI editorial',false],['changes','What-if changes',!run?.changes.length],
+    ] as const).map(([id,label,disabled])=><button key={id} id={`studio-tab-${id}`} role="tab" tabIndex={studioTab===id?0:-1} aria-selected={studioTab===id} aria-controls={`studio-panel-${id}`} disabled={disabled} onClick={event=>{setStudioTab(id);event.currentTarget.parentElement?.scrollIntoView({block:'start',behavior:'smooth'});}}>{label}{id==='events'&&run&&<small>{run.selected.length}</small>}</button>)}</div>
     {error && <p role="alert" className="error">{error}</p>}
-    <Intelligence books={books} setBooks={setBooks} run={run} setRun={setRun} disabled={qlooBusy} stale={stale} onBusy={setModelBusy} />
+    {qlooBusy && <div className="job-progress studio-progress" role="status"><div><b>{progress.message || 'Starting…'}</b><span>{progress.completed}/{progress.total}</span></div><progress value={progress.completed} max={progress.total}/><button disabled={!jobId} onClick={()=>void fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'cancel',id:jobId})})}>Cancel</button></div>}
+    {stale&&<div className="studio-stale" role="status"><span>Inputs changed. Saved results describe the previous snapshot.</span><button onClick={()=>setStudioTab('setup')}>Review setup</button>{onlyStockChanged&&<button disabled={busy} onClick={()=>void request({action:'repair',runId:run!.id,revision:run!.revision,stock:Object.fromEntries(books.filter(book=>run!.input.catalogue.find(old=>old.id===book.id)?.stock!==book.stock).map(book=>[book.id,book.stock]))})}>Apply stock repair</button>}</div>}
+    <div hidden={studioTab!=='editorial'} id="studio-panel-editorial" role="tabpanel" aria-labelledby="studio-tab-editorial" className="studio-tab-panel"><Intelligence books={books} setBooks={setBooks} run={run} setRun={setRun} disabled={qlooBusy||draftBusy} stale={stale} onBusy={setModelBusy}/></div>
+    <div hidden={studioTab!=='setup'} id="studio-panel-setup" role="tabpanel" aria-labelledby="studio-tab-setup" className="studio-tab-panel studio-setup-grid">
     <section className="panel live-panel">
-      <h2>1. Catalogue & hidden gems</h2>
+      <h2>Catalogue & hidden gems</h2>
       <p>Select 3–5 books to promote. Stock is a hard constraint. Up to 25 catalogue titles are resolved per run.</p>
       <label className="upload-button catalogue-import-button">Import Excel / CSV<input type="file" accept={catalogueFileTypes} disabled={busy} onChange={e => { void importCSV(e.target.files?.[0]); e.target.value = ''; }} /></label>
       <p className="muted">Columns: title, author, stock. Optional: id, tags (separated by ;), hiddenGem (true/false). Import replaces the catalogue after validation.</p>
@@ -123,7 +185,7 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
       </label>)}</div>
     </section>
     <section className="panel live-panel">
-      <h2>2. Curator preferences & constraints</h2>
+      <h2>Shape the evening</h2>
       <fieldset disabled={busy} className="live-controls">
         <label>Selected catalogue genres/tags<input value={genres} placeholder="Optional, comma separated" onChange={e => setGenres(e.target.value)} /></label>
         <div><b>Curator types</b>{(['listening', 'cinema', 'mixed'] as CuratorType[]).map(type => <label className="live-check" key={type}><input type="checkbox" checked={types.includes(type)} onChange={e => setTypes(e.target.checked ? [...types, type] : types.filter(t => t !== type))} />{type}</label>)}</div>
@@ -131,33 +193,40 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
         <label className="live-check"><input type="checkbox" checked={constraints.screeningRightsConfirmed} onChange={e => setConstraints({ ...constraints, screeningRightsConfirmed: e.target.checked })} />I have confirmed screening rights for film proposals.</label>
       </fieldset>
       <button className="primary" disabled={busy || !types.length} onClick={() => void request({ action: 'create', input })}>{busy ? 'Working…' : 'Generate evidence-backed events'}</button>
-      {qlooBusy && <div className="job-progress" role="status"><p>{progress.message || 'Starting…'} · {progress.completed}/{progress.total}</p><progress value={progress.completed} max={progress.total} /><button disabled={!jobId} onClick={() => void fetch('/api/jobs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'cancel', id: jobId }) })}>Cancel</button></div>}
-      {stale && <p className="live-warning" role="status">Inputs changed. Results below describe the previous snapshot. Generate a new run{onlyStockChanged ? ' or apply stock repair.' : '.'}</p>}
-      {stale && onlyStockChanged && <button disabled={busy} onClick={() => void request({ action: 'repair', runId: run!.id, revision: run!.revision, stock: Object.fromEntries(books.filter(b => run!.input.catalogue.find(old => old.id === b.id)?.stock !== b.stock).map(b => [b.id, b.stock])) })}>Apply stock what-if & revalidate</button>}
     </section>
+    </div>
     {run && <>
-      <section className="panel live-panel"><h2>3. Entity matching & thematic clusters</h2>
+      <section hidden={studioTab!=='matching'} id="studio-panel-matching" role="tabpanel" aria-labelledby="studio-tab-matching" className="panel live-panel studio-tab-panel"><h2>Book matches & themes</h2>
         <p>{run.resolutions.filter(r => r.status === 'confirmed').length}/{run.resolutions.length} confirmed · revision {run.revision}. Clusters use supplied catalogue tags, or Qloo tags when none were supplied.</p>
-        <details><summary>Review all book matches</summary>{run.resolutions.map(resolution => <div className="live-match" key={resolution.bookId}>
+        <div className="studio-match-list" tabIndex={0} role="region" aria-label="Book matching results">{run.resolutions.map(resolution => <div className="live-match" key={resolution.bookId}>
           <b>{run.input.catalogue.find(b => b.id === resolution.bookId)?.title}</b> · {resolution.status}
           {resolution.candidates.length > 0 && <select aria-label={`Qloo match for ${resolution.bookId}`} disabled={busy} value={matches[resolution.bookId] ?? resolution.entityId ?? ''} onChange={e => { const next = { ...matches }; if (e.target.value) next[resolution.bookId] = e.target.value; else delete next[resolution.bookId]; setMatches(next); }}><option value="">Choose / automatic exact match</option>{resolution.candidates.map(c => <option key={c.id} value={c.id}>{c.name} — {c.detail}</option>)}</select>}
-        </div>)}</details>
-        <div className="live-clusters">{run.clusters.map(cluster => <span className="chip" key={cluster.id}>{cluster.theme} · {cluster.bookIds.length} · {cluster.source}</span>)}</div>
-        {run.warnings.map((warning, index) => <p className="live-warning" key={index}>{warning}</p>)}
+        </div>)}</div>
+        <details className="studio-theme-details"><summary>Thematic groups ({run.clusters.length})</summary><div className="live-clusters">{run.clusters.map(cluster => <span className="chip" key={cluster.id}>{cluster.theme} · {cluster.bookIds.length} · {cluster.source}</span>)}</div></details>
+        {!!run.warnings.length&&<details><summary>Matching notes ({run.warnings.length})</summary><div className="studio-notes">{run.warnings.map((warning,index)=><p className="live-warning" key={index}>{warning}</p>)}</div></details>}
       </section>
-      <section className="panel live-panel"><h2>4. Cultural graph & evidence</h2><p>Click a connection to inspect its source. Labels show raw Qloo affinity, not a probability about an individual.</p>
-        <div className="graph-filters"><label>Book<select value={graphBook} onChange={e => setGraphBook(e.target.value)}><option value="all">All selected books</option>{run.input.catalogue.filter(b => b.hiddenGem).map(b => <option key={b.id} value={b.id}>{b.title}</option>)}</select></label><label>References<select value={graphType} onChange={e => setGraphType(e.target.value)}><option value="all">Music & films</option><option value="artist">Music only</option><option value="movie">Films only</option></select></label><label>Connections per book/type<select value={graphLimit} onChange={e => setGraphLimit(Number(e.target.value))}><option value={3}>Top 3</option><option value={5}>Top 5</option><option value={20}>Show all</option></select></label></div>
-        <div className="live-graph"><ReactFlow nodes={graph.nodes} edges={graph.edges} fitView onEdgeClick={(_, edge) => setEdgeId(edge.id)} onNodeClick={(_, node) => { const edge = run.edges.find(e => e.entityId === node.id && e.active); if (edge) setEdgeId(edge.id); }}><Background /><Controls /></ReactFlow></div>
-        {selectedEdge && <div className="live-evidence"><h3>{selectedEdge.name}</h3><p>Book: {run.input.catalogue.find(b => b.id === selectedEdge.bookId)?.title} · {selectedEdge.type} · {selectedEdge.active ? 'active' : 'invalidated'}</p><p>Raw affinity: {selectedEdge.affinity.toFixed(6)} · Normalized: {percentile(selectedEdge.affinity, run.references[selectedEdge.context]).toFixed(3)} · Popularity: {selectedEdge.popularity?.toFixed(3) ?? 'unavailable'}</p><p>Entity ID: {selectedEdge.entityId} · Retrieved: {new Date(selectedEdge.retrievedAt).toLocaleString()}</p><p>Context: {selectedEdge.context} · Fixed reference: {run.references[selectedEdge.context].values.length} candidates, {new Date(run.references[selectedEdge.context].capturedAt).toLocaleString()}</p><pre>{JSON.stringify(selectedEdge.request, null, 2)}</pre><button disabled={busy || stale || !selectedEdge.active} onClick={() => void request({ action: 'repair', runId: run.id, revision: run.revision, exclude: selectedEdge.entityId })}>Exclude this node & repair</button></div>}
+      <section hidden={studioTab!=='graph'} id="studio-panel-graph" role="tabpanel" aria-labelledby="studio-tab-graph" className="panel live-panel studio-tab-panel"><h2>Cultural graph & evidence</h2><p>Click a connection to inspect its source. Labels show raw Qloo affinity, not a probability about an individual.</p>
+        <div className="graph-filters"><label>Book<select aria-label="Book" value={graphBook} onChange={e => setGraphBook(e.target.value)}><option value="all">All selected books</option>{run.input.catalogue.filter(b => b.hiddenGem).map(b => <option key={b.id} value={b.id}>{b.title}</option>)}</select></label><label>References<select aria-label="References" value={graphType} onChange={e => setGraphType(e.target.value)}><option value="all">Music & films</option><option value="artist">Music only</option><option value="movie">Films only</option></select></label><label>Connections per book/type<select aria-label="Connections per book/type" value={graphLimit} onChange={e => setGraphLimit(Number(e.target.value))}><option value={3}>Top 3</option><option value={5}>Top 5</option><option value={20}>Show all</option></select></label></div>
+        <div className="studio-graph-layout">
+        <div className="live-graph" ref={graphContainer} tabIndex={0} role="region" aria-label="Cultural connections graph">{active&&studioTab==='graph'&&<ReactFlow nodes={graph.nodes} edges={graph.edges} fitView fitViewOptions={{padding:.18}} minZoom={.1} maxZoom={2} onEdgeClick={(_, edge) => setEdgeId(edge.id)} onNodeClick={(_, node) => { const edge = run.edges.find(e => e.entityId === node.id && e.active); if (edge) setEdgeId(edge.id); }}><Background /><Controls /><CenterGraph signature={`${run.id}:${run.revision}:${graphBook}:${graphType}:${graphLimit}`} container={graphContainer} nodeIds={graph.nodes.map(node=>node.id)}/></ReactFlow>}</div>
+        {selectedEdge&&<dialog className="studio-evidence-dialog" ref={evidenceDialog} aria-labelledby="studio-evidence-title" onCancel={event=>{event.preventDefault();closeEvidence();}}>
+          <div className="studio-evidence-heading"><div><span>QLOO EVIDENCE</span><h3 id="studio-evidence-title">{selectedEdge.name}</h3></div><button autoFocus onClick={closeEvidence} aria-label="Close evidence">×</button></div>
+          <p><b>{run.input.catalogue.find(book=>book.id===selectedEdge.bookId)?.title}</b> · {selectedEdge.type==='artist'?'Music reference':'Film reference'} · {selectedEdge.active?'Active connection':'Invalidated connection'}</p>
+          <div className="studio-evidence-stats"><span>Qloo affinity<b>{selectedEdge.affinity.toFixed(3)}</b></span><span>Normalized affinity<b>{run.references[selectedEdge.context]?percentile(selectedEdge.affinity,run.references[selectedEdge.context]).toFixed(3):'Unavailable'}</b></span><span>Popularity<b>{selectedEdge.popularity?.toFixed(3)??'Unavailable'}</b></span></div>
+          <p className="studio-evidence-note">These are discovery signals, not proof of thematic suitability or a prediction about an individual. Review references and permissions before using them.</p>
+          <details><summary>Source &amp; technical details</summary><p>Retrieved: {new Date(selectedEdge.retrievedAt).toLocaleString()}<br/>Entity: {selectedEdge.entityId}<br/>Context: {selectedEdge.context}<br/>Fixed reference: {run.references[selectedEdge.context]?.values.length??0} candidates</p><pre>{JSON.stringify(selectedEdge.request,null,2)}</pre></details>
+          <div className="studio-evidence-footer"><button disabled={busy||stale||!selectedEdge.active} onClick={()=>void request({action:'repair',runId:run.id,revision:run.revision,exclude:selectedEdge.entityId})}>Exclude &amp; repair</button><button onClick={closeEvidence}>Back to graph</button></div>
+        </dialog>}
+        </div>
+        {!graph.nodes.length&&<p className="studio-empty">No active connections match these filters.</p>}
       </section>
-      <section className="panel live-panel"><h2>5. Diverse top-ranked events</h2><button onClick={() => void downloadPDF('folioecho-cultural-report.pdf', undefined, run.id)}>Export PDF report</button>
-        <p>Score = 100 × (0.40R + 0.25N + 0.25U + 0.10F). Only validated proposals are ranked. Selection prioritizes new books or curator types in score order.</p>
+      <section hidden={studioTab!=='events'} id="studio-panel-events" role="tabpanel" aria-labelledby="studio-tab-events" className="panel live-panel studio-tab-panel"><div className="studio-section-header"><div><h2>Your event ideas</h2><p>Choose a validated idea to continue in Event Planner.</p></div><button onClick={() => void downloadPDF('folioecho-cultural-report.pdf', undefined, run.id)}>Export PDF report</button></div>
         <details><summary>How the factors are calculated</summary><p>R: mean percentile of affinities against the initial candidate pool for each book/type query. Ties use midranks; constant pools use 0.5. References stay fixed during repair.</p><p>N: mean (1 − Qloo popularity), a discovery proxy. U: half the share of selected hidden gems covered (including stock-outs), plus half the use of the event's book allowance. F: half the stock-to-attendance headroom, plus half the unused duration allowance. These are explicit pilot heuristics, not validated sales predictions.</p><p>Durations are editorial allocations for discussions and listening/excerpt sessions, not verified full-film running times. Screening rights require owner confirmation.</p></details>
-        {run.selected.length ? run.selected.map(id => eventCard(run.proposals.find(p => p.id === id)!)) : <p>No verified event meets the current constraints. Review missing evidence, stock, duration or screening rights.</p>}
-        <details><summary>All proposals, including rejected and unverified ({run.proposals.length})</summary>{[...run.proposals].sort((a, b) => (b.score ?? -1) - (a.score ?? -1)).map(eventCard)}</details>
+        <div className="studio-event-list" role="region" aria-label="Top event ideas" tabIndex={0}>{run.selected.length ? run.selected.map(id => eventCard(run.proposals.find(p => p.id === id)!)) : <p>No verified event meets the current constraints. Review missing evidence, stock, duration or screening rights.</p>}</div>
+        <details><summary>All proposals, including rejected and unverified ({run.proposals.length})</summary><div className="studio-all-proposals">{[...run.proposals].sort((a,b)=>(b.score??-1)-(a.score??-1)).map(eventCard)}</div></details>
       </section>
-      {run.changes.length > 0 && <section className="panel live-panel"><h2>What changed</h2><p>Normalization references remain unchanged. {run.excluded.length} cultural nodes excluded.</p>{run.changes.map(change => <article className="live-change" key={change.eventId}><h3>{change.before.title}</h3><p>{change.reason}</p><p>Before: {change.before.edgeIds.map(id => run.edges.find(e => e.id === id)?.name).join(', ')} · {change.before.score?.toFixed(1) ?? change.before.status}</p><p>After: {change.after?.edgeIds.map(id => run.edges.find(e => e.id === id)?.name).join(', ') || 'No replacement'} · {change.after?.score?.toFixed(1) ?? change.after?.status ?? 'removed'}</p></article>)}</section>}
-      <p className="muted">Your catalogue, profile and completed runs are saved privately on this computer. Qloo evidence and revision history remain outside the public repository. OpenAI features require private server configuration; public hosting is not enabled.</p>
+      {run.changes.length > 0 && <section hidden={studioTab!=='changes'} id="studio-panel-changes" role="tabpanel" aria-labelledby="studio-tab-changes" className="panel live-panel studio-tab-panel"><h2>What changed</h2><p>Normalization references remain unchanged. {run.excluded.length} cultural nodes excluded.</p><div className="studio-changes-list">{run.changes.map(change => <article className="live-change" key={change.eventId}><h3>{change.before.title}</h3><p>{change.reason}</p><p>Before: {change.before.edgeIds.map(id => run.edges.find(e => e.id === id)?.name).join(', ')} · {change.before.score?.toFixed(1) ?? change.before.status}</p><p>After: {change.after?.edgeIds.map(id => run.edges.find(e => e.id === id)?.name).join(', ') || 'No replacement'} · {change.after?.score?.toFixed(1) ?? change.after?.status ?? 'removed'}</p></article>)}</div></section>}
+
     </>}
   </div>;
 }

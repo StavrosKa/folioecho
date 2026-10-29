@@ -17,3 +17,7 @@ tmp/
 *.key
 openai.json
 .netlify/
+gemini.json
+
+# Local submission artwork and intermediate files
+artifacts/

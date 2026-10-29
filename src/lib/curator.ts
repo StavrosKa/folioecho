@@ -17,7 +17,8 @@ export interface Evidence {
 export interface Reference { values: number[]; capturedAt: string; method: 'empirical-percentile'; }
 export interface Cluster { id: string; theme: string; bookIds: string[]; source: 'catalogue-tags' | 'qloo-tags' | 'ungrouped' }
 export interface Proposal {
-  narrativeSource?: 'OpenAI';
+  narrativeSource?: 'OpenAI' | 'Gemini';
+  narrativeModel?: string;
   id: string; title: string; curator: CuratorType; bookIds: string[]; edgeIds: string[]; duration: number;
   status: 'valid' | 'unverified' | 'rejected'; reasons: string[];
   factors: { R: number; N: number; U: number; F: number } | null; score: number | null; interpretation: string;

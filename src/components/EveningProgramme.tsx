@@ -6,8 +6,9 @@ import './evening-programme.css';
 
 export default function EveningProgramme({ event, books, onChange }: { event: EventDraft; books: Book[]; onChange: (programme: ProgrammeSegment[]) => void }) {
   const [editing, setEditing] = useState<string | null>(null);
-  const featured = books.filter(b => b.hiddenGem && b.stock > 0);
-  const segments = event.programme ?? createProgramme(featured);
+  const segments = event.programme ?? createProgramme(books.filter(b => b.hiddenGem && b.stock > 0));
+  const featuredIds = new Set(segments.flatMap(segment=>segment.bookIds));
+  const featured = books.filter(book=>featuredIds.has(book.id));
   const timing = programmeTiming(segments);
   const icons = { welcome: 'people', reading: 'book', listening: 'music', discussion: 'network', closing: 'compass', custom: 'calendar' };
   function update(id: string, patch: Partial<ProgrammeSegment>) { onChange(segments.map(s => s.id === id ? { ...s, ...patch } : s)); }

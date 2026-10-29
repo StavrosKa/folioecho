@@ -1,0 +1,8 @@
+Sample profile portrait
+Photographer: Yaroslav Shuraev / Pexels
+Source: https://www.pexels.com/photo/a-smiling-woman-wearing-eyeglasses-9489904/
+License: https://www.pexels.com/license/
+Downloaded as a 256 x 256 compressed thumbnail from Pexels, 2026-10-29.
+File: public/sample-avatar.jpg
+Used solely as a clearly labelled sample profile portrait in the demo workspace.
+The model is not the fictional bookshop owner and no endorsement is implied.

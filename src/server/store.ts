@@ -58,6 +58,6 @@ export async function counter(id:string) {
 }
 export async function purgeExpiredKeys() {
   const cutoff=Date.now()-86400_000;
-  if(hosted()) await query("DELETE FROM folioecho_records WHERE kind='openai-key' AND updated < $1",[cutoff]);
-  else (await sqlite()).prepare("DELETE FROM scoped_records WHERE kind='openai-key' AND updated < ?").run(cutoff);
+  if(hosted()) await query("DELETE FROM folioecho_records WHERE kind IN ('openai-key','gemini-key') AND updated < $1",[cutoff]);
+  else (await sqlite()).prepare("DELETE FROM scoped_records WHERE kind IN ('openai-key','gemini-key') AND updated < ?").run(cutoff);
 }

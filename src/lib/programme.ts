@@ -1,7 +1,8 @@
 import type { Book } from './catalogue.ts';
 export type SegmentKind = 'welcome' | 'reading' | 'listening' | 'discussion' | 'closing' | 'custom';
 export interface ProgrammeSegment { id: string; kind: SegmentKind; title: string; offset: number; duration: number; description: string; notes: string; bookIds: string[] }
-export interface EventDraft { id: string; title: string; date: string; time: string; capacity: number; status: string; theme: string; programme?: ProgrammeSegment[] }
+export interface EventSource {runId:string;proposalId:string;revision:number;curator:string;duration:number;bookIds:string[];references:{name:string;type:string;entityId:string;affinity:number}[]}
+export interface EventDraft { id: string; title: string; date: string; time: string; capacity: number; status: string; theme: string; programme?: ProgrammeSegment[];source?:EventSource }
 
 export function createProgramme(books: Book[]): ProgrammeSegment[] {
   const bookIds = books.map(b => b.id);

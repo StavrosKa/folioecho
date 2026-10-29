@@ -63,17 +63,17 @@ test('settings require same-origin writes and explicit consent, and do not echo 
  const saved=await settingsPost(request(connect()) as any) as Response;assert.equal(saved.status,200);assert.ok(!(await saved.text()).includes(fixtureKey()));
 }));
 test('daily demo request cap is per visitor and cannot be reset by changing billing mode',async()=>{
- const previousKey=process.env.OPENAI_API_KEY,previousModel=process.env.OPENAI_MODEL;
- process.env.OPENAI_API_KEY=fixtureKey();process.env.OPENAI_MODEL='gpt-6-luna';
+ const previousKey=process.env.GEMINI_API_KEY,previousModel=process.env.GEMINI_MODEL;
+ process.env.GEMINI_API_KEY=fixtureKey();process.env.GEMINI_MODEL='gemini-3.5-flash-lite';
  try{
   await withOwner(randomUUID(),async()=>{
-   let calls=0;const transport=(async()=>{calls++;return response(usage);}) as typeof fetch;
-   for(let i=0;i<5;i++)await structuredModel('test',{},'',{},transport);
-   const status=await accountStatus();assert.equal(status.usage.requestPercent,100);assert.equal(status.usage.requestLimit,5);
-   await assert.rejects(structuredModel('test',{},'',{},transport),/allowance/);assert.equal(calls,5);
+   let calls=0;const transport=(async()=>{calls++;return new Response(JSON.stringify({candidates:[{finishReason:"STOP",content:{parts:[{text:JSON.stringify({title:"Evening"})}]}}],usageMetadata:{promptTokenCount:10,totalTokenCount:20,candidatesTokenCount:10}}));}) as typeof fetch;
+   for(let i=0;i<10;i++)await structuredModel('test',{},'',{},transport);
+   const status=await accountStatus();assert.equal(status.usage.requestPercent,100);assert.equal(status.usage.requestLimit,10);
+   await assert.rejects(structuredModel('test',{},'',{},transport),/allowance/);assert.equal(calls,10);
    await changeAccount(connect());await changeAccount({action:'demo'});
-   await assert.rejects(structuredModel('test',{},'',{},transport),/allowance/);assert.equal(calls,5);
+   await assert.rejects(structuredModel('test',{},'',{},transport),/allowance/);assert.equal(calls,10);
   });
   await withOwner(randomUUID(),async()=>assert.equal((await accountStatus()).usage.attempts,0));
- }finally{if(previousKey===undefined)delete process.env.OPENAI_API_KEY;else process.env.OPENAI_API_KEY=previousKey;if(previousModel===undefined)delete process.env.OPENAI_MODEL;else process.env.OPENAI_MODEL=previousModel;}
+ }finally{if(previousKey===undefined)delete process.env.GEMINI_API_KEY;else process.env.GEMINI_API_KEY=previousKey;if(previousModel===undefined)delete process.env.GEMINI_MODEL;else process.env.GEMINI_MODEL=previousModel;}
 });

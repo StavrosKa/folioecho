@@ -21,3 +21,8 @@ Local adaptations: sage stroke color and lighter stroke width.
 - mystery: zoom-question
 - solitude: armchair
 - default: book-2
+
+literature.svg is an original FolioEcho vector illustration of an open book,
+created in code for the Literature & Other Themes group (repository ISC license).
+Gemini selects only artwork IDs from this local collection; it never supplies SVG
+markup or remote image URLs.

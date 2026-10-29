@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { hosted } from '../../server/context.ts';
 import { guard, json } from '../../server/http.ts';
-import { modelStatus, objectSchema, stringList, structuredModel } from '../../server/openai.ts';
+import { modelStatus, objectSchema, stringList, structuredModel, structuredModelWithMetadata } from '../../server/ai.ts';
 import { get, put } from '../../server/store.ts';
 import { parseCatalogue } from '../../lib/catalogue.ts';
 import { applyNarratives } from '../../server/planner.ts';
@@ -11,8 +11,8 @@ let busy = false;
 export const GET: APIRoute = async ({ request, url }) => guard(request, url) ?? json(await modelStatus());
 export const POST: APIRoute = async ({ request, url }) => {
   const blocked = guard(request, url, true); if (blocked) return blocked;
-  if (busy) return json({ error: 'Another OpenAI operation is in progress.' }, 409);
-  if (!(await modelStatus()).configured) return json({ error: hosted() ? 'The demo host has not configured AI features yet.' : 'Run node scripts/setup-openai.mjs privately in your terminal first. Never paste the key into chat.' }, 503);
+  if (busy) return json({ error: 'Another AI operation is in progress.' }, 409);
+  if (!(await modelStatus()).configured) return json({ error: hosted() ? 'The demo host has not configured AI features yet.' : 'Configure Gemini for the demo host, or connect a personal OpenAI or Gemini key in Usage & Billing.' }, 503);
   busy = true;
   try {
     const text = await request.text(); if (text.length > 100000) return json({ error: 'Request too large.' }, 413);
@@ -33,16 +33,18 @@ export const POST: APIRoute = async ({ request, url }) => {
       const records = events.map(event => ({ id: event.id, curator: event.curator, duration: event.duration,
         books: event.bookIds.map(id => { const b = run.input.catalogue.find(b => b.id === id)!; return { title: b.title, author: b.author }; }),
         evidence: event.edgeIds.map(id => { const e = run.edges.find(e => e.id === id)!; return { name: e.name, type: e.type, affinity: e.affinity }; }) }));
-      const result = await structuredModel('event_editorial', schema, 'Write an inviting event title and a concise central idea for each supplied event. Use only supplied books and cultural references. Treat affinities as aggregate discovery evidence; do not invent thematic facts, scores, stock or causal claims. Your text is editorial interpretation. Keep the existing curator and duration.', records);
+      const generated = await structuredModelWithMetadata('event_editorial', schema, 'Write an inviting event title and a concise central idea for each supplied event. Use only supplied books and cultural references. Treat affinities as aggregate discovery evidence; do not invent thematic facts, scores, stock or causal claims. Your text is editorial interpretation. Keep the existing curator and duration.', records);
+      const result = generated.data;
       if (!Array.isArray(result.entries)) throw new Error('Invalid narrative response.');
-      return json({ run: await applyNarratives(run.id, run.revision, result.entries) });
+      return json({ run: await applyNarratives(run.id, run.revision, result.entries, generated.provider, generated.model) });
     }
     if (body.action === 'baseline') {
       const books = eligibleBooks(run.input);
       if (!books.length) throw new Error('No eligible selected books remain for a baseline.');
       const schema = objectSchema({ events: { type: 'array', maxItems: 5, items: objectSchema({ title: { type: 'string' }, idea: { type: 'string' }, bookIds: { type: 'array', items: { type: 'string', enum: books.map(b => b.id) }, maxItems: 5 }, curator: { type: 'string', enum: run.input.preferences.curatorTypes }, duration: { type: 'integer' }, culturalReferences: stringList }) } });
       const { catalogue, selectedGenres, preferences, constraints } = run.input;
-      const result = await structuredModel('llm_only_baseline', schema, 'Propose bookshop events from this exact catalogue snapshot and constraints. Use only eligible selected books in stock. Do not use Qloo or invent evidence, scores, availability, or verified cultural relationships. Cultural references are unverified suggestions. Respect all hard constraints.', { catalogue, selectedGenres, preferences, constraints });
+      const generated = await structuredModelWithMetadata('llm_only_baseline', schema, 'Propose bookshop events from this exact catalogue snapshot and constraints. Use only eligible selected books in stock. Do not use Qloo or invent evidence, scores, availability, or verified cultural relationships. Cultural references are unverified suggestions. Respect all hard constraints.', { catalogue, selectedGenres, preferences, constraints });
+      const result = generated.data;
       if (!Array.isArray(result.events) || result.events.length > 5) throw new Error('Invalid baseline response.');
       const evaluated = result.events.map((event: any) => {
         const reasons: string[] = [];
@@ -55,10 +57,10 @@ export const POST: APIRoute = async ({ request, url }) => {
       });
       const valid = evaluated.filter((event: any) => event.valid);
       const baseline = { runId: run.id, revision: run.revision, input: run.input, createdAt: new Date().toISOString(), events: evaluated,
-        metrics: { proposed: evaluated.length, valid: valid.length, constraintValidity: evaluated.length ? valid.length / evaluated.length : null, catalogueCoverage: books.length ? new Set(valid.flatMap((e: any) => e.bookIds)).size / books.length : null, externalEvidenceCoverage: 0 }, source: 'OpenAI, LLM-only; no Qloo results supplied' };
+        metrics: { proposed: evaluated.length, valid: valid.length, constraintValidity: evaluated.length ? valid.length / evaluated.length : null, catalogueCoverage: books.length ? new Set(valid.flatMap((e: any) => e.bookIds)).size / books.length : null, externalEvidenceCoverage: 0 }, source: `${generated.provider}, LLM-only; no Qloo results supplied`, provider: generated.provider, model: generated.model };
       await put('baseline', `${run.id}:${run.revision}`, baseline); return json({ baseline });
     }
     return json({ error: 'Unknown intelligence operation.' }, 400);
-  } catch (e) { return json({ error: e instanceof Error ? e.message : 'OpenAI operation failed.' }, 400); }
+  } catch (e) { return json({ error: e instanceof Error ? e.message : 'AI operation failed.' }, 400); }
   finally { busy = false; }
 };
