@@ -1,9 +1,9 @@
 const steps = [
-  { number: '01', title: 'Bring your books', label: 'Your collection', text: 'Import a CSV in Event Studio with title, author and stock. Check the quantities, then select 3–5 hidden gems you want more readers to discover.', tip: 'Catalogue shows distinct titles and total copies separately.' },
+  { number: '01', title: 'Bring your books', label: 'Your collection', text: 'Use Import catalogue for Excel (.xlsx), CSV or JSON. The Import guide beside it explains title, author and stock. Check the quantities, then select 3–5 hidden gems you want more readers to discover.', tip: 'Catalogue shows distinct titles and total copies separately.' },
   { number: '02', title: 'Shape your evening', label: 'Your preferences', text: 'Choose listening, cinema or a mixed event. Set the number of books, available time, venue capacity and expected attendance.', tip: 'Keep stock accurate. Film proposals need screening-rights confirmation.' },
   { number: '03', title: 'Discover cultural bridges', label: 'Your inspiration', text: 'Generate events, then explore music and film connections. Start with the Top 3 map view and click a connection to see its Qloo evidence.', tip: 'Review uncertain book matches. Affinity is a discovery signal, not a guarantee of fit.' },
   { number: '04', title: 'Make it your own', label: 'Your judgement', text: 'Read each event’s idea, books, references and duration. Open Why recommended for the explanation. Use Exclude & repair when a cultural direction does not suit your shop.', tip: 'For stock-only changes, use Apply stock what-if & revalidate.' },
-  { number: '05', title: 'Share the plan', label: 'Your next event', text: 'Export a PDF from Event Studio and discuss it with your team. Recheck stock, timing and permissions before confirming the programme.', tip: 'Changes are saved locally. FolioEcho does not send invitations or reserve copies.' },
+  { number: '05', title: 'Share the plan', label: 'Your next event', text: 'Export a PDF from Event Studio and discuss it with your team. Recheck stock, timing and permissions before confirming the programme.', tip: 'Changes are saved to your workspace. FolioEcho does not send invitations or reserve copies.' },
 ];
 export default function HelpGuide() {
   return <div className="bookshop-guide concise-guide">

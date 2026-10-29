@@ -15,6 +15,7 @@ const paths: Record<string, string> = {
   gem: "m3 8 4-5h10l4 5-9 13Z M3 8h18 M7 3l5 18 5-18",
   arrow: "M4 12h16 m-6-6 6 6-6 6",
   download: "M12 3v12 m-5-5 5 5 5-5 M4 16v5h16v-5",
+  upload: "M12 16V3 m-5 5 5-5 5 5 M4 16v5h16v-5",
   check: "m5 12 4 4 10-11",
   info: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z M12 10v7 M12 6v1",
   help: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z M9 8a3 3 0 1 1 5 2l-2 2v2 M12 17v1",

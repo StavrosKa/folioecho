@@ -30,7 +30,7 @@ and OpenAI actions require their respective private server configuration.
 
 | Area | Current behaviour |
 | --- | --- |
-| Catalogue | Validated CSV/JSON import, title/author/tag search, stock editing, 3–5 hidden-gem selections, distinct-title and total-copy counts. |
+| Catalogue | Validated Excel (.xlsx), CSV and JSON import, title/author/tag search, stock editing, 3–5 hidden-gem selections, distinct-title and total-copy counts. |
 | Category cards | Counts from catalogue tags, with local category-specific SVG backgrounds. These counts are not autonomous metadata enrichment. |
 | Event Studio | Qloo entity matching, owner review of uncertain matches, thematic groups, music/film candidates and an evidence-backed graph. |
 | Ranking | Hard-constraint validation, fixed-context affinity normalization, R/N/U/F scoring and diverse selection of eligible proposals. |
@@ -112,7 +112,16 @@ successful live OpenAI result is claimed merely because the adapter is implement
 
 ## Catalogue formats and limits
 
-For CSV, use **Import CSV inside Event Studio**. Required columns:
+Use the gold **Import catalogue** button for Excel (.xlsx), CSV or JSON. Open
+**Import guide** beside it for a practical field reference, an example and a CSV
+template that opens in Excel. The same formats are supported inside Event Studio.
+
+Excel reads the first worksheet and converts it to validated catalogue JSON in the
+browser; the original workbook is not uploaded. Use a plain values-only table,
+headers in row 1, and at most 1,000 book rows. Files are limited to 2 MB. Older
+.xls files must be saved as .xlsx. The Qloo run limit remains 25 titles.
+
+Required Excel/CSV columns:
 
 ```csv
 title,author,stock
@@ -125,7 +134,7 @@ Optional columns: `id`, `tags` (semicolon separated), and `hiddenGem` (`true` or
 `false`). Quoted fields, escaped quotes and embedded newlines are supported.
 See [the sample CSV](public/sample-catalogue.csv).
 
-The top-bar import retains the JSON format from the original MVP. Every row has a
+The top-bar import also retains the JSON format from the original MVP. Every row has a
 unique string `id`, `title`, `author`, non-negative integer `stock`, string `tags`
 array and boolean `hiddenGem`. See [the sample JSON](public/sample-catalogue.json).
 
@@ -244,3 +253,6 @@ Run `FOLIOECHO_NETLIFY_BUILD=1 npm run build` in a shell that supports this synt
 Netlify platform selects its adapter automatically. See [the deployment guide](docs/NETLIFY.md).
 No private local database or API credential is deployed. The repository includes
 an ISC license; bundled category art and fonts retain their own license notices.
+
+Excel import uses the MIT-licensed read-excel-file, fflate and saxen libraries.
+Their notices are included in [Excel import licenses](public/licenses/excel-import.txt).

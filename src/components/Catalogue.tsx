@@ -13,7 +13,6 @@ import "@xyflow/react/dist/style.css";
 import {
   categories,
   demoBridges,
-  parseCatalogue,
   plan,
   type Book,
 } from "../lib/catalogue";
@@ -21,6 +20,8 @@ import { sampleBooks, initialEvents, bookNotes } from "../lib/workspace";
 import Icon from "./Icon";
 import "./catalogue.css";
 import LiveStudio from "./LiveStudio";
+import CatalogueImportGuide from "./CatalogueImportGuide";
+import { readCatalogueFile, catalogueFileTypes } from "../lib/import-catalogue";
 import { downloadPDF } from "../lib/export";
 import HelpGuide from "./HelpGuide";
 import OpenAISettings from "./OpenAISettings";
@@ -168,6 +169,8 @@ export default function Catalogue() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [events, setEvents] = useState(initialEvents);
+  const [importing, setImporting] = useState(false);
+  const [importGuide, setImportGuide] = useState(false);
   const [deletedDraft, setDeletedDraft] = useState<{ event: (typeof initialEvents)[number]; index: number; selected: boolean } | null>(null);
   const [eventId, setEventId] = useState("e1");
   const [profile, setProfile] = useState({
@@ -273,11 +276,10 @@ export default function Catalogue() {
     setError("");
   }
   async function upload(file?: File) {
-    if (!file) return;
+    if (!file || importing) return;
+    setImporting(true);
     try {
-      if (file.size > 2_000_000)
-        throw new Error("Use a JSON file smaller than 2 MB.");
-      const next = parseCatalogue(JSON.parse(await file.text()));
+      const next = await readCatalogueFile(file);
       setBooks(next);
       setRejected([]);
       setKept([]);
@@ -293,7 +295,7 @@ export default function Catalogue() {
       setError(
         e instanceof Error ? e.message : "Could not import the catalogue.",
       );
-    }
+    } finally { setImporting(false); }
   }
   function updateStock(id: string, value: string) {
     const stock = Number(value);
@@ -403,7 +405,7 @@ export default function Catalogue() {
       <button
         className="primary"
         onClick={() => {
-          setEventId(events[0].id);
+          setEventId(events[0]?.id ?? "");
           go("planner");
         }}
       >
@@ -692,18 +694,20 @@ export default function Catalogue() {
               <Icon name="bell" />
               <i />
             </button>
-            <label className="upload-button">
-              <Icon name="download" size={17} />
-              Import catalogue
+            <label className="upload-button catalogue-import-button" role="button" tabIndex={0} aria-disabled={importing} onKeyDown={event => { if (!importing && ['Enter', ' '].includes(event.key)) { event.preventDefault(); event.currentTarget.querySelector('input')?.click(); } }}>
+              <Icon name="upload" size={17} />
+              {importing ? 'Importing…' : 'Import catalogue'}
               <input
                 type="file"
-                accept=".json,application/json"
+                accept={catalogueFileTypes}
+                disabled={importing}
                 onChange={(e) => {
                   void upload(e.target.files?.[0]);
                   e.target.value = "";
                 }}
               />
             </label>
+            <button type="button" className="catalogue-import-help" onClick={() => setImportGuide(true)} aria-haspopup="dialog"><Icon name="help" size={16} />Import guide</button>
           </div>
         </header>
         {notifications && (
@@ -1667,6 +1671,7 @@ export default function Catalogue() {
           </footer>
         </div>
       </main>
+      {importGuide && <CatalogueImportGuide onClose={() => setImportGuide(false)} />}
     </div>
   );
 }

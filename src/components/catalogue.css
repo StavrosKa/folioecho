@@ -371,6 +371,33 @@ main {
   gap: 16px;
   align-items: center;
 }
+.upload-button.catalogue-import-button { background: #e5bc57; color: #263c2d; border-color: #cfa444; font-weight: 600; box-shadow: 0 2px 5px #8d70221a; }
+.upload-button.catalogue-import-button:hover { background: #dbae42; border-color: #bb9030; }
+.upload-button.catalogue-import-button:focus-within { outline: 2px solid #3b5e41; outline-offset: 3px; }
+.upload-button.catalogue-import-button[aria-disabled=true] { opacity: .65; cursor: wait; }
+.catalogue-import-help { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #faf7ed; color: #58664e; border-color: #dcd9c8; white-space: nowrap; font-size: 11px; padding: 9px 11px; }
+.catalogue-import-dialog { width: min(740px, calc(100vw - 36px)); max-height: calc(100dvh - 48px); box-sizing: border-box; border: 1px solid #d6ddcc; border-radius: 16px; padding: 26px; background: #faf9f2; color: #263c2d; box-shadow: 0 20px 70px #10251e33; }
+.catalogue-import-dialog::backdrop { background: #172d24a6; }
+.import-guide-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+.import-guide-head small { font-size: 10px; letter-spacing: 1.5px; color: #8d763d; }
+.import-guide-head h2 { font-family: Georgia, serif; font-size: 28px; margin: 9px 0 16px; }
+.catalogue-import-dialog p { font-size: 13px; line-height: 1.7; color: #5a6652; }
+.import-guide-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin: 18px 0; }
+.import-guide-steps section { background: #edf1e5; border-radius: 9px; padding: 14px; }
+.import-guide-steps b { font-size: 12px; color: #354f35; }
+.import-guide-steps p { font-size: 11px; margin: 7px 0 0; }
+.import-guide-table { overflow-x: auto; background: white; border: 1px solid #e0e3d8; border-radius: 9px; }
+.import-guide-table table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.import-guide-table caption { padding: 10px 12px; text-align: left; color: #526448; font-weight: 600; background: #f7f8f1; }
+.import-guide-table th,.import-guide-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e8ebdf; }
+.import-guide-table th { background: #f1eddc; color: #4c593e; }
+.import-guide-example { background: #f3ebd5; border-radius: 8px; padding: 13px; margin-top: 15px; }
+.import-guide-example b { font-size: 12px; display: block; margin-bottom: 7px; }
+.import-guide-example code { display: block; font-size: 11px; overflow-wrap: anywhere; line-height: 1.8; }
+.catalogue-import-dialog .import-guide-note { font-size: 11px; }
+.import-guide-actions { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-top: 20px; }
+.import-guide-actions a { display: inline-flex; align-items: center; gap: 6px; color: #365a3c; font-size: 12px; }
+@media(max-width:850px) { .top-actions { gap: 8px; flex-wrap: wrap; justify-content: flex-end; } .catalogue-import-dialog { padding: 19px; } .import-guide-steps { grid-template-columns: 1fr; } .import-guide-actions { align-items: stretch; flex-direction: column; } }
 .icon-button {
   border: 0;
   background: transparent;
@@ -2462,3 +2489,6 @@ select {
 .guide-small-help summary { font-weight: 600; color: #3b523a; cursor: pointer; }
 .guide-small-help details p { font-size: 13px; color: #65725d; }
 @media(max-width: 850px) { .guide-step-grid { grid-template-columns: 1fr; } .guide-step-card { padding: 21px; } }
+
+@media(max-width:850px){.topbar{height:auto;min-height:57px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}}
+@media(max-width:600px){.top-actions{width:100%;justify-content:flex-start}}

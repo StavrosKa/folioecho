@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ReactFlow, Background, Controls, type Node, type Edge } from '@xyflow/react';
 import type { Book } from '../lib/catalogue';
-import { parseCatalogueCSV } from '../lib/csv';
+import { readCatalogueFile, catalogueFileTypes } from '../lib/import-catalogue';
 import { defaultConstraints, percentile, type CuratorType, type Run, type Proposal } from '../lib/curator';
 import './live-studio.css';
 import { downloadPDF } from '../lib/export';
@@ -72,11 +72,10 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
   async function importCSV(file?: File) {
     if (!file) return;
     try {
-      if (file.size > 2_000_000) throw new Error('CSV is limited to 2 MB.');
-      const imported = parseCatalogueCSV(await file.text());
+      const imported = await readCatalogueFile(file);
       if (imported.length > 25) throw new Error('The Qloo pilot supports at most 25 books.');
       setBooks(imported); setMatches({}); setError('');
-    } catch (e) { setError(e instanceof Error ? e.message : 'CSV import failed.'); }
+    } catch (e) { setError(e instanceof Error ? e.message : 'Catalogue import failed.'); }
   }
   const graph = useMemo(() => {
     const nodes: Node[] = []; const edges: Edge[] = [];
@@ -115,7 +114,7 @@ export default function LiveStudio({ books, setBooks }: { books: Book[]; setBook
     <section className="panel live-panel">
       <h2>1. Catalogue & hidden gems</h2>
       <p>Select 3–5 books to promote. Stock is a hard constraint. Up to 25 catalogue titles are resolved per run.</p>
-      <label className="upload-button">Import CSV<input type="file" accept=".csv,text/csv" disabled={busy} onChange={e => { void importCSV(e.target.files?.[0]); e.target.value = ''; }} /></label>
+      <label className="upload-button catalogue-import-button">Import Excel / CSV<input type="file" accept={catalogueFileTypes} disabled={busy} onChange={e => { void importCSV(e.target.files?.[0]); e.target.value = ''; }} /></label>
       <p className="muted">Columns: title, author, stock. Optional: id, tags (separated by ;), hiddenGem (true/false). Import replaces the catalogue after validation.</p>
       <div className="live-books">{books.map(book => <label className="live-book" key={book.id}>
         <input type="checkbox" disabled={busy} checked={book.hiddenGem} onChange={e => setBooks(books.map(b => b.id === book.id ? { ...b, hiddenGem: e.target.checked } : b))} />
