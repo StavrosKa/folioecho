@@ -36,7 +36,7 @@ and OpenAI actions require their respective private server configuration.
 | Ranking | Hard-constraint validation, fixed-context affinity normalization, R/N/U/F scoring and diverse selection of eligible proposals. |
 | What-if | Exclude a cultural node or change stock, repair affected proposals, keep normalization references fixed and explain before/after changes. |
 | Evening programme | Five editable segments with clock times, durations, linked books, several activity suggestions and host preparation notes. Add/remove segments, detect gaps/overlaps and arrange consecutively. |
-| Settings | Saved bookshop profile, replaceable JPEG/PNG/WebP photo up to 2 MiB, compact illustrative owner avatar and private OpenAI setup status. |
+| Settings | Saved bookshop profile, replaceable JPEG/PNG/WebP photo up to 2 MiB, compact illustrative owner avatar and optional personal OpenAI key, usage percentages and estimated app costs. |
 | Reports | Branded PDF downloads for catalogue snapshots, event drafts/programmes and live Event Studio evidence. PDF reports are not re-importable backups. |
 | Help | Five concise practical steps in styled cards, plus expandable troubleshooting notes. |
 | Storage | SQLite locally; Postgres with isolated visitor workspaces on Netlify. Catalogue, profile, drafts, runs, revisions and query caches persist server-side. |
@@ -71,9 +71,21 @@ harness's private configuration. No API key is sent to the browser.
 
 ## Optional private OpenAI setup
 
-Open **Settings → Connected services → OpenAI** for setup instructions and
-**Check configuration**. This button checks configuration presence; it does not
-validate credentials through a paid model request.
+Open **Settings → Connected services → OpenAI** to choose sponsored demo usage or
+connect an optional personal key for this browser workspace. Settings shows daily
+request and cost allowance percentages, reported token counts and estimated app
+costs. Refreshing settings makes no paid model request. A saved key is not claimed
+to be valid until an actual AI operation succeeds.
+
+The demo uses the host’s private key, with five AI attempts per visitor per UTC
+day and the shared server cap. A personal key is encrypted with AES-256-GCM, bound
+to its signed visitor workspace, expires after 24 hours and can be deleted from
+Settings. It is never returned to the browser or stored in localStorage. Personal
+usage has its own allowance and never silently falls back to the host’s key.
+See [AI settings and accounting](docs/AI_SETTINGS.md) for estimates, quota limits
+and temporary-key storage boundaries.
+
+For the **local demo host**, the existing terminal setup is also available:
 
 ```sh
 node scripts/setup-openai.mjs

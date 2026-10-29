@@ -8,11 +8,11 @@ import { applyNarratives } from '../../server/planner.ts';
 import { eligibleBooks, type Run } from '../../lib/curator.ts';
 export const prerender = false;
 let busy = false;
-export const GET: APIRoute = ({ request, url }) => guard(request, url) ?? json(modelStatus());
+export const GET: APIRoute = async ({ request, url }) => guard(request, url) ?? json(await modelStatus());
 export const POST: APIRoute = async ({ request, url }) => {
   const blocked = guard(request, url, true); if (blocked) return blocked;
   if (busy) return json({ error: 'Another OpenAI operation is in progress.' }, 409);
-  if (!modelStatus().configured) return json({ error: hosted() ? 'The demo host has not configured AI features yet.' : 'Run node scripts/setup-openai.mjs privately in your terminal first. Never paste the key into chat.' }, 503);
+  if (!(await modelStatus()).configured) return json({ error: hosted() ? 'The demo host has not configured AI features yet.' : 'Run node scripts/setup-openai.mjs privately in your terminal first. Never paste the key into chat.' }, 503);
   busy = true;
   try {
     const text = await request.text(); if (text.length > 100000) return json({ error: 'Request too large.' }, 413);

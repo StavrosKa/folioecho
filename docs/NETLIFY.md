@@ -26,6 +26,7 @@ This is a disposable demo workspace, not an authenticated business account.
 | `OPENAI_MODEL` | A model available to your API account that supports Responses structured outputs |
 | `FOLIOECHO_QLOO_DAILY_LIMIT` | Optional; defaults to `300` actual Qloo requests for the whole site |
 | `FOLIOECHO_OPENAI_DAILY_LIMIT` | Optional; defaults to `20` OpenAI requests for the whole site |
+| `FOLIOECHO_DEMO_DAILY_USD` | Optional; defaults to `$0.05` estimated AI cost allowance per visitor per UTC day |
 
 Netlify supplies `URL`, `SITE_ID` and the database connection. Do not expose
 credentials through `PUBLIC_` or `VITE_` variables, Git, browser input, or chat.
@@ -61,6 +62,12 @@ The settings panel reports provider configuration without exposing keys. It is
 not a live provider connectivity test. API spend is separate from Netlify credits
 when using your own OpenAI key. Monitor the team's shared Netlify usage during
 judging; the Free account's sites pause when its credits are exhausted.
+
+Settings now also supports optional encrypted personal OpenAI keys and separate
+usage/cost ledgers. The existing session secret derives the hosted encryption key;
+no extra master secret is required. The expiry cleanup Function runs hourly.
+See [AI settings](AI_SETTINGS.md) for consent, temporary-key retention, personal
+request allowances, cost estimates and accounting verification boundaries.
 
 ## Verify before submitting the URL
 

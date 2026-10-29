@@ -17,7 +17,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
       if (mutating && !await consume(`write:${owner()}:${Math.floor(Date.now()/60_000)}`,30)) return json({ error:'Please wait a minute before making more changes.' },429);
       // Narration and planning share a database lease; different server instances cannot edit the same run simultaneously.
       if (mutating && context.url.pathname === '/api/intelligence') {
-        if (!await consume(`ai:${owner()}:${new Date().toISOString().slice(0,10)}`,5)) return json({ error:'This visitor has reached the daily AI demo limit.' },429);
         const token = randomUUID(); const key = `planning:${owner()}`;
         if (!await acquire(key,token)) return json({ error:'Your planning operation is still running.' },409);
         try { return await next(); } finally { await release(key,token); }

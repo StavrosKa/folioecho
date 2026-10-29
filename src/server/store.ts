@@ -47,3 +47,17 @@ export async function acquire(id: string, token: string, milliseconds = 14 * 60_
   return !!(await sqlite()).prepare('INSERT INTO demo_leases VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token,expires=excluded.expires WHERE expires < ? RETURNING token').get(id,token,now+milliseconds,now);
 }
 export async function release(id: string, token: string) { if (hosted()) await query('DELETE FROM folioecho_leases WHERE id=$1 AND token=$2',[id,token]); else (await sqlite()).prepare('DELETE FROM demo_leases WHERE id=? AND token=?').run(id,token); }
+export async function remove(kind:string,id:string) {
+  const args=[scope(kind),kind,id];
+  if(hosted()) await query('DELETE FROM folioecho_records WHERE owner=$1 AND kind=$2 AND id=$3',args);
+  else (await sqlite()).prepare('DELETE FROM scoped_records WHERE owner=? AND kind=? AND id=?').run(...args);
+}
+export async function counter(id:string) {
+  const row=hosted()?(await query('SELECT count FROM folioecho_limits WHERE id=$1',[id]))[0]:(await sqlite()).prepare('SELECT count FROM demo_limits WHERE id=?').get(id);
+  return Number(row?.count ?? 0);
+}
+export async function purgeExpiredKeys() {
+  const cutoff=Date.now()-86400_000;
+  if(hosted()) await query("DELETE FROM folioecho_records WHERE kind='openai-key' AND updated < $1",[cutoff]);
+  else (await sqlite()).prepare("DELETE FROM scoped_records WHERE kind='openai-key' AND updated < ?").run(cutoff);
+}
