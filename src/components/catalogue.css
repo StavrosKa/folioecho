@@ -1355,6 +1355,14 @@ td > small {
 .draft-item small {
   color: #85907d;
 }
+.draft-card { position: relative; margin-bottom: 10px; }
+.draft-card .draft-item { margin-bottom: 0; }
+.draft-delete { position: absolute; right: 10px; top: 11px; display: inline-flex; align-items: center; gap: 5px; padding: 5px 7px; font-size: 11px; color: #914b3d; background: transparent; border: 1px solid transparent; border-radius: 5px; }
+.draft-delete:hover { background: #f9eae5; border-color: #e5c9c0; }
+.draft-delete:focus-visible { outline: 2px solid #914b3d; outline-offset: 2px; }
+.draft-empty { font-size: 13px; line-height: 1.7; color: #727d6b; }
+.draft-undo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px; background: #eef3e8; border-radius: 6px; font-size: 12px; }
+.draft-undo button { padding: 5px 9px; font-size: 12px; }
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

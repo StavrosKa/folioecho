@@ -29,6 +29,7 @@ const paths: Record<string, string> = {
   reset: "M3 10a9 9 0 1 1 2 9 M3 3v7h7",
   close: "m5 5 14 14 M19 5 5 19",
   plus: "M12 3v18 M3 12h18",
+  trash: "M3 6h18 M9 6V3h6v3 M5 6l1 15h12l1-15 M10 10v7 M14 10v7",
 };
 
 export default function Icon({

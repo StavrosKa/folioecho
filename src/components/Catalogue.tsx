@@ -168,6 +168,7 @@ export default function Catalogue() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [events, setEvents] = useState(initialEvents);
+  const [deletedDraft, setDeletedDraft] = useState<{ event: (typeof initialEvents)[number]; index: number; selected: boolean } | null>(null);
   const [eventId, setEventId] = useState("e1");
   const [profile, setProfile] = useState({
     name: "Anna Papadopoulou",
@@ -315,6 +316,26 @@ export default function Catalogue() {
     ]);
     setEventId(id);
     go("planner");
+  }
+  function deleteEvent(id: string) {
+    const index = events.findIndex(event => event.id === id);
+    if (index < 0) return;
+    const selected = selectedEvent.id === id;
+    const remaining = events.filter(event => event.id !== id);
+    setDeletedDraft({ event: events[index], index, selected });
+    setEvents(remaining);
+    if (selected) setEventId(remaining[Math.min(index, remaining.length - 1)]?.id ?? "");
+  }
+  function undoDeleteEvent() {
+    if (!deletedDraft) return;
+    setEvents(current => {
+      if (current.some(event => event.id === deletedDraft.event.id)) return current;
+      const restored = [...current];
+      restored.splice(Math.min(deletedDraft.index, restored.length), 0, deletedDraft.event);
+      return restored;
+    });
+    if (deletedDraft.selected || !events.length) setEventId(deletedDraft.event.id);
+    setDeletedDraft(null);
   }
   function rejectDirection() {
     if (!selected?.match) return;
@@ -1116,8 +1137,9 @@ export default function Catalogue() {
                 }
               >
                 {events.map((e) => (
+                  <div className="draft-card" key={e.id}>
                   <button
-                    key={e.id}
+                    type="button"
                     className={
                       "draft-item " +
                       (selectedEvent.id === e.id ? "chosen" : "")
@@ -1131,8 +1153,13 @@ export default function Catalogue() {
                     </small>
                     <Chip>{e.status}</Chip>
                   </button>
+                  <button type="button" className="draft-delete" aria-label={`Delete draft: ${e.title}`} onClick={() => deleteEvent(e.id)}><Icon name="trash" size={14} />Delete</button>
+                  </div>
                 ))}
+                {!events.length && <p className="draft-empty">No event drafts yet. Use the + button to plan an evening.</p>}
+                {deletedDraft && <div className="draft-undo" role="status"><span>Draft deleted.</span><button type="button" onClick={undoDeleteEvent}>Undo</button></div>}
               </Panel>
+                {events.length > 0 && (
                 <Panel
                   title="Shape your evening"
                   subtitle="Draft planning — no booking or invitation is sent."
@@ -1229,7 +1256,9 @@ export default function Catalogue() {
                     </label>
                   </div>
                 </Panel>
+                )}
               </div>
+              {events.length > 0 && (
               <div className="planner-programme">
                 <Panel
                   title="Evening programme"
@@ -1258,6 +1287,7 @@ export default function Catalogue() {
                   </div>
                 </Panel>
               </div>
+              )}
             </div>
           )}
           {page === "map" && (
