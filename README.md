@@ -2,6 +2,10 @@
 
 **Where books find their audience.**
 
+**[Open the live demo](https://folioecho.netlify.app/)** ·
+[Releases](https://github.com/StavrosKa/folioecho/releases) ·
+[Container package](https://github.com/StavrosKa/folioecho/pkgs/container/folioecho)
+
 FolioEcho helps independent bookshops turn their existing inventory into cultural
 event ideas. It combines catalogue constraints with real Qloo music/film affinities,
 an explainable ranking pipeline, and an editable evening programme. Optional OpenAI
@@ -11,7 +15,9 @@ Built with Astro, TypeScript, React and React Flow. Local development uses Node.
 SQLite; the Netlify demo target uses Postgres, isolated anonymous visitor workspaces
 and Background Functions. See [Netlify deployment](docs/NETLIFY.md) for runtime
 secrets, database provisioning, usage limits and the required online smoke test.
-The hosted deployment has not yet been verified live.
+The public deployment has been checked for Qloo planning, what-if repair,
+persistence and visitor isolation. Optional OpenAI execution still requires a real
+operator/user API key and a successful live model test.
 
 ## Quick start
 
@@ -22,7 +28,7 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:4321/. The default screen is **Event Studio**.
+Open http://127.0.0.1:4321/. The default screen is **Overview**.
 Local catalogue/profile editing does not require provider credentials. Live Qloo
 and OpenAI actions require their respective private server configuration.
 
@@ -218,7 +224,10 @@ $env:PORT = "4321"
 node dist/server/entry.mjs
 ```
 
-The GitHub workflow runs installation, checks, tests and both Node and Netlify builds; it does not deploy the app or require provider credentials.
+The validation workflow runs installation, checks, tests and both Node and Netlify
+builds without provider credentials. The separate release workflow validates and
+smoke-tests the container before publishing it to GitHub Packages and creating a
+versioned GitHub release.
 
 The dependency overrides pin patched `brace-expansion` and `undici` versions used
 by the harness dependency tree. Run `npm audit` when reviewing future dependency
@@ -244,7 +253,8 @@ image service is needed.
 
 Live-validate optional OpenAI features with owner credentials, evaluate ranking
 quality with booksellers, extend comparison metrics, review dependency security,
-and add authentication/deployment hardening before any public release.
+and add authenticated business accounts before using the app for sensitive
+production bookshop data. The existing public site is a bounded anonymous demo.
 
 ## Netlify demo target
 
@@ -256,3 +266,35 @@ an ISC license; bundled category art and fonts retain their own license notices.
 
 Excel import uses the MIT-licensed read-excel-file, fflate and saxen libraries.
 Their notices are included in [Excel import licenses](public/licenses/excel-import.txt).
+
+## Releases and packages
+
+The current packaged release is **v1.1.0**. See the [release notes](docs/releases/v1.1.0.md)
+and [GitHub Releases](https://github.com/StavrosKa/folioecho/releases).
+GitHub provides source ZIP/tar archives for each published release. The executable
+package is a container image, not an npm library:
+
+```sh
+docker pull ghcr.io/stavroska/folioecho:1.1.0
+docker run --rm -p 127.0.0.1:4321:4321 -v folioecho-data:/app/.folioecho ghcr.io/stavroska/folioecho:1.1.0
+```
+
+Open http://127.0.0.1:4321/. The image uses **single-workspace Node/SQLite mode**,
+with no preinstalled API credentials or user data. It is intended for local use;
+the public multi-visitor app uses Netlify/Postgres. To configure optional providers,
+supply an ignored private environment file with `--env-file .env.local` at runtime.
+Never put keys into Docker build arguments or source. Keep the named volume private.
+
+Package page: https://github.com/StavrosKa/folioecho/pkgs/container/folioecho
+If GitHub initially marks the package Private, the repository owner must change
+its visibility to Public in Package settings before anonymous pulls work.
+The release workflow uses the repository-scoped automatic GITHUB_TOKEN, not a new
+personal access token or any Qloo/OpenAI key.
+
+To publish a later version, update package.json and package-lock.json, add matching
+release notes under docs/releases/vX.Y.Z.md and push to main. Existing published
+release versions are skipped; they are not overwritten.
+
+Recent UI updates include Delete/Undo on event drafts, the Overview landing page,
+gold Excel/CSV/JSON import with an adjacent guide, and live sidebar badges for total
+copies and selected hidden gems. The automated suite contains 38 tests.
