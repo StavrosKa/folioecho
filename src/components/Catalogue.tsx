@@ -222,6 +222,7 @@ export default function Catalogue() {
   const [kept, setKept] = useState<string[]>([]);
   const results = useMemo(() => plan(books, rejected), [books, rejected]);
   const gems = books.filter((b) => b.hiddenGem);
+  const totalCopies = books.reduce((sum, book) => sum + book.stock, 0);
   const available = books.filter((b) => b.stock > 0);
   const clusters = categories(books);
   const ready = gems.length >= 3 && gems.length <= 5;
@@ -631,7 +632,8 @@ export default function Catalogue() {
                 >
                   <Icon name={item.icon} />
                   <span>{pageNames[item.page]}</span>
-                  {item.page === "catalogue" && <small>{books.length}</small>}
+                  {item.page === "catalogue" && <small title="Total copies in stock" aria-label={`${totalCopies} total copies in stock`}>{totalCopies}</small>}
+                  {item.page === "discovery" && <small title="Selected hidden gems" aria-label={`${gems.length} selected hidden gems`}>{gems.length}</small>}
                   {item.page === "planner" && <small>{events.length}</small>}
                 </button>
               ))}
