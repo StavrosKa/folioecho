@@ -159,7 +159,7 @@ function saveFile(name: string, value: unknown) {
 }
 
 export default function Catalogue() {
-  const [page, setPage] = useState<Page>("live");
+  const [page, setPage] = useState<Page>("overview");
   const [books, setBooks] = useState<Book[]>(sampleBooks);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
