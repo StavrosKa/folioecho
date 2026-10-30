@@ -1,0 +1,3192 @@
+{
+  "id": "e39e1343-9f92-4b4f-aa17-33315494afa7",
+  "revision": 1,
+  "createdAt": "2026-10-30T20:40:52.167Z",
+  "input": {
+    "catalogue": [
+      {
+        "id": "hg-fair-play",
+        "title": "Fair Play",
+        "author": "Tove Jansson",
+        "stock": 4,
+        "tags": [
+          "art",
+          "creativity",
+          "travel"
+        ],
+        "hiddenGem": true
+      },
+      {
+        "id": "hg-the-tanners",
+        "title": "The Tanners",
+        "author": "Robert Walser",
+        "stock": 3,
+        "tags": [
+          "family",
+          "identity",
+          "travel"
+        ],
+        "hiddenGem": true
+      },
+      {
+        "id": "hg-the-peregrine",
+        "title": "The Peregrine",
+        "author": "J. A. Baker",
+        "stock": 2,
+        "tags": [
+          "nature",
+          "introspection",
+          "identity"
+        ],
+        "hiddenGem": true
+      },
+      {
+        "id": "b4",
+        "title": "A Room of One’s Own",
+        "author": "Virginia Woolf",
+        "stock": 5,
+        "tags": [
+          "identity",
+          "creativity"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b5",
+        "title": "The Odyssey",
+        "author": "Homer",
+        "stock": 0,
+        "tags": [
+          "travel",
+          "memory"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b6",
+        "title": "The Summer Book",
+        "author": "Tove Jansson",
+        "stock": 6,
+        "tags": [
+          "nature",
+          "memory",
+          "family"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b7",
+        "title": "Ways of Seeing",
+        "author": "John Berger",
+        "stock": 4,
+        "tags": [
+          "art",
+          "identity",
+          "creativity"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b8",
+        "title": "The City & the City",
+        "author": "China Miéville",
+        "stock": 2,
+        "tags": [
+          "cities",
+          "imagination",
+          "mystery"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b9",
+        "title": "A Field Guide to Getting Lost",
+        "author": "Rebecca Solnit",
+        "stock": 3,
+        "tags": [
+          "travel",
+          "nature",
+          "identity"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b10",
+        "title": "Bluets",
+        "author": "Maggie Nelson",
+        "stock": 0,
+        "tags": [
+          "art",
+          "introspection",
+          "memory"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b11",
+        "title": "Just Kids",
+        "author": "Patti Smith",
+        "stock": 7,
+        "tags": [
+          "music",
+          "cities",
+          "creativity"
+        ],
+        "hiddenGem": false
+      },
+      {
+        "id": "b12",
+        "title": "The Little Prince",
+        "author": "Antoine de Saint-Exupéry",
+        "stock": 8,
+        "tags": [
+          "imagination",
+          "travel",
+          "friendship"
+        ],
+        "hiddenGem": false
+      }
+    ],
+    "selectedGenres": [],
+    "preferences": {
+      "curatorTypes": [
+        "listening",
+        "cinema"
+      ]
+    },
+    "constraints": {
+      "minStock": 1,
+      "maxBooks": 3,
+      "maxEvents": 5,
+      "maxDuration": 150,
+      "capacity": 24,
+      "attendance": 12,
+      "screeningRightsConfirmed": false
+    },
+    "matches": {}
+  },
+  "resolutions": [
+    {
+      "bookId": "hg-fair-play",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "2AA39172-FE37-4991-8E68-D532DC245789",
+          "name": "Fair Play",
+          "detail": "1989, Tove Jansson"
+        },
+        {
+          "id": "437740AF-B282-432B-B055-D84B53BB7FE6",
+          "name": "Fair Play: The Moral Dilemmas of Spying",
+          "detail": "2006, James M. Olson"
+        },
+        {
+          "id": "4D24A5CF-3181-4EF2-80DC-8AC2F9C0818C",
+          "name": "Fair Play (New York Blades, #2)",
+          "detail": "2004, Deirdre Martin"
+        }
+      ],
+      "entityId": "2AA39172-FE37-4991-8E68-D532DC245789"
+    },
+    {
+      "bookId": "hg-the-tanners",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "BED335AC-2BFD-4BC8-89F6-58A63D9CC835",
+          "name": "The Tanners",
+          "detail": "1907, Robert Walser"
+        },
+        {
+          "id": "293314D4-E4E7-4956-83F8-00C14509F600",
+          "name": "Tanner's Twelve Swingers (Evan Tanner #3)",
+          "detail": "1967, Lawrence Block"
+        },
+        {
+          "id": "0D984414-899D-45FA-84D6-DE1C92EEAEAE",
+          "name": "Tanner's Promise (The Harlow Brothers, #1)",
+          "detail": "2018, Kaylie Newell"
+        }
+      ],
+      "entityId": "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+    },
+    {
+      "bookId": "hg-the-peregrine",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0",
+          "name": "The Peregrine",
+          "detail": "1967, J.A. Baker"
+        },
+        {
+          "id": "AC683C50-6F4B-4EDA-9043-F156D58764E7",
+          "name": "The Peregrine: The Hill of Summer &amp; Diaries: The Complete Works of J. A. Baker",
+          "detail": "2010, J.A. Baker"
+        },
+        {
+          "id": "BC423DA2-5CD4-40DE-BE52-E9213F92B8CF",
+          "name": "The Peregrine Prophecy (Rithhek Cage Trilogy, #2)",
+          "detail": "2013, Darren T. Patrick"
+        }
+      ],
+      "entityId": "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+    },
+    {
+      "bookId": "b4",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "17AA0B10-A5B7-435E-A130-2C2F38E319CC",
+          "name": "A Room of One’s Own",
+          "detail": "1929, Virginia Woolf"
+        },
+        {
+          "id": "8FC82910-2301-4000-A04C-FE3B5665F997",
+          "name": "A Room of One's Own / Three Guineas",
+          "detail": "1938, Virginia Woolf"
+        },
+        {
+          "id": "030E4E4C-2B8D-4958-A823-A74E52C1B507",
+          "name": "A Room of One's Own & The Voyage Out",
+          "detail": "1929, Virginia Woolf"
+        }
+      ],
+      "entityId": "17AA0B10-A5B7-435E-A130-2C2F38E319CC"
+    },
+    {
+      "bookId": "b5",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "33F3E487-DBE1-42D9-9842-9AE75B1CAFA4",
+          "name": "The Odyssey",
+          "detail": "2006, Homer"
+        },
+        {
+          "id": "73711AAB-B29E-4619-90AB-9EC84D0F496D",
+          "name": "The Odyssey",
+          "detail": "2012, Gillian Cross"
+        },
+        {
+          "id": "79DFEB39-46E6-4DE4-AD89-E9DF5B31DFA9",
+          "name": "The Odyssey",
+          "detail": "2022, Lara    Williams"
+        }
+      ],
+      "entityId": "33F3E487-DBE1-42D9-9842-9AE75B1CAFA4"
+    },
+    {
+      "bookId": "b6",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "B658D12F-39BE-4CC5-B45C-FD5CD0195352",
+          "name": "The Summer Book",
+          "detail": "1972, Tove Jansson"
+        },
+        {
+          "id": "10EBB523-8F1D-4DA1-AD57-A2CACFF1C530",
+          "name": "The Summer Book",
+          "detail": "1995, Susan Branch"
+        },
+        {
+          "id": "9826A521-3181-44B4-8B0E-2FB073FEA1A9",
+          "name": "The Summer Game (Bison Book)",
+          "detail": "1972, Roger Angell"
+        }
+      ],
+      "entityId": "B658D12F-39BE-4CC5-B45C-FD5CD0195352"
+    },
+    {
+      "bookId": "b7",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "BAAC0794-1C76-4A26-BA43-A36CD0017BA8",
+          "name": "Ways of Seeing",
+          "detail": "1972, John Berger"
+        },
+        {
+          "id": "AD098727-0C75-46E0-8A2B-CF2363C7E70F",
+          "name": "The Book of Two Ways",
+          "detail": "2020, Jodi Picoult"
+        },
+        {
+          "id": "0786E45B-3FCC-4598-999E-F4BBC4BB039C",
+          "name": "13 Ways of Looking at a Fat Girl",
+          "detail": "2016, Mona Awad"
+        }
+      ],
+      "entityId": "BAAC0794-1C76-4A26-BA43-A36CD0017BA8"
+    },
+    {
+      "bookId": "b8",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "DCDE8AFB-FC60-4FA1-8A69-16DC49EE9288",
+          "name": "The City & the City",
+          "detail": "2009, China Miéville"
+        },
+        {
+          "id": "BD4489ED-7F61-4AFC-8B7F-13EFBBA2DC04",
+          "name": "House of Earth and Blood (Crescent City, #1)",
+          "detail": "2020, Sarah J. Maas"
+        },
+        {
+          "id": "ADEBB124-9C05-4917-8524-2578D796619B",
+          "name": "City of Bones (The Mortal Instruments, #1)",
+          "detail": "2007, Cassandra Clare"
+        }
+      ],
+      "entityId": "DCDE8AFB-FC60-4FA1-8A69-16DC49EE9288"
+    },
+    {
+      "bookId": "b9",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "2F1D3EBF-5433-481F-BC3D-DE76429F96C0",
+          "name": "A Field Guide to Getting Lost",
+          "detail": "2005, Rebecca Solnit"
+        },
+        {
+          "id": "1C0C90FF-5016-465D-B3D5-B4FA108D7965",
+          "name": "A Field Guide to Getting Lost",
+          "detail": "2020, Joy McCullough"
+        },
+        {
+          "id": "B2C93F90-C75B-46BC-949B-598FBB43F0B4",
+          "name": "Sofi Mendoza's Guide to Getting Lost in Mexico",
+          "detail": "2007, Malin Alegria"
+        }
+      ],
+      "entityId": "2F1D3EBF-5433-481F-BC3D-DE76429F96C0"
+    },
+    {
+      "bookId": "b10",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "2A08CD8E-9AC3-4310-B2B9-115698273AF5",
+          "name": "Bluets",
+          "detail": "2009, Maggie Nelson"
+        }
+      ],
+      "entityId": "2A08CD8E-9AC3-4310-B2B9-115698273AF5"
+    },
+    {
+      "bookId": "b11",
+      "status": "confirmed",
+      "candidates": [
+        {
+          "id": "7A5F59C6-CE09-462C-8F6A-3D7EF6328F8B",
+          "name": "Just Kids",
+          "detail": "2010, Patti Smith"
+        },
+        {
+          "id": "449AE1A7-0A19-4B13-B12A-3B90B2CD12F7",
+          "name": "Just Kids from the Bronx: Telling It the Way It Was: An Oral History",
+          "detail": "2015, Arlene Alda"
+        },
+        {
+          "id": "52DA755F-B95A-4C49-8332-7939CD25C8F5",
+          "name": "Why Can't We Just Play?: What I Did When I Realized My Kids Were Way Too Busy",
+          "detail": "2016, Pam Lobley"
+        }
+      ],
+      "entityId": "7A5F59C6-CE09-462C-8F6A-3D7EF6328F8B"
+    },
+    {
+      "bookId": "b12",
+      "status": "needs_input",
+      "candidates": [
+        {
+          "id": "EF9FE530-A3E4-44EB-B593-CD150B81D36E",
+          "name": "The Little Prince",
+          "detail": "1943, Antoine de Saint-Exupéry"
+        },
+        {
+          "id": "E5C85E1D-6D64-4582-B96D-13291A7EB8C1",
+          "name": "The Little Princesses: The Story of the Queen's Childhood by Her Nanny",
+          "detail": "1950, Marion Crawford"
+        },
+        {
+          "id": "598DA4A2-6522-4DE2-88F3-716CF9FEB1D9",
+          "name": "The Little Prince",
+          "detail": "1943, Antoine de Saint-Exupéry"
+        }
+      ]
+    }
+  ],
+  "clusters": [
+    {
+      "id": "catalogue:art",
+      "theme": "art",
+      "bookIds": [
+        "hg-fair-play",
+        "b7",
+        "b10"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:cities",
+      "theme": "cities",
+      "bookIds": [
+        "b8",
+        "b11"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:creativity",
+      "theme": "creativity",
+      "bookIds": [
+        "hg-fair-play",
+        "b4",
+        "b7",
+        "b11"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:family",
+      "theme": "family",
+      "bookIds": [
+        "hg-the-tanners",
+        "b6"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:identity",
+      "theme": "identity",
+      "bookIds": [
+        "hg-the-tanners",
+        "hg-the-peregrine",
+        "b4",
+        "b7",
+        "b9"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:imagination",
+      "theme": "imagination",
+      "bookIds": [
+        "b8",
+        "b12"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:introspection",
+      "theme": "introspection",
+      "bookIds": [
+        "hg-the-peregrine",
+        "b10"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:memory",
+      "theme": "memory",
+      "bookIds": [
+        "b5",
+        "b6",
+        "b10"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:nature",
+      "theme": "nature",
+      "bookIds": [
+        "hg-the-peregrine",
+        "b6",
+        "b9"
+      ],
+      "source": "catalogue-tags"
+    },
+    {
+      "id": "catalogue:travel",
+      "theme": "travel",
+      "bookIds": [
+        "hg-fair-play",
+        "hg-the-tanners",
+        "b5",
+        "b9",
+        "b12"
+      ],
+      "source": "catalogue-tags"
+    }
+  ],
+  "edges": [
+    {
+      "id": "hg-fair-play:artist:1BFF4538-93DB-45F0-BF46-65FDA34F154D",
+      "bookId": "hg-fair-play",
+      "entityId": "1BFF4538-93DB-45F0-BF46-65FDA34F154D",
+      "name": "Jessica Pratt",
+      "type": "artist",
+      "affinity": 0.9346482394443361,
+      "popularity": 0.9764006579766562,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:243F4879-DF71-4063-B08C-53CB4FAC72CD",
+      "bookId": "hg-fair-play",
+      "entityId": "243F4879-DF71-4063-B08C-53CB4FAC72CD",
+      "name": "Natalie Prass",
+      "type": "artist",
+      "affinity": 0.9339687459836188,
+      "popularity": 0.9614847728211077,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:2500BC06-F6E9-4AD6-8B6C-9B5DC8BAD3E6",
+      "bookId": "hg-fair-play",
+      "entityId": "2500BC06-F6E9-4AD6-8B6C-9B5DC8BAD3E6",
+      "name": "Perfume Genius",
+      "type": "artist",
+      "affinity": 0.9437413969570195,
+      "popularity": 0.9946719619369679,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:3DECEC68-DDB4-4550-9B5D-86C78FD82978",
+      "bookId": "hg-fair-play",
+      "entityId": "3DECEC68-DDB4-4550-9B5D-86C78FD82978",
+      "name": "Julia Holter",
+      "type": "artist",
+      "affinity": 0.9420765705619324,
+      "popularity": 0.9879152494609703,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:3EF6F370-BE93-4711-8C87-956624ADC3E0",
+      "bookId": "hg-fair-play",
+      "entityId": "3EF6F370-BE93-4711-8C87-956624ADC3E0",
+      "name": "Jerskin Fendrix",
+      "type": "artist",
+      "affinity": 0.9419805064950022,
+      "popularity": 0.8775403207308522,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:64AD0902-0A1A-4121-9BB2-7AA76E380AAB",
+      "bookId": "hg-fair-play",
+      "entityId": "64AD0902-0A1A-4121-9BB2-7AA76E380AAB",
+      "name": "Angel Olsen",
+      "type": "artist",
+      "affinity": 0.9469182949337241,
+      "popularity": 0.9935873490225376,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:7E57EBD1-1839-464F-A0B8-A3191ED9E804",
+      "bookId": "hg-fair-play",
+      "entityId": "7E57EBD1-1839-464F-A0B8-A3191ED9E804",
+      "name": "Weyes Blood",
+      "type": "artist",
+      "affinity": 0.9452642432798024,
+      "popularity": 0.9895536375492335,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:A6A5E0F4-1217-4974-83CE-38D0D04F38AC",
+      "bookId": "hg-fair-play",
+      "entityId": "A6A5E0F4-1217-4974-83CE-38D0D04F38AC",
+      "name": "Anna Meredith",
+      "type": "artist",
+      "affinity": 0.9358427177284449,
+      "popularity": 0.9033383795686452,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:C1A3D5EA-56E7-4EBD-B48E-607B8922FDD6",
+      "bookId": "hg-fair-play",
+      "entityId": "C1A3D5EA-56E7-4EBD-B48E-607B8922FDD6",
+      "name": "U.S. Girls",
+      "type": "artist",
+      "affinity": 0.9396423103629967,
+      "popularity": 0.974333012209268,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:artist:ECF249B7-4719-4192-85A4-1B0E79C52834",
+      "bookId": "hg-fair-play",
+      "entityId": "ECF249B7-4719-4192-85A4-1B0E79C52834",
+      "name": "Spellling",
+      "type": "artist",
+      "affinity": 0.9362745747275731,
+      "popularity": 0.9545085163412828,
+      "context": "hg-fair-play:artist",
+      "retrievedAt": "2026-10-30T20:41:00.812Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:5CC38766-088F-4C2A-B4AC-BC91FD0D6E0D",
+      "bookId": "hg-fair-play",
+      "entityId": "5CC38766-088F-4C2A-B4AC-BC91FD0D6E0D",
+      "name": "Time",
+      "type": "movie",
+      "affinity": 0.9178440382879816,
+      "popularity": 0.8896520443206116,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:7D6E66D9-2E1B-43F7-85EE-1F4AB4552865",
+      "bookId": "hg-fair-play",
+      "entityId": "7D6E66D9-2E1B-43F7-85EE-1F4AB4552865",
+      "name": "Babyteeth",
+      "type": "movie",
+      "affinity": 0.9168340628941298,
+      "popularity": 0.9564677422838507,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:91B1E32D-3754-4272-BF29-F4701E331576",
+      "bookId": "hg-fair-play",
+      "entityId": "91B1E32D-3754-4272-BF29-F4701E331576",
+      "name": "Disclosure",
+      "type": "movie",
+      "affinity": 0.9315319914789831,
+      "popularity": 0.9266614829693945,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:CBA73727-0B88-4D49-9B66-434A9EC36EED",
+      "bookId": "hg-fair-play",
+      "entityId": "CBA73727-0B88-4D49-9B66-434A9EC36EED",
+      "name": "Kajillionaire",
+      "type": "movie",
+      "affinity": 0.9260867279645191,
+      "popularity": 0.9682390548391974,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:D0284786-422C-44D3-9C87-AD30D05FCDD5",
+      "bookId": "hg-fair-play",
+      "entityId": "D0284786-422C-44D3-9C87-AD30D05FCDD5",
+      "name": "Never Rarely Sometimes Always",
+      "type": "movie",
+      "affinity": 0.9156082993618291,
+      "popularity": 0.9630661569364349,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:D12F4C38-AED7-428B-B38F-A0B0CC9C568C",
+      "bookId": "hg-fair-play",
+      "entityId": "D12F4C38-AED7-428B-B38F-A0B0CC9C568C",
+      "name": "Dick Johnson Is Dead",
+      "type": "movie",
+      "affinity": 0.9201616588684491,
+      "popularity": 0.9209054191235232,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:D1593622-2FE6-4AA3-B1CF-C65C3CBF0D26",
+      "bookId": "hg-fair-play",
+      "entityId": "D1593622-2FE6-4AA3-B1CF-C65C3CBF0D26",
+      "name": "The Glorias",
+      "type": "movie",
+      "affinity": 0.9219434034628625,
+      "popularity": 0.7744983692952332,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:E39A5CE6-5991-46B9-897D-4B23A494804A",
+      "bookId": "hg-fair-play",
+      "entityId": "E39A5CE6-5991-46B9-897D-4B23A494804A",
+      "name": "Promising Young Woman",
+      "type": "movie",
+      "affinity": 0.9184987092342789,
+      "popularity": 0.9933691872394652,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:E43CD9D8-EF5B-4028-BA3B-EFE911D7BD86",
+      "bookId": "hg-fair-play",
+      "entityId": "E43CD9D8-EF5B-4028-BA3B-EFE911D7BD86",
+      "name": "Shirley",
+      "type": "movie",
+      "affinity": 0.915053717385275,
+      "popularity": 0.9151277565390181,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-fair-play:movie:FF259635-9D65-4490-94BF-3B1583880F59",
+      "bookId": "hg-fair-play",
+      "entityId": "FF259635-9D65-4490-94BF-3B1583880F59",
+      "name": "For Sama",
+      "type": "movie",
+      "affinity": 0.9118533024581358,
+      "popularity": 0.941985788029979,
+      "context": "hg-fair-play:movie",
+      "retrievedAt": "2026-10-30T20:41:00.935Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "2AA39172-FE37-4991-8E68-D532DC245789"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:002E30D2-7E6E-43F7-BCF5-DAE3A2C0E705",
+      "bookId": "hg-the-tanners",
+      "entityId": "002E30D2-7E6E-43F7-BCF5-DAE3A2C0E705",
+      "name": "Daniel Johnston",
+      "type": "artist",
+      "affinity": 0.9409236801852967,
+      "popularity": 0.9939903924922504,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:1D566602-06DA-4D21-8B83-D371FD7C377D",
+      "bookId": "hg-the-tanners",
+      "entityId": "1D566602-06DA-4D21-8B83-D371FD7C377D",
+      "name": "Arthur Russell",
+      "type": "artist",
+      "affinity": 0.9410597104811319,
+      "popularity": 0.9879578475512651,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:4A3117E1-31D2-4DD0-9B6C-277866BEE80E",
+      "bookId": "hg-the-tanners",
+      "entityId": "4A3117E1-31D2-4DD0-9B6C-277866BEE80E",
+      "name": "Songs: Ohia",
+      "type": "artist",
+      "affinity": 0.9360644196401524,
+      "popularity": 0.99127394504191,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:6C6DE241-A207-434D-B503-E9D71D85F41F",
+      "bookId": "hg-the-tanners",
+      "entityId": "6C6DE241-A207-434D-B503-E9D71D85F41F",
+      "name": "The Fall",
+      "type": "artist",
+      "affinity": 0.9373653607843762,
+      "popularity": 0.9936594380984213,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:876A6875-9CA2-4F15-B8A8-25496507C11E",
+      "bookId": "hg-the-tanners",
+      "entityId": "876A6875-9CA2-4F15-B8A8-25496507C11E",
+      "name": "Scott Walker",
+      "type": "artist",
+      "affinity": 0.9450467049105197,
+      "popularity": 0.9908479641389615,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:97158F4B-D12D-4430-86C2-21716141EBD6",
+      "bookId": "hg-the-tanners",
+      "entityId": "97158F4B-D12D-4430-86C2-21716141EBD6",
+      "name": "Bill Callahan",
+      "type": "artist",
+      "affinity": 0.935953087958639,
+      "popularity": 0.9894356736068786,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:97B90712-23B5-4802-8BEF-D4A2C8EA705A",
+      "bookId": "hg-the-tanners",
+      "entityId": "97B90712-23B5-4802-8BEF-D4A2C8EA705A",
+      "name": "SMOG",
+      "type": "artist",
+      "affinity": 0.9395446887067619,
+      "popularity": 0.9894618878162909,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:B7EC34CD-CEBA-4A36-82D5-1F35F5EC176F",
+      "bookId": "hg-the-tanners",
+      "entityId": "B7EC34CD-CEBA-4A36-82D5-1F35F5EC176F",
+      "name": "Low",
+      "type": "artist",
+      "affinity": 0.9385602399963529,
+      "popularity": 0.9962513680540537,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:C82327A0-304C-4E89-A38C-99A39D2CFF5A",
+      "bookId": "hg-the-tanners",
+      "entityId": "C82327A0-304C-4E89-A38C-99A39D2CFF5A",
+      "name": "Television",
+      "type": "artist",
+      "affinity": 0.9371380336709103,
+      "popularity": 0.9946883458178506,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:artist:FA295951-408A-4CAE-A399-776AB308D5FD",
+      "bookId": "hg-the-tanners",
+      "entityId": "FA295951-408A-4CAE-A399-776AB308D5FD",
+      "name": "Nico",
+      "type": "artist",
+      "affinity": 0.9378650968705589,
+      "popularity": 0.9940329905825452,
+      "context": "hg-the-tanners:artist",
+      "retrievedAt": "2026-10-30T20:41:00.996Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:1A30C7BB-99D4-47D9-A45F-D6B9870DC2E0",
+      "bookId": "hg-the-tanners",
+      "entityId": "1A30C7BB-99D4-47D9-A45F-D6B9870DC2E0",
+      "name": "Ida",
+      "type": "movie",
+      "affinity": 0.9037567317028684,
+      "popularity": 0.9746970776906628,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:2411BCB5-A55B-492E-B08B-FD0CF9423EC4",
+      "bookId": "hg-the-tanners",
+      "entityId": "2411BCB5-A55B-492E-B08B-FD0CF9423EC4",
+      "name": "Marina Abramovic: The Artist Is Present",
+      "type": "movie",
+      "affinity": 0.9136805841265063,
+      "popularity": 0.9133890580790082,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:2FE44C13-39D4-412E-A962-AC8F1528BAFC",
+      "bookId": "hg-the-tanners",
+      "entityId": "2FE44C13-39D4-412E-A962-AC8F1528BAFC",
+      "name": "The Look of Silence",
+      "type": "movie",
+      "affinity": 0.9175113535248636,
+      "popularity": 0.9346530162638502,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:3162F76D-8CE1-48FB-B7CE-3607A15DDD73",
+      "bookId": "hg-the-tanners",
+      "entityId": "3162F76D-8CE1-48FB-B7CE-3607A15DDD73",
+      "name": "Nostalgia for the Light",
+      "type": "movie",
+      "affinity": 0.9039605489182121,
+      "popularity": 0.9284649776453056,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:4597CF47-7117-4E90-99D5-97E569009D2C",
+      "bookId": "hg-the-tanners",
+      "entityId": "4597CF47-7117-4E90-99D5-97E569009D2C",
+      "name": "Finding Vivian Maier",
+      "type": "movie",
+      "affinity": 0.9113687988590143,
+      "popularity": 0.9405602712801573,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:4B316632-B9FA-40A7-82C8-9581EA7C13A2",
+      "bookId": "hg-the-tanners",
+      "entityId": "4B316632-B9FA-40A7-82C8-9581EA7C13A2",
+      "name": "Stories We Tell",
+      "type": "movie",
+      "affinity": 0.9241393331897454,
+      "popularity": 0.9378064321043651,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:5F2C14DE-6BE4-4492-ABAD-16E4B110C24B",
+      "bookId": "hg-the-tanners",
+      "entityId": "5F2C14DE-6BE4-4492-ABAD-16E4B110C24B",
+      "name": "Gregory Crewdson: Brief Encounters",
+      "type": "movie",
+      "affinity": 0.9041800092658802,
+      "popularity": 0.6247111168707747,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:7FCFC743-1CE5-4D70-8B85-9D1D6B79A721",
+      "bookId": "hg-the-tanners",
+      "entityId": "7FCFC743-1CE5-4D70-8B85-9D1D6B79A721",
+      "name": "The Master",
+      "type": "movie",
+      "affinity": 0.9213194958150803,
+      "popularity": 0.9897082010410592,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:8B59401A-E088-4BF3-89EF-2FEB65ECE178",
+      "bookId": "hg-the-tanners",
+      "entityId": "8B59401A-E088-4BF3-89EF-2FEB65ECE178",
+      "name": "The Act of Killing",
+      "type": "movie",
+      "affinity": 0.9321599633332875,
+      "popularity": 0.9750534568781183,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-tanners:movie:F948FA2E-6832-476E-8B97-4EE79415551F",
+      "bookId": "hg-the-tanners",
+      "entityId": "F948FA2E-6832-476E-8B97-4EE79415551F",
+      "name": "Fire at Sea",
+      "type": "movie",
+      "affinity": 0.9059677965085216,
+      "popularity": 0.8611849068014428,
+      "context": "hg-the-tanners:movie",
+      "retrievedAt": "2026-10-30T20:41:06.964Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "BED335AC-2BFD-4BC8-89F6-58A63D9CC835"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:1A9BE260-F41E-4592-9EAF-BDD6AE774F69",
+      "bookId": "hg-the-peregrine",
+      "entityId": "1A9BE260-F41E-4592-9EAF-BDD6AE774F69",
+      "name": "Joni Mitchell",
+      "type": "artist",
+      "affinity": 0.9159684713506849,
+      "popularity": 0.9978209438426099,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:2141D485-0AEA-4081-815F-5823480ED0D9",
+      "bookId": "hg-the-peregrine",
+      "entityId": "2141D485-0AEA-4081-815F-5823480ED0D9",
+      "name": "Elvis Costello & The Attractions",
+      "type": "artist",
+      "affinity": 0.9157987738677411,
+      "popularity": 0.9926272536028155,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:46591B68-B84F-4A28-AABA-F231BB2C4C68",
+      "bookId": "hg-the-peregrine",
+      "entityId": "46591B68-B84F-4A28-AABA-F231BB2C4C68",
+      "name": "Daniel Lanois",
+      "type": "artist",
+      "affinity": 0.9174703789162229,
+      "popularity": 0.97748199411491,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:8C7EDFAA-835E-4CF4-B5D5-3E8407B9CBD4",
+      "bookId": "hg-the-peregrine",
+      "entityId": "8C7EDFAA-835E-4CF4-B5D5-3E8407B9CBD4",
+      "name": "David Crosby",
+      "type": "artist",
+      "affinity": 0.9151825222126982,
+      "popularity": 0.9658297780311818,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:8E27B7D4-366B-4DC9-B235-3B05DBB896FF",
+      "bookId": "hg-the-peregrine",
+      "entityId": "8E27B7D4-366B-4DC9-B235-3B05DBB896FF",
+      "name": "David Byrne",
+      "type": "artist",
+      "affinity": 0.9182688967748323,
+      "popularity": 0.9905104561927793,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:AC89DF85-355D-4758-B8C6-5B2C78572126",
+      "bookId": "hg-the-peregrine",
+      "entityId": "AC89DF85-355D-4758-B8C6-5B2C78572126",
+      "name": "Robert Wyatt",
+      "type": "artist",
+      "affinity": 0.921744996592688,
+      "popularity": 0.9822595337802856,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:C0382BC0-E665-4C12-87DD-4947FA03505F",
+      "bookId": "hg-the-peregrine",
+      "entityId": "C0382BC0-E665-4C12-87DD-4947FA03505F",
+      "name": "Robert Plant & Alison Krauss",
+      "type": "artist",
+      "affinity": 0.9324826113180664,
+      "popularity": 0.987128823178604,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:F233AC9E-804C-461E-AD3B-4ACB37B0F3C0",
+      "bookId": "hg-the-peregrine",
+      "entityId": "F233AC9E-804C-461E-AD3B-4ACB37B0F3C0",
+      "name": "Brian Wilson",
+      "type": "artist",
+      "affinity": 0.9187318494589582,
+      "popularity": 0.9880201062986191,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:F25DF7B9-A6BE-4178-B702-43B959A0CD93",
+      "bookId": "hg-the-peregrine",
+      "entityId": "F25DF7B9-A6BE-4178-B702-43B959A0CD93",
+      "name": "Ry Cooder",
+      "type": "artist",
+      "affinity": 0.9293111953432653,
+      "popularity": 0.9892718347980523,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:artist:FACA805E-4DA2-4653-A314-A61E160B158D",
+      "bookId": "hg-the-peregrine",
+      "entityId": "FACA805E-4DA2-4653-A314-A61E160B158D",
+      "name": "Dennis Wilson",
+      "type": "artist",
+      "affinity": 0.9170353795399575,
+      "popularity": 0.9648926200446952,
+      "context": "hg-the-peregrine:artist",
+      "retrievedAt": "2026-10-30T20:41:07.019Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:artist",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:0500591F-6592-4BF9-8B7F-52C12B39C54F",
+      "bookId": "hg-the-peregrine",
+      "entityId": "0500591F-6592-4BF9-8B7F-52C12B39C54F",
+      "name": "I Am Greta",
+      "type": "movie",
+      "affinity": 0.9115197856725394,
+      "popularity": 0.8678697164085617,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:0F6527DF-CE77-4C3F-9DF5-F0F9E4EA322A",
+      "bookId": "hg-the-peregrine",
+      "entityId": "0F6527DF-CE77-4C3F-9DF5-F0F9E4EA322A",
+      "name": "The Game Changers",
+      "type": "movie",
+      "affinity": 0.9118050482899973,
+      "popularity": 0.9293181278213353,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:2F0357A6-7FF9-47B1-9288-7C046C521E24",
+      "bookId": "hg-the-peregrine",
+      "entityId": "2F0357A6-7FF9-47B1-9288-7C046C521E24",
+      "name": "The Great Hack",
+      "type": "movie",
+      "affinity": 0.9196174363970981,
+      "popularity": 0.9336054774401175,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:731E15D9-3867-4CA4-92F0-35966C962C74",
+      "bookId": "hg-the-peregrine",
+      "entityId": "731E15D9-3867-4CA4-92F0-35966C962C74",
+      "name": "The Inventor: Out for Blood in Silicon Valley",
+      "type": "movie",
+      "affinity": 0.911768870194274,
+      "popularity": 0.9088857210738893,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:9D63767D-9182-4ED5-8054-965C9280E8EA",
+      "bookId": "hg-the-peregrine",
+      "entityId": "9D63767D-9182-4ED5-8054-965C9280E8EA",
+      "name": "Behind the Curve",
+      "type": "movie",
+      "affinity": 0.9156628336794318,
+      "popularity": 0.8900948184626017,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:9F968B8E-8528-4ADC-B080-61A1A9734788",
+      "bookId": "hg-the-peregrine",
+      "entityId": "9F968B8E-8528-4ADC-B080-61A1A9734788",
+      "name": "Cowspiracy: The Sustainability Secret",
+      "type": "movie",
+      "affinity": 0.921032906660257,
+      "popularity": 0.940376682001771,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:C06A4E40-E088-4DDE-81A0-549F6F7D9479",
+      "bookId": "hg-the-peregrine",
+      "entityId": "C06A4E40-E088-4DDE-81A0-549F6F7D9479",
+      "name": "Seaspiracy",
+      "type": "movie",
+      "affinity": 0.9238400834252006,
+      "popularity": 0.9507332771766129,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:D194DAE4-6C21-4CC7-9BFD-A2FD7AC8EAD6",
+      "bookId": "hg-the-peregrine",
+      "entityId": "D194DAE4-6C21-4CC7-9BFD-A2FD7AC8EAD6",
+      "name": "The Social Dilemma",
+      "type": "movie",
+      "affinity": 0.9117229566551921,
+      "popularity": 0.9784228601049698,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:D4EBB9FC-D78C-4B61-A20C-8402744F59EB",
+      "bookId": "hg-the-peregrine",
+      "entityId": "D4EBB9FC-D78C-4B61-A20C-8402744F59EB",
+      "name": "The Dawn Wall",
+      "type": "movie",
+      "affinity": 0.9165677852294631,
+      "popularity": 0.9328603209572561,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    },
+    {
+      "id": "hg-the-peregrine:movie:E464E1CF-4A81-4F83-845E-EDE64BDB9324",
+      "bookId": "hg-the-peregrine",
+      "entityId": "E464E1CF-4A81-4F83-845E-EDE64BDB9324",
+      "name": "My Octopus Teacher",
+      "type": "movie",
+      "affinity": 0.9141144059839242,
+      "popularity": 0.9786388474913065,
+      "context": "hg-the-peregrine:movie",
+      "retrievedAt": "2026-10-30T20:41:07.022Z",
+      "active": true,
+      "request": {
+        "endpoint": "/v2/insights",
+        "query": {
+          "filter.type": "urn:entity:movie",
+          "take": 10,
+          "signal.interests.entities": [
+            "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0"
+          ],
+          "feature.explainability": true
+        }
+      }
+    }
+  ],
+  "references": {
+    "hg-fair-play:artist": {
+      "values": [
+        0.9469182949337241,
+        0.9452642432798024,
+        0.9437413969570195,
+        0.9420765705619324,
+        0.9419805064950022,
+        0.9396423103629967,
+        0.9362745747275731,
+        0.9358427177284449,
+        0.9346482394443361,
+        0.9339687459836188
+      ],
+      "capturedAt": "2026-10-30T20:40:52.167Z",
+      "method": "empirical-percentile"
+    },
+    "hg-fair-play:movie": {
+      "values": [
+        0.9315319914789831,
+        0.9260867279645191,
+        0.9219434034628625,
+        0.9201616588684491,
+        0.9184987092342789,
+        0.9178440382879816,
+        0.9168340628941298,
+        0.9156082993618291,
+        0.915053717385275,
+        0.9118533024581358
+      ],
+      "capturedAt": "2026-10-30T20:40:52.167Z",
+      "method": "empirical-percentile"
+    },
+    "hg-the-tanners:artist": {
+      "values": [
+        0.9450467049105197,
+        0.9410597104811319,
+        0.9409236801852967,
+        0.9395446887067619,
+        0.9385602399963529,
+        0.9378650968705589,
+        0.9373653607843762,
+        0.9371380336709103,
+        0.9360644196401524,
+        0.935953087958639
+      ],
+      "capturedAt": "2026-10-30T20:40:52.167Z",
+      "method": "empirical-percentile"
+    },
+    "hg-the-tanners:movie": {
+      "values": [
+        0.9321599633332875,
+        0.9241393331897454,
+        0.9213194958150803,
+        0.9175113535248636,
+        0.9136805841265063,
+        0.9113687988590143,
+        0.9059677965085216,
+        0.9041800092658802,
+        0.9039605489182121,
+        0.9037567317028684
+      ],
+      "capturedAt": "2026-10-30T20:40:52.167Z",
+      "method": "empirical-percentile"
+    },
+    "hg-the-peregrine:artist": {
+      "values": [
+        0.9324826113180664,
+        0.9293111953432653,
+        0.921744996592688,
+        0.9187318494589582,
+        0.9182688967748323,
+        0.9174703789162229,
+        0.9170353795399575,
+        0.9159684713506849,
+        0.9157987738677411,
+        0.9151825222126982
+      ],
+      "capturedAt": "2026-10-30T20:40:52.167Z",
+      "method": "empirical-percentile"
+    },
+    "hg-the-peregrine:movie": {
+      "values": [
+        0.9238400834252006,
+        0.921032906660257,
+        0.9196174363970981,
+        0.9165677852294631,
+        0.9156628336794318,
+        0.9141144059839242,
+        0.9118050482899973,
+        0.911768870194274,
+        0.9117229566551921,
+        0.9115197856725394
+      ],
+      "capturedAt": "2026-10-30T20:40:52.167Z",
+      "method": "empirical-percentile"
+    }
+  },
+  "proposals": [
+    {
+      "id": "solo:hg-fair-play:listening",
+      "title": "Fair Play · Books & listening",
+      "curator": "listening",
+      "bookIds": [
+        "hg-fair-play"
+      ],
+      "edgeIds": [
+        "hg-fair-play:artist:64AD0902-0A1A-4121-9BB2-7AA76E380AAB"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 1,
+        "N": 0.006412650977462353,
+        "U": 0.3333333333333333,
+        "F": 0.5166666666666666
+      },
+      "score": 53.66031627443656,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-fair-play:listening:alternative:1",
+      "title": "Fair Play · Books & listening · 2",
+      "curator": "listening",
+      "bookIds": [
+        "hg-fair-play"
+      ],
+      "edgeIds": [
+        "hg-fair-play:artist:7E57EBD1-1839-464F-A0B8-A3191ED9E804"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.8888888888888888,
+        "N": 0.010446362450766467,
+        "U": 0.3333333333333333,
+        "F": 0.5166666666666666
+      },
+      "score": 49.31671461682472,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-fair-play:listening:alternative:2",
+      "title": "Fair Play · Books & listening · 3",
+      "curator": "listening",
+      "bookIds": [
+        "hg-fair-play"
+      ],
+      "edgeIds": [
+        "hg-fair-play:artist:2500BC06-F6E9-4AD6-8B6C-9B5DC8BAD3E6"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.7777777777777778,
+        "N": 0.005328038063032059,
+        "U": 0.3333333333333333,
+        "F": 0.5166666666666666
+      },
+      "score": 44.74431206268691,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-fair-play:cinema",
+      "title": "Fair Play · Books & cinema",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-fair-play"
+      ],
+      "edgeIds": [
+        "hg-fair-play:movie:91B1E32D-3754-4272-BF29-F4701E331576"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-fair-play:cinema:alternative:1",
+      "title": "Fair Play · Books & cinema · 2",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-fair-play"
+      ],
+      "edgeIds": [
+        "hg-fair-play:movie:CBA73727-0B88-4D49-9B66-434A9EC36EED"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-fair-play:cinema:alternative:2",
+      "title": "Fair Play · Books & cinema · 3",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-fair-play"
+      ],
+      "edgeIds": [
+        "hg-fair-play:movie:D1593622-2FE6-4AA3-B1CF-C65C3CBF0D26"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-tanners:listening",
+      "title": "The Tanners · Books & listening",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:artist:876A6875-9CA2-4F15-B8A8-25496507C11E"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 1,
+        "N": 0.009152035861038521,
+        "U": 0.3333333333333333,
+        "F": 0.475
+      },
+      "score": 53.312134229859296,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-tanners:listening:alternative:1",
+      "title": "The Tanners · Books & listening · 2",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:artist:1D566602-06DA-4D21-8B83-D371FD7C377D"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.8888888888888888,
+        "N": 0.012042152448734855,
+        "U": 0.3333333333333333,
+        "F": 0.475
+      },
+      "score": 48.93994270010726,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-tanners:listening:alternative:2",
+      "title": "The Tanners · Books & listening · 3",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:artist:002E30D2-7E6E-43F7-BCF5-DAE3A2C0E705"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.7777777777777778,
+        "N": 0.0060096075077495925,
+        "U": 0.3333333333333333,
+        "F": 0.475
+      },
+      "score": 44.34468463213818,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-tanners:cinema",
+      "title": "The Tanners · Books & cinema",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:movie:8B59401A-E088-4BF3-89EF-2FEB65ECE178"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-tanners:cinema:alternative:1",
+      "title": "The Tanners · Books & cinema · 2",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:movie:4B316632-B9FA-40A7-82C8-9581EA7C13A2"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-tanners:cinema:alternative:2",
+      "title": "The Tanners · Books & cinema · 3",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:movie:7FCFC743-1CE5-4D70-8B85-9D1D6B79A721"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-peregrine:listening",
+      "title": "The Peregrine · Books & listening",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-peregrine:artist:C0382BC0-E665-4C12-87DD-4947FA03505F"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 1,
+        "N": 0.012871176821396046,
+        "U": 0.3333333333333333,
+        "F": 0.4333333333333333
+      },
+      "score": 52.98844608720157,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-peregrine:listening:alternative:1",
+      "title": "The Peregrine · Books & listening · 2",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-peregrine:artist:F25DF7B9-A6BE-4178-B702-43B959A0CD93"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.8888888888888888,
+        "N": 0.010728165201947748,
+        "U": 0.3333333333333333,
+        "F": 0.4333333333333333
+      },
+      "score": 48.490426352270916,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-peregrine:listening:alternative:2",
+      "title": "The Peregrine · Books & listening · 3",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-peregrine:artist:AC89DF85-355D-4758-B8C6-5B2C78572126"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.7777777777777778,
+        "N": 0.017740466219714368,
+        "U": 0.3333333333333333,
+        "F": 0.4333333333333333
+      },
+      "score": 44.221289433270634,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-peregrine:cinema",
+      "title": "The Peregrine · Books & cinema",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-peregrine:movie:C06A4E40-E088-4DDE-81A0-549F6F7D9479"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-peregrine:cinema:alternative:1",
+      "title": "The Peregrine · Books & cinema · 2",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-peregrine:movie:9F968B8E-8528-4ADC-B080-61A1A9734788"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "solo:hg-the-peregrine:cinema:alternative:2",
+      "title": "The Peregrine · Books & cinema · 3",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-peregrine:movie:2F0357A6-7FF9-47B1-9288-7C046C521E24"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:identity:listening",
+      "title": "identity · Books & listening",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-tanners",
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:artist:876A6875-9CA2-4F15-B8A8-25496507C11E",
+        "hg-the-peregrine:artist:C0382BC0-E665-4C12-87DD-4947FA03505F"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 1,
+        "N": 0.011011606341217228,
+        "U": 0.6666666666666666,
+        "F": 0.4333333333333333
+      },
+      "score": 61.275290158530424,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:identity:listening:alternative:1",
+      "title": "identity · Books & listening · 2",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-tanners",
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:artist:1D566602-06DA-4D21-8B83-D371FD7C377D",
+        "hg-the-peregrine:artist:F25DF7B9-A6BE-4178-B702-43B959A0CD93"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.8888888888888888,
+        "N": 0.011385158825341302,
+        "U": 0.6666666666666666,
+        "F": 0.4333333333333333
+      },
+      "score": 56.840184526189084,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:identity:listening:alternative:2",
+      "title": "identity · Books & listening · 3",
+      "curator": "listening",
+      "bookIds": [
+        "hg-the-tanners",
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:artist:002E30D2-7E6E-43F7-BCF5-DAE3A2C0E705",
+        "hg-the-peregrine:artist:AC89DF85-355D-4758-B8C6-5B2C78572126"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.7777777777777778,
+        "N": 0.01187503686373198,
+        "U": 0.6666666666666666,
+        "F": 0.4333333333333333
+      },
+      "score": 52.407987032704405,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:identity:cinema",
+      "title": "identity · Books & cinema",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-tanners",
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:movie:8B59401A-E088-4BF3-89EF-2FEB65ECE178",
+        "hg-the-peregrine:movie:C06A4E40-E088-4DDE-81A0-549F6F7D9479"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:identity:cinema:alternative:1",
+      "title": "identity · Books & cinema · 2",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-tanners",
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:movie:4B316632-B9FA-40A7-82C8-9581EA7C13A2",
+        "hg-the-peregrine:movie:9F968B8E-8528-4ADC-B080-61A1A9734788"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:identity:cinema:alternative:2",
+      "title": "identity · Books & cinema · 3",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-the-tanners",
+        "hg-the-peregrine"
+      ],
+      "edgeIds": [
+        "hg-the-tanners:movie:7FCFC743-1CE5-4D70-8B85-9D1D6B79A721",
+        "hg-the-peregrine:movie:2F0357A6-7FF9-47B1-9288-7C046C521E24"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:travel:listening",
+      "title": "travel · Books & listening",
+      "curator": "listening",
+      "bookIds": [
+        "hg-fair-play",
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-fair-play:artist:64AD0902-0A1A-4121-9BB2-7AA76E380AAB",
+        "hg-the-tanners:artist:876A6875-9CA2-4F15-B8A8-25496507C11E"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 1,
+        "N": 0.0077823434192503815,
+        "U": 0.6666666666666666,
+        "F": 0.475
+      },
+      "score": 61.611225252147925,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:travel:listening:alternative:1",
+      "title": "travel · Books & listening · 2",
+      "curator": "listening",
+      "bookIds": [
+        "hg-fair-play",
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-fair-play:artist:7E57EBD1-1839-464F-A0B8-A3191ED9E804",
+        "hg-the-tanners:artist:1D566602-06DA-4D21-8B83-D371FD7C377D"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.8888888888888888,
+        "N": 0.011244257449750661,
+        "U": 0.6666666666666666,
+        "F": 0.475
+      },
+      "score": 57.25332865846598,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:travel:listening:alternative:2",
+      "title": "travel · Books & listening · 3",
+      "curator": "listening",
+      "bookIds": [
+        "hg-fair-play",
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-fair-play:artist:2500BC06-F6E9-4AD6-8B6C-9B5DC8BAD3E6",
+        "hg-the-tanners:artist:002E30D2-7E6E-43F7-BCF5-DAE3A2C0E705"
+      ],
+      "duration": 45,
+      "status": "valid",
+      "reasons": [],
+      "factors": {
+        "R": 0.7777777777777778,
+        "N": 0.005668822785390826,
+        "U": 0.6666666666666666,
+        "F": 0.475
+      },
+      "score": 52.66949834741255,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:travel:cinema",
+      "title": "travel · Books & cinema",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-fair-play",
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-fair-play:movie:91B1E32D-3754-4272-BF29-F4701E331576",
+        "hg-the-tanners:movie:8B59401A-E088-4BF3-89EF-2FEB65ECE178"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:travel:cinema:alternative:1",
+      "title": "travel · Books & cinema · 2",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-fair-play",
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-fair-play:movie:CBA73727-0B88-4D49-9B66-434A9EC36EED",
+        "hg-the-tanners:movie:4B316632-B9FA-40A7-82C8-9581EA7C13A2"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    },
+    {
+      "id": "catalogue:travel:cinema:alternative:2",
+      "title": "travel · Books & cinema · 3",
+      "curator": "cinema",
+      "bookIds": [
+        "hg-fair-play",
+        "hg-the-tanners"
+      ],
+      "edgeIds": [
+        "hg-fair-play:movie:D1593622-2FE6-4AA3-B1CF-C65C3CBF0D26",
+        "hg-the-tanners:movie:7FCFC743-1CE5-4D70-8B85-9D1D6B79A721"
+      ],
+      "duration": 120,
+      "status": "unverified",
+      "reasons": [
+        "Confirm screening rights before ranking a film event."
+      ],
+      "factors": null,
+      "score": null,
+      "interpretation": "Editorial proposal: introduce the selected books, explore the returned cultural references, and invite a reader discussion. Qloo affinity supports discovery; thematic suitability needs owner review."
+    }
+  ],
+  "selected": [
+    "catalogue:travel:listening",
+    "catalogue:identity:listening",
+    "catalogue:travel:listening:alternative:1",
+    "catalogue:identity:listening:alternative:1",
+    "solo:hg-fair-play:listening"
+  ],
+  "excluded": [],
+  "warnings": [],
+  "changes": [],
+  "trace": [
+    {
+      "phase": "input",
+      "status": "done",
+      "summary": "Accepted 12 catalogue books and 3 eligible hidden gems. Hard constraints are fixed for this run.",
+      "id": "273611f4-f761-4690-8afc-b8394b3e6f8a",
+      "at": "2026-10-30T20:40:52.188Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "hg-fair-play",
+      "count": 3,
+      "summary": "Resolved search tool for Fair Play: 3 candidate entities · cached Qloo response.",
+      "id": "7ff04ea9-d6ac-4d1b-be79-f8a234671515",
+      "at": "2026-10-30T20:40:52.241Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "hg-the-tanners",
+      "count": 3,
+      "summary": "Resolved search tool for The Tanners: 3 candidate entities · cached Qloo response.",
+      "id": "beb1d0fd-1000-46e0-9414-5f4eb925ba49",
+      "at": "2026-10-30T20:40:52.241Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "hg-the-peregrine",
+      "count": 3,
+      "summary": "Resolved search tool for The Peregrine: 3 candidate entities · cached Qloo response.",
+      "id": "37de8efd-0f05-40fe-a7da-f6d6236d1ad7",
+      "at": "2026-10-30T20:40:52.241Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "hg-fair-play",
+      "entityId": "2AA39172-FE37-4991-8E68-D532DC245789",
+      "summary": "Fair Play: entity confirmed.",
+      "id": "cf4003d7-3af4-4a8c-b212-938cc5eca9d8",
+      "at": "2026-10-30T20:40:52.242Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "hg-the-tanners",
+      "entityId": "BED335AC-2BFD-4BC8-89F6-58A63D9CC835",
+      "summary": "The Tanners: entity confirmed.",
+      "id": "9438e568-d720-441d-903c-b114d3c6142d",
+      "at": "2026-10-30T20:40:52.242Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "hg-the-peregrine",
+      "entityId": "AA33E231-4727-42A8-9EAC-C59E4AFAA6E0",
+      "summary": "The Peregrine: entity confirmed.",
+      "id": "3376f8ff-e7a4-49bd-a9b4-3a9509cf15df",
+      "at": "2026-10-30T20:40:52.242Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b4",
+      "count": 3,
+      "summary": "Resolved search tool for A Room of One’s Own: 3 candidate entities · cached Qloo response.",
+      "id": "ed706576-caa6-4789-89e2-c079cbc72eeb",
+      "at": "2026-10-30T20:40:52.255Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b5",
+      "count": 3,
+      "summary": "Resolved search tool for The Odyssey: 3 candidate entities · cached Qloo response.",
+      "id": "129597b9-74bb-42cd-b3eb-c7c0a6e3288f",
+      "at": "2026-10-30T20:40:52.255Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b6",
+      "count": 3,
+      "summary": "Resolved search tool for The Summer Book: 3 candidate entities · cached Qloo response.",
+      "id": "4740deb4-1674-4ea3-9d54-fc870145a450",
+      "at": "2026-10-30T20:40:52.256Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b4",
+      "entityId": "17AA0B10-A5B7-435E-A130-2C2F38E319CC",
+      "summary": "A Room of One’s Own: entity confirmed.",
+      "id": "0756ba79-85bd-46ae-a2d7-d98f5f057cb8",
+      "at": "2026-10-30T20:40:52.256Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b5",
+      "entityId": "33F3E487-DBE1-42D9-9842-9AE75B1CAFA4",
+      "summary": "The Odyssey: entity confirmed.",
+      "id": "60996f8a-724b-4350-bafe-981bfdefa569",
+      "at": "2026-10-30T20:40:52.257Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b6",
+      "entityId": "B658D12F-39BE-4CC5-B45C-FD5CD0195352",
+      "summary": "The Summer Book: entity confirmed.",
+      "id": "06fe3901-16d0-4881-a37b-8c4fd5498a7a",
+      "at": "2026-10-30T20:40:52.258Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b7",
+      "count": 3,
+      "summary": "Resolved search tool for Ways of Seeing: 3 candidate entities · cached Qloo response.",
+      "id": "3021d2a0-4f88-4718-8449-83086eda9cca",
+      "at": "2026-10-30T20:40:52.268Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b8",
+      "count": 3,
+      "summary": "Resolved search tool for The City & the City: 3 candidate entities · cached Qloo response.",
+      "id": "7889433d-62b6-4293-aebd-3e7a252093ce",
+      "at": "2026-10-30T20:40:52.268Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b9",
+      "count": 3,
+      "summary": "Resolved search tool for A Field Guide to Getting Lost: 3 candidate entities · cached Qloo response.",
+      "id": "4fba9dcf-e744-4283-860d-a75c2b159226",
+      "at": "2026-10-30T20:40:52.268Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b7",
+      "entityId": "BAAC0794-1C76-4A26-BA43-A36CD0017BA8",
+      "summary": "Ways of Seeing: entity confirmed.",
+      "id": "8e577558-b4f2-432a-97cb-3050a467ec14",
+      "at": "2026-10-30T20:40:52.268Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b8",
+      "entityId": "DCDE8AFB-FC60-4FA1-8A69-16DC49EE9288",
+      "summary": "The City & the City: entity confirmed.",
+      "id": "7bec84ad-3eb4-4535-a6ef-6bc37fe08fa0",
+      "at": "2026-10-30T20:40:52.268Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b9",
+      "entityId": "2F1D3EBF-5433-481F-BC3D-DE76429F96C0",
+      "summary": "A Field Guide to Getting Lost: entity confirmed.",
+      "id": "7fb9e80c-8a32-40a2-87bf-ae9812e17d9c",
+      "at": "2026-10-30T20:40:52.269Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b10",
+      "count": 1,
+      "summary": "Resolved search tool for Bluets: 1 candidate entities · cached Qloo response.",
+      "id": "99335f3c-b4a0-4d95-8ddd-1ff53695ce25",
+      "at": "2026-10-30T20:40:52.275Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b11",
+      "count": 3,
+      "summary": "Resolved search tool for Just Kids: 3 candidate entities · cached Qloo response.",
+      "id": "0c0677ae-02f4-49d9-ba11-1c82eea70fe3",
+      "at": "2026-10-30T20:40:52.276Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.search",
+      "source": "cache",
+      "endpoint": "/search",
+      "bookId": "b12",
+      "count": 3,
+      "summary": "Resolved search tool for The Little Prince: 3 candidate entities · cached Qloo response.",
+      "id": "f738e1e3-2649-4ab1-b3d1-858b51a9f4d2",
+      "at": "2026-10-30T20:40:52.276Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b10",
+      "entityId": "2A08CD8E-9AC3-4310-B2B9-115698273AF5",
+      "summary": "Bluets: entity confirmed.",
+      "id": "6348ef52-255f-4166-a802-322fd35ff975",
+      "at": "2026-10-30T20:40:52.276Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "done",
+      "bookId": "b11",
+      "entityId": "7A5F59C6-CE09-462C-8F6A-3D7EF6328F8B",
+      "summary": "Just Kids: entity confirmed.",
+      "id": "e591019d-f087-4bdb-8d21-437769db9f6f",
+      "at": "2026-10-30T20:40:52.276Z",
+      "revision": 1
+    },
+    {
+      "phase": "resolution",
+      "status": "unverified",
+      "bookId": "b12",
+      "summary": "The Little Prince: match needs owner review; do not infer an entity.",
+      "id": "9c5cd712-8e39-4768-9dc3-be9ae2ec3237",
+      "at": "2026-10-30T20:40:52.276Z",
+      "revision": 1
+    },
+    {
+      "phase": "cluster",
+      "status": "done",
+      "count": 10,
+      "summary": "Grouped supplied catalogue/Qloo tags into 10 thematic clusters.",
+      "id": "10cbb98e-15f7-4939-9f88-69024d27a9b5",
+      "at": "2026-10-30T20:40:52.369Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.insights",
+      "source": "tool-call",
+      "endpoint": "/v2/insights",
+      "bookId": "hg-fair-play",
+      "count": 10,
+      "summary": "Retrieved 10 artist links for Fair Play · Qloo tool call (app cache miss).",
+      "id": "fa09137d-9b11-4ea2-b2f7-494535d70acb",
+      "at": "2026-10-30T20:41:00.822Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.insights",
+      "source": "tool-call",
+      "endpoint": "/v2/insights",
+      "bookId": "hg-fair-play",
+      "count": 10,
+      "summary": "Retrieved 10 movie links for Fair Play · Qloo tool call (app cache miss).",
+      "id": "36f78959-34ac-492b-a8b1-ed1af658d56d",
+      "at": "2026-10-30T20:41:00.940Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.insights",
+      "source": "tool-call",
+      "endpoint": "/v2/insights",
+      "bookId": "hg-the-tanners",
+      "count": 10,
+      "summary": "Retrieved 10 artist links for The Tanners · Qloo tool call (app cache miss).",
+      "id": "38b7f429-7f67-4935-a825-02301a4c3b47",
+      "at": "2026-10-30T20:41:01.000Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.insights",
+      "source": "tool-call",
+      "endpoint": "/v2/insights",
+      "bookId": "hg-the-tanners",
+      "count": 10,
+      "summary": "Retrieved 10 movie links for The Tanners · Qloo tool call (app cache miss).",
+      "id": "9e026ab8-0016-427e-ad31-0d829f421b89",
+      "at": "2026-10-30T20:41:06.968Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.insights",
+      "source": "tool-call",
+      "endpoint": "/v2/insights",
+      "bookId": "hg-the-peregrine",
+      "count": 10,
+      "summary": "Retrieved 10 artist links for The Peregrine · Qloo tool call (app cache miss).",
+      "id": "a4519b51-08d2-4875-ae8b-7dd2b56e7e7c",
+      "at": "2026-10-30T20:41:07.022Z",
+      "revision": 1
+    },
+    {
+      "phase": "tool",
+      "status": "done",
+      "tool": "qloo.insights",
+      "source": "tool-call",
+      "endpoint": "/v2/insights",
+      "bookId": "hg-the-peregrine",
+      "count": 10,
+      "summary": "Retrieved 10 movie links for The Peregrine · Qloo tool call (app cache miss).",
+      "id": "8e9674e6-99ae-4e32-8c98-4953b4d8b9b9",
+      "at": "2026-10-30T20:41:07.024Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-fair-play:cinema",
+      "summary": "Marked unverified: Fair Play · Books & cinema. Confirm screening rights before ranking a film event.",
+      "id": "9f5b6649-68d2-4d89-a54d-dfa02ab1cb32",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-fair-play:cinema:alternative:1",
+      "summary": "Marked unverified: Fair Play · Books & cinema · 2. Confirm screening rights before ranking a film event.",
+      "id": "14f69f8b-770a-42de-b54e-aa7f7d7e9d71",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-fair-play:cinema:alternative:2",
+      "summary": "Marked unverified: Fair Play · Books & cinema · 3. Confirm screening rights before ranking a film event.",
+      "id": "fe2dc0f0-f7fa-468d-b9cd-a120451ce9d6",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-the-tanners:cinema",
+      "summary": "Marked unverified: The Tanners · Books & cinema. Confirm screening rights before ranking a film event.",
+      "id": "869319c8-6f2a-4d06-9efe-9925a8f79987",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-the-tanners:cinema:alternative:1",
+      "summary": "Marked unverified: The Tanners · Books & cinema · 2. Confirm screening rights before ranking a film event.",
+      "id": "753167c8-c0cd-4ba5-afe8-8b1172f9252c",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-the-tanners:cinema:alternative:2",
+      "summary": "Marked unverified: The Tanners · Books & cinema · 3. Confirm screening rights before ranking a film event.",
+      "id": "6021887d-9fa8-4e5d-a76c-0ed10cd46609",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-the-peregrine:cinema",
+      "summary": "Marked unverified: The Peregrine · Books & cinema. Confirm screening rights before ranking a film event.",
+      "id": "06bd2f5c-36ec-4c33-92d0-deb6bfa5ca87",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-the-peregrine:cinema:alternative:1",
+      "summary": "Marked unverified: The Peregrine · Books & cinema · 2. Confirm screening rights before ranking a film event.",
+      "id": "47e89b73-781e-4799-9675-4664a4570d46",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "solo:hg-the-peregrine:cinema:alternative:2",
+      "summary": "Marked unverified: The Peregrine · Books & cinema · 3. Confirm screening rights before ranking a film event.",
+      "id": "8a7659f6-b2a7-4f90-889c-003e91ff1e64",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "catalogue:identity:cinema",
+      "summary": "Marked unverified: identity · Books & cinema. Confirm screening rights before ranking a film event.",
+      "id": "de09b447-e7d6-40ea-838a-2fd9d5e6a126",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "catalogue:identity:cinema:alternative:1",
+      "summary": "Marked unverified: identity · Books & cinema · 2. Confirm screening rights before ranking a film event.",
+      "id": "beec1ed5-3fbf-4621-bc11-e9fb97ab28b6",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "catalogue:identity:cinema:alternative:2",
+      "summary": "Marked unverified: identity · Books & cinema · 3. Confirm screening rights before ranking a film event.",
+      "id": "3396b5b9-6c6a-4b40-998a-d775dc726435",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "catalogue:travel:cinema",
+      "summary": "Marked unverified: travel · Books & cinema. Confirm screening rights before ranking a film event.",
+      "id": "3b34d6e9-39e5-4c5a-97a7-6f5dddca4be3",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "catalogue:travel:cinema:alternative:1",
+      "summary": "Marked unverified: travel · Books & cinema · 2. Confirm screening rights before ranking a film event.",
+      "id": "09531cd9-e231-4501-9e85-2f1a70f2c4fa",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "unverified",
+      "proposalId": "catalogue:travel:cinema:alternative:2",
+      "summary": "Marked unverified: travel · Books & cinema · 3. Confirm screening rights before ranking a film event.",
+      "id": "b0a90167-fa4d-4664-8921-48b872bfe623",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "validation",
+      "status": "done",
+      "count": 30,
+      "summary": "Validated 30 proposals: 15 eligible, 0 rejected, 15 unverified.",
+      "id": "b0c56573-0195-440c-83bb-5ae6c17bdeda",
+      "at": "2026-10-30T20:41:07.035Z",
+      "revision": 1
+    },
+    {
+      "phase": "ranking",
+      "status": "done",
+      "count": 15,
+      "summary": "Scored eligible proposals with R/N/U/F and fixed query-context affinity references. Rejected and unverified proposals were not ranked.",
+      "id": "29459ca0-9d58-41ce-ae24-79fe288480c7",
+      "at": "2026-10-30T20:41:07.036Z",
+      "revision": 1
+    },
+    {
+      "phase": "selection",
+      "status": "done",
+      "count": 5,
+      "summary": "Selected 5 diverse eligible proposals.",
+      "id": "fcdc5d00-c01e-4f20-97c9-c811a42ffb0a",
+      "at": "2026-10-30T20:41:07.037Z",
+      "revision": 1
+    }
+  ],
+  "algorithmVersion": "curator-v2.0"
+}

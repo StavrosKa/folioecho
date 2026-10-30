@@ -1,15 +1,19 @@
+import Icon from './Icon';
 import { notify } from '../lib/notifications';
 import { useEffect, useMemo, useRef, useState, type RefObject, type KeyboardEvent } from 'react';
 import { ReactFlow, Background, Controls, useNodesInitialized, useReactFlow, getNodesBounds, getViewportForBounds, type Node, type Edge } from '@xyflow/react';
 import type { Book } from '../lib/catalogue';
 import { readCatalogueFile, catalogueFileTypes } from '../lib/import-catalogue';
-import { defaultConstraints, percentile, type CuratorType, type Run, type Proposal } from '../lib/curator';
+import { defaultConstraints, percentile, type CuratorType, type Run, type Proposal, type AgentTraceEvent } from '../lib/curator';
 import './live-studio.css';
 import { downloadPDF } from '../lib/export';
 import Intelligence from './Intelligence';
+import AgentTrace from './AgentTrace';
+import MetricHint from './MetricHint';
+import { liveEstimate } from '../lib/live-estimate';
 import type { EventDraft } from '../lib/programme';
 
-type StudioTab='setup'|'matching'|'graph'|'events'|'editorial'|'changes';
+type StudioTab='setup'|'matching'|'graph'|'events'|'editorial'|'changes'|'trace';
 function CenterGraph({signature,container,nodeIds}:{signature:string;container:RefObject<HTMLDivElement|null>;nodeIds:string[]}){
   const ready=useNodesInitialized();const {getNodes,setViewport}=useReactFlow();
   useEffect(()=>{
@@ -30,8 +34,18 @@ function CenterGraph({signature,container,nodeIds}:{signature:string;container:R
   return null;
 }
 
-export default function LiveStudio({ books, setBooks, onPlanEvent, active=true }: { books: Book[]; setBooks: (books: Book[]) => void; onPlanEvent: (draft:EventDraft)=>void; active?:boolean }) {
+export default function LiveStudio({ books, setBooks, onPlanEvent, onCompare, active=true }: { books: Book[]; setBooks: (books: Book[]) => void; onPlanEvent: (draft:EventDraft)=>void; onCompare?:()=>void; active?:boolean }) {
+  const [restoring,setRestoring]=useState(true);
   const [studioTab,setStudioTab]=useState<StudioTab>('setup');
+  useEffect(()=>{
+    const navigate=(event:Event)=>{const tab=(event as CustomEvent<string>).detail;if(['trace','graph','events'].includes(tab))setStudioTab(tab as StudioTab);};
+    window.addEventListener('folioecho-studio-tab',navigate);
+    return()=>window.removeEventListener('folioecho-studio-tab',navigate);
+  },[]);
+
+  const [confirmLive,setConfirmLive]=useState(false);
+  const liveDialog=useRef<HTMLDialogElement>(null);
+  useEffect(()=>{const dialog=liveDialog.current;if(confirmLive&&active&&!dialog?.open)dialog?.showModal();else if(!confirmLive||!active)dialog?.close();},[confirmLive,active]);
   const graphContainer=useRef<HTMLDivElement>(null);
   const evidenceDialog=useRef<HTMLDialogElement>(null);
   const [types, setTypes] = useState<CuratorType[]>(['listening']);
@@ -50,6 +64,7 @@ export default function LiveStudio({ books, setBooks, onPlanEvent, active=true }
   const [graphType, setGraphType] = useState('all');
   const [graphLimit, setGraphLimit] = useState(3);
   const [jobId, setJobId] = useState('');
+  const [jobTrace,setJobTrace]=useState<AgentTraceEvent[]>([]);
   const [progress, setProgress] = useState({ message: '', completed: 0, total: 1 });
   const mounted = useRef(true);
   async function poll(id: string) {
@@ -59,12 +74,13 @@ export default function LiveStudio({ books, setBooks, onPlanEvent, active=true }
         const response = await fetch(`/api/jobs?id=${encodeURIComponent(id)}`);
         const job = await response.json();
         if (!response.ok) throw new Error(job.error ?? 'Job unavailable.');
-        setProgress(job);
+        setProgress(job);if(job.trace)setJobTrace(job.trace);
         if (job.status !== 'running') {
           localStorage.removeItem('folioecho-job');
           if (job.status === 'done') {
+            setJobTrace([]);
             notify('Event Studio results ready', 'Your cultural evidence and event proposals have been updated.', 'success', `studio-${id}`);
-            setRun(job.run); setEdgeId(''); setStudioTab(job.run.changes.length?'changes':job.run.selected.length?'events':'matching'); setTypes(job.run.input.preferences.curatorTypes);
+            setRun(job.run); setEdgeId(''); setStudioTab(job.run.changes.length?'changes':job.run.selected.length?'events':'matching'); setTypes(job.run.input.preferences.curatorTypes.filter((type:CuratorType)=>type!=='mixed'));
             setConstraints(job.run.input.constraints); setGenres(job.run.input.selectedGenres.join(', ')); setMatches(job.run.input.matches);
           }
           if (job.status === 'error') throw new Error(job.error ?? 'Planning failed.');
@@ -78,17 +94,18 @@ export default function LiveStudio({ books, setBooks, onPlanEvent, active=true }
     mounted.current = true;
     void fetch('/api/workspace').then(r => r.json()).then(data => {
       if (!mounted.current) return;
-      if (data.run) { setRun(data.run); setStudioTab(data.run.selected.length?'events':'matching'); setTypes(data.run.input.preferences.curatorTypes); setConstraints(data.run.input.constraints); setGenres(data.run.input.selectedGenres.join(', ')); setMatches(data.run.input.matches); }
+      if (data.run) { setRun(data.run); setStudioTab(data.run.selected.length?'events':'matching'); setTypes(data.run.input.preferences.curatorTypes.filter((type:CuratorType)=>type!=='mixed')); setConstraints(data.run.input.constraints); setGenres(data.run.input.selectedGenres.join(', ')); setMatches(data.run.input.matches); }
       const job = localStorage.getItem('folioecho-job');
       if (job) void poll(job).catch(e => setError(e.message));
-    }).catch(() => setError('Could not restore the last saved run.'));
+    }).catch(() => setError('Could not restore the last saved run.')).finally(()=>{if(mounted.current)setRestoring(false);});
     return () => { mounted.current = false; };
   }, []);
   const input = { catalogue: books, selectedGenres: genres.split(',').map(s => s.trim().toLowerCase()).filter(Boolean), preferences: { curatorTypes: types }, constraints, matches };
+  const estimate=liveEstimate(books.length,books.filter(book=>book.hiddenGem&&book.stock>=constraints.minStock).length,types.includes('mixed')||(types.includes('listening')&&types.includes('cinema'))?2:1);
   const stale = !!run && (JSON.stringify(run.input.catalogue) !== JSON.stringify(books) || JSON.stringify(run.input.constraints) !== JSON.stringify(constraints) || JSON.stringify(run.input.preferences.curatorTypes) !== JSON.stringify(types) || JSON.stringify(run.input.selectedGenres) !== JSON.stringify(input.selectedGenres) || JSON.stringify(run.input.matches) !== JSON.stringify(matches));
   const onlyStockChanged = !!run && JSON.stringify(run.input.catalogue.map(({ stock, ...b }) => b)) === JSON.stringify(books.map(({ stock, ...b }) => b)) && JSON.stringify(run.input.constraints) === JSON.stringify(constraints) && JSON.stringify(run.input.preferences.curatorTypes) === JSON.stringify(types) && JSON.stringify(run.input.selectedGenres) === JSON.stringify(input.selectedGenres) && JSON.stringify(run.input.matches) === JSON.stringify(matches);
   async function request(body: unknown) {
-    setBusy(true); setError('');
+    setBusy(true); setError('');setJobTrace([]);
     try {
       const response = await fetch('/api/jobs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const data = await response.json();
@@ -164,14 +181,22 @@ export default function LiveStudio({ books, setBooks, onPlanEvent, active=true }
     </article>;
   }
   return <div className="live-studio">
-    <div className="studio-header"><div><span className="studio-eyebrow">BOOKSHOP EVENT WORKSPACE</span><h1>Event Studio</h1><p>Choose books, explore Qloo evidence and turn a validated proposal into a plan.</p></div><div className="studio-metrics"><span><b>{books.filter(book=>book.hiddenGem).length}</b> hidden gems</span><span><b>{run?.selected.length??0}</b> event ideas</span>{run&&<span><b>R{run.revision}</b> saved snapshot</span>}</div></div>
+    <dialog ref={liveDialog} className="studio-evidence-dialog" aria-labelledby="live-warning-title" onCancel={event=>{event.preventDefault();setConfirmLive(false);}}>
+      <h2 id="live-warning-title">Start a live Qloo run?</h2><p>Estimated time: <b>{estimate.label}</b>. Up to {estimate.lookups} catalogue and cultural lookups, with at most 3 running at once. Cache hits can reduce the work.</p><p>This is a planning estimate, not a measured service guarantee. A cold run or slow provider can take several minutes longer. It uses your Qloo planning allowance. Existing saved results stay available; leaving this tab does not cancel a job.</p>
+      <div className="button-row"><button autoFocus onClick={()=>setConfirmLive(false)}>Keep saved results</button><button className="primary" disabled={busy||!types.length} onClick={()=>{setConfirmLive(false);void request({action:'create',input});}}>Start live run ({estimate.label})</button></div>
+    </dialog>
+    <div className="studio-header"><div><span className="studio-eyebrow">BOOKSHOP EVENT WORKSPACE</span><h1>Event Studio</h1><p>A tool-using planning agent: resolve books, retrieve Qloo evidence, validate proposals and repair your plan.</p></div><div className="studio-metrics"><span><b>{books.filter(book=>book.hiddenGem).length}</b><span className="studio-metric-label">hidden gems</span></span><span><b>{run?run.selected.length:restoring?'…':0}</b><span className="studio-metric-label">event ideas<MetricHint text="Selected proposals in the latest saved Qloo run. Planner drafts are counted separately; zero ideas does not delete drafts."/></span></span>{run&&<span><b>R{run.revision}</b><span className="studio-metric-label">saved snapshot</span></span>}</div></div>
     <div className="studio-tabs" role="tablist" aria-label="Event Studio sections" onKeyDown={studioTabKeys}>{([
-      ['setup','Set up',false],['matching','Book matches',!run],['graph','Cultural graph',!run],['events','Event ideas',!run],['editorial','AI editorial',false],['changes','What-if changes',!run?.changes.length],
+      ['setup','Set up',false],['matching','Book matches',!run],['graph','Cultural graph',!run],['events','Event ideas',!run],['editorial','AI editorial',false],['trace','Agent trace',!run&&!jobTrace.length],['changes','What-if changes',!run?.changes.length],
     ] as const).map(([id,label,disabled])=><button key={id} id={`studio-tab-${id}`} role="tab" tabIndex={studioTab===id?0:-1} aria-selected={studioTab===id} aria-controls={`studio-panel-${id}`} disabled={disabled} onClick={event=>{setStudioTab(id);event.currentTarget.parentElement?.scrollIntoView({block:'start',behavior:'smooth'});}}>{label}{id==='events'&&run&&<small>{run.selected.length}</small>}</button>)}</div>
+    {run?.preloaded&&<div className="studio-stale" role="status"><span><b>Preloaded Qloo example</b> · Real sample-catalogue results generated {new Date(run.preloaded.generatedAt).toLocaleString()}. Loading this snapshot makes no Qloo request; regenerate to refresh evidence.</span></div>}
+    {!!run?.warnings.length&&<p className="live-warning">Some Qloo queries need review. Only recorded evidence is used. Open Book matches → Matching notes for details.</p>}
     {error && <p role="alert" className="error">{error}</p>}
     {qlooBusy && <div className="job-progress studio-progress" role="status"><div><b>{progress.message || 'Starting…'}</b><span>{progress.completed}/{progress.total}</span></div><progress value={progress.completed} max={progress.total}/><button disabled={!jobId} onClick={()=>void fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'cancel',id:jobId})})}>Cancel</button></div>}
+    {qlooBusy&&jobTrace.length>0&&<AgentTrace trace={jobTrace} live/>}
+    <div hidden={studioTab!=='trace'} id="studio-panel-trace" role="tabpanel" aria-labelledby="studio-tab-trace" className="studio-tab-panel"><AgentTrace trace={jobTrace.length?jobTrace:run?.trace} run={run}/></div>
     {stale&&<div className="studio-stale" role="status"><span>Inputs changed. Saved results describe the previous snapshot.</span><button onClick={()=>setStudioTab('setup')}>Review setup</button>{onlyStockChanged&&<button disabled={busy} onClick={()=>void request({action:'repair',runId:run!.id,revision:run!.revision,stock:Object.fromEntries(books.filter(book=>run!.input.catalogue.find(old=>old.id===book.id)?.stock!==book.stock).map(book=>[book.id,book.stock]))})}>Apply stock repair</button>}</div>}
-    <div hidden={studioTab!=='editorial'} id="studio-panel-editorial" role="tabpanel" aria-labelledby="studio-tab-editorial" className="studio-tab-panel"><Intelligence books={books} setBooks={setBooks} run={run} setRun={setRun} disabled={qlooBusy||draftBusy} stale={stale} onBusy={setModelBusy}/></div>
+    <div hidden={studioTab!=='editorial'} id="studio-panel-editorial" role="tabpanel" aria-labelledby="studio-tab-editorial" className="studio-tab-panel"><Intelligence onCompare={onCompare} books={books} setBooks={setBooks} run={run} setRun={setRun} disabled={qlooBusy||draftBusy} stale={stale} onBusy={setModelBusy}/></div>
     <div hidden={studioTab!=='setup'} id="studio-panel-setup" role="tabpanel" aria-labelledby="studio-tab-setup" className="studio-tab-panel studio-setup-grid">
     <section className="panel live-panel">
       <h2>Catalogue & hidden gems</h2>
@@ -188,18 +213,19 @@ export default function LiveStudio({ books, setBooks, onPlanEvent, active=true }
       <h2>Shape the evening</h2>
       <fieldset disabled={busy} className="live-controls">
         <label>Selected catalogue genres/tags<input value={genres} placeholder="Optional, comma separated" onChange={e => setGenres(e.target.value)} /></label>
-        <div><b>Curator types</b>{(['listening', 'cinema', 'mixed'] as CuratorType[]).map(type => <label className="live-check" key={type}><input type="checkbox" checked={types.includes(type)} onChange={e => setTypes(e.target.checked ? [...types, type] : types.filter(t => t !== type))} />{type}</label>)}</div>
+        <div className="curator-picker"><b>Curator types</b><div>{(['listening', 'cinema'] as CuratorType[]).map(type => <label className={'curator-choice '+(types.includes(type)?'selected':'')} key={type}><input type="checkbox" checked={types.includes(type)} onChange={e => setTypes(e.target.checked ? [...types, type] : types.filter(t => t !== type))} /><Icon name={type==='listening'?'music':'film'} size={24}/><span><strong>{type==='listening'?'Music & reading':'Cinema & books'}</strong><small>{type==='listening'?'Discover artists and musical connections':'Explore film connections and discussion ideas'}</small></span></label>)}</div></div>
         {([['minStock', 'Minimum stock', 1, 1000], ['maxBooks', 'Books per event', 1, 5], ['maxEvents', 'Top events', 1, 10], ['maxDuration', 'Maximum minutes', 15, 600], ['capacity', 'Venue capacity', 1, 1000], ['attendance', 'Expected attendance', 1, 1000]] as const).map(([key, label, min, max]) => <label key={key}>{label}<input type="number" min={min} max={max} value={constraints[key]} onChange={e => setConstraints({ ...constraints, [key]: Number(e.target.value) })} /></label>)}
         <label className="live-check"><input type="checkbox" checked={constraints.screeningRightsConfirmed} onChange={e => setConstraints({ ...constraints, screeningRightsConfirmed: e.target.checked })} />I have confirmed screening rights for film proposals.</label>
       </fieldset>
-      <button className="primary" disabled={busy || !types.length} onClick={() => void request({ action: 'create', input })}>{busy ? 'Working…' : 'Generate evidence-backed events'}</button>
+      <button className="primary" disabled={busy || !types.length} onClick={() => setConfirmLive(true)}>{busy ? 'Working…' : `Run live (${estimate.label})`}</button>
+      <p className="muted">Saved sample results are the default. Live execution is optional and uses Qloo quota; uncached requests can take longer.</p>
     </section>
     </div>
     {run && <>
       <section hidden={studioTab!=='matching'} id="studio-panel-matching" role="tabpanel" aria-labelledby="studio-tab-matching" className="panel live-panel studio-tab-panel"><h2>Book matches & themes</h2>
         <p>{run.resolutions.filter(r => r.status === 'confirmed').length}/{run.resolutions.length} confirmed · revision {run.revision}. Clusters use supplied catalogue tags, or Qloo tags when none were supplied.</p>
         <div className="studio-match-list" tabIndex={0} role="region" aria-label="Book matching results">{run.resolutions.map(resolution => <div className="live-match" key={resolution.bookId}>
-          <b>{run.input.catalogue.find(b => b.id === resolution.bookId)?.title}</b> · {resolution.status}
+          <b>{run.input.catalogue.find(b => b.id === resolution.bookId)?.title}</b><span className="match-status">{resolution.status}</span>
           {resolution.candidates.length > 0 && <select aria-label={`Qloo match for ${resolution.bookId}`} disabled={busy} value={matches[resolution.bookId] ?? resolution.entityId ?? ''} onChange={e => { const next = { ...matches }; if (e.target.value) next[resolution.bookId] = e.target.value; else delete next[resolution.bookId]; setMatches(next); }}><option value="">Choose / automatic exact match</option>{resolution.candidates.map(c => <option key={c.id} value={c.id}>{c.name} — {c.detail}</option>)}</select>}
         </div>)}</div>
         <details className="studio-theme-details"><summary>Thematic groups ({run.clusters.length})</summary><div className="live-clusters">{run.clusters.map(cluster => <span className="chip" key={cluster.id}>{cluster.theme} · {cluster.bookIds.length} · {cluster.source}</span>)}</div></details>

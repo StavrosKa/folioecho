@@ -1,37 +1,37 @@
 [
   {
-    "id": "b1",
-    "title": "Invisible Cities",
-    "author": "Italo Calvino",
+    "id": "hg-fair-play",
+    "title": "Fair Play",
+    "author": "Tove Jansson",
     "stock": 4,
     "tags": [
-      "cities",
-      "imagination",
+      "art",
+      "creativity",
       "travel"
     ],
     "hiddenGem": true
   },
   {
-    "id": "b2",
-    "title": "The Book of Disquiet",
-    "author": "Fernando Pessoa",
+    "id": "hg-the-tanners",
+    "title": "The Tanners",
+    "author": "Robert Walser",
     "stock": 3,
     "tags": [
-      "introspection",
-      "cities",
-      "solitude"
+      "family",
+      "identity",
+      "travel"
     ],
     "hiddenGem": true
   },
   {
-    "id": "b3",
-    "title": "The Waves",
-    "author": "Virginia Woolf",
+    "id": "hg-the-peregrine",
+    "title": "The Peregrine",
+    "author": "J. A. Baker",
     "stock": 2,
     "tags": [
-      "memory",
       "nature",
-      "introspection"
+      "introspection",
+      "identity"
     ],
     "hiddenGem": true
   },

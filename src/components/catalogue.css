@@ -601,6 +601,17 @@ main {
 .art-3 {
   background-position: 100% 50%;
 }
+.artwork.actual-cover {
+  background-image: none;
+  background-color: transparent;
+}
+.actual-cover > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
 .cover-button .artwork,
 .cover-button .fallback-cover {
   width: 73%;

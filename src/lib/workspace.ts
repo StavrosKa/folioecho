@@ -1,9 +1,12 @@
 import { demoBooks, type Book } from "./catalogue.ts";
 import type { EventDraft } from './programme.ts';
 
-// Fixed sample data keeps design reviews repeatable. All figures are illustrative.
+// Public sample titles; stock quantities are illustrative. Selected gems have confirmed Qloo matches.
 export const sampleBooks: Book[] = [
-  ...demoBooks,
+  {id:'hg-fair-play',title:'Fair Play',author:'Tove Jansson',stock:4,tags:['art','creativity','travel'],hiddenGem:true},
+  {id:'hg-the-tanners',title:'The Tanners',author:'Robert Walser',stock:3,tags:['family','identity','travel'],hiddenGem:true},
+  {id:'hg-the-peregrine',title:'The Peregrine',author:'J. A. Baker',stock:2,tags:['nature','introspection','identity'],hiddenGem:true},
+  ...demoBooks.filter(book=>!book.hiddenGem),
   {
     id: "b6",
     title: "The Summer Book",
@@ -64,7 +67,7 @@ export const sampleBooks: Book[] = [
 export const initialEvents: EventDraft[] = [
   {
     id: "e1",
-    title: "An evening of imagined cities",
+    title: "Art, friendship & small worlds",
     date: "2026-11-06",
     time: "19:00",
     capacity: 24,
@@ -73,7 +76,7 @@ export const initialEvents: EventDraft[] = [
   },
   {
     id: "e2",
-    title: "Between the pages and the sea",
+    title: "Wandering & the art of attention",
     date: "2026-11-13",
     time: "18:30",
     capacity: 18,

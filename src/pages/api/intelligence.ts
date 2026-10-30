@@ -6,6 +6,7 @@ import { get, put } from '../../server/store.ts';
 import { parseCatalogue } from '../../lib/catalogue.ts';
 import { applyNarratives } from '../../server/planner.ts';
 import { eligibleBooks, type Run } from '../../lib/curator.ts';
+import { comparisonProtocol, constraintIssues } from '../../lib/comparison.ts';
 export const prerender = false;
 let busy = false;
 export const GET: APIRoute = async ({ request, url }) => guard(request, url) ?? json(await modelStatus());
@@ -41,22 +42,20 @@ export const POST: APIRoute = async ({ request, url }) => {
     if (body.action === 'baseline') {
       const books = eligibleBooks(run.input);
       if (!books.length) throw new Error('No eligible selected books remain for a baseline.');
-      const schema = objectSchema({ events: { type: 'array', maxItems: 5, items: objectSchema({ title: { type: 'string' }, idea: { type: 'string' }, bookIds: { type: 'array', items: { type: 'string', enum: books.map(b => b.id) }, maxItems: 5 }, curator: { type: 'string', enum: run.input.preferences.curatorTypes }, duration: { type: 'integer' }, culturalReferences: stringList }) } });
+      const targetCount = Math.min(5, run.input.constraints.maxEvents, run.selected.length);
+      if (!targetCount) throw new Error('Select at least one validated Qloo event before running a matched comparison.');
+      const schema = objectSchema({ events: { type: 'array', minItems: targetCount, maxItems: targetCount, items: objectSchema({ title: { type: 'string' }, idea: { type: 'string' }, bookIds: { type: 'array', items: { type: 'string', enum: books.map(b => b.id) }, maxItems: 5 }, curator: { type: 'string', enum: run.input.preferences.curatorTypes }, duration: { type: 'integer' }, culturalReferences: { ...stringList, minItems: 1 } }) } });
       const { catalogue, selectedGenres, preferences, constraints } = run.input;
-      const generated = await structuredModelWithMetadata('llm_only_baseline', schema, 'Propose bookshop events from this exact catalogue snapshot and constraints. Use only eligible selected books in stock. Do not use Qloo or invent evidence, scores, availability, or verified cultural relationships. Cultural references are unverified suggestions. Respect all hard constraints.', { catalogue, selectedGenres, preferences, constraints });
+      const generated = await structuredModelWithMetadata('llm_only_baseline', schema, `Propose exactly ${targetCount} distinct bookshop events from this exact catalogue snapshot and constraints. Use only eligible selected books in stock. For listening events, culturalReferences must name actual music artists; for cinema events name actual films; mixed events need both. Do not substitute literary movements, genres, themes, or the catalogue books as cultural references. References are unverified suggestions, never evidence. Do not use Qloo or invent affinity scores, availability, or verified cultural relationships. Respect all hard constraints. The requested output count is the comparison budget; no competing proposals or Qloo data are supplied.`, { catalogue, selectedGenres, preferences, constraints });
       const result = generated.data;
-      if (!Array.isArray(result.events) || result.events.length > 5) throw new Error('Invalid baseline response.');
+      if (!Array.isArray(result.events) || result.events.length !== targetCount) throw new Error('Baseline did not return the matched proposal count.');
       const evaluated = result.events.map((event: any) => {
-        const reasons: string[] = [];
-        if (!Array.isArray(event.bookIds) || !event.bookIds.length || event.bookIds.length > run.input.constraints.maxBooks || new Set(event.bookIds).size !== event.bookIds.length || event.bookIds.some((id: unknown) => !books.some(b => b.id === id))) reasons.push('Inventory/selection constraints failed.');
-        if (!run.input.preferences.curatorTypes.includes(event.curator) || !Number.isSafeInteger(event.duration) || event.duration <= 0 || event.duration > run.input.constraints.maxDuration) reasons.push('Curator or duration constraints failed.');
-        if (run.input.constraints.attendance > run.input.constraints.capacity) reasons.push('Capacity exceeded.');
-        if (event.curator !== 'listening' && !run.input.constraints.screeningRightsConfirmed) reasons.push('Screening rights are unverified.');
+        const reasons = constraintIssues(event, run.input);
         if (typeof event.title !== 'string' || event.title.length > 180 || typeof event.idea !== 'string' || event.idea.length > 1500 || !Array.isArray(event.culturalReferences) || event.culturalReferences.some((s: unknown) => typeof s !== 'string' || s.length > 200)) throw new Error('Baseline content failed validation.');
         return { ...event, valid: reasons.length === 0, reasons, evidenceStatus: 'unverified' };
       });
       const valid = evaluated.filter((event: any) => event.valid);
-      const baseline = { runId: run.id, revision: run.revision, input: run.input, createdAt: new Date().toISOString(), events: evaluated,
+      const baseline = { protocolVersion: comparisonProtocol, targetCount, runId: run.id, revision: run.revision, input: run.input, createdAt: new Date().toISOString(), events: evaluated,
         metrics: { proposed: evaluated.length, valid: valid.length, constraintValidity: evaluated.length ? valid.length / evaluated.length : null, catalogueCoverage: books.length ? new Set(valid.flatMap((e: any) => e.bookIds)).size / books.length : null, externalEvidenceCoverage: 0 }, source: `${generated.provider}, LLM-only; no Qloo results supplied`, provider: generated.provider, model: generated.model };
       await put('baseline', `${run.id}:${run.revision}`, baseline); return json({ baseline });
     }

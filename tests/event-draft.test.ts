@@ -37,6 +37,9 @@ test('draft API uses the owned canonical run, rejects stale catalogue/revisions 
  try{
   assert.equal((await call()).status,200);assert.equal((await call(run.revision-1)).status,409);assert.equal((await call(run.revision,'https://other.example')).status,403);
   await withOwner(randomUUID(),async()=>assert.equal((await call()).status,409));
+    const newer=structuredClone(run);newer.id=randomUUID();await new Promise(resolve=>setTimeout(resolve,5));await put('run',newer.id,newer);
+    assert.equal((await call()).status,409,'old runs cannot create drafts after a newer run exists');
+    await new Promise(resolve=>setTimeout(resolve,5));await put('run',run.id,run);
   await put('workspace','local',{books:run.input.catalogue.map(book=>({...book,stock:0}))});assert.equal((await call()).status,409);
  }finally{globalThis.fetch=original;}
 }));

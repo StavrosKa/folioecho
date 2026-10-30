@@ -24,11 +24,21 @@ export interface Proposal {
   factors: { R: number; N: number; U: number; F: number } | null; score: number | null; interpretation: string;
 }
 export interface Run {
+  preloaded?: { generatedAt: string; sourceRunId: string };
+  trace?: AgentTraceEvent[];
   algorithmVersion?: string;
   id: string; revision: number; createdAt: string; input: PlanningInput; resolutions: Resolution[];
   clusters: Cluster[]; edges: Evidence[]; references: Record<string, Reference>;
   proposals: Proposal[]; selected: string[]; excluded: string[]; warnings: string[];
   changes: { eventId: string; before: Proposal; after: Proposal | null; reason: string }[];
+}
+export interface ToolAudit { name: 'qloo.search' | 'qloo.insights'; endpoint: string; cacheHit: boolean }
+export interface AgentTraceEvent {
+  id: string; at: string; revision: number;
+  phase: 'input' | 'tool' | 'resolution' | 'cluster' | 'validation' | 'repair' | 'ranking' | 'selection' | 'editorial';
+  status: 'done' | 'rejected' | 'unverified' | 'error'; summary: string;
+  tool?: string; source?: 'tool-call' | 'cache' | 'provider';
+  bookId?: string; entityId?: string; proposalId?: string; count?: number; endpoint?: string;
 }
 export const defaultConstraints: PlanningInput['constraints'] = {
   minStock: 1, maxBooks: 3, maxEvents: 5, maxDuration: 150, capacity: 24, attendance: 12, screeningRightsConfirmed: false,

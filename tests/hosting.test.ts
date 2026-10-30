@@ -41,7 +41,7 @@ test('hosted Qloo transport preserves returned affinities and the exact evidence
   process.env.QLOO_API_KEY='synthetic-test-key-not-a-real-credential';
   const requests:URL[]=[];
   globalThis.fetch=(async(input:any,options:any)=>{
-    const url=new URL(String(input)); requests.push(url); assert.equal(options.headers['X-Api-Key'],process.env.QLOO_API_KEY);
+    const url=new URL(String(input)); requests.push(url); assert.equal(options.headers['X-Api-Key'],process.env.QLOO_API_KEY); assert.equal(options.redirect,'error');
     return new Response(JSON.stringify(url.pathname==='/search'?{results:[{entity_id:'fixture',name:'Fixture',types:['urn:entity:book']}]}:{results:{entities:[{entity_id:'fixture-artist',name:'Artist',subtype:'urn:entity:artist',query:{affinity:.73}}]}}));
   }) as typeof fetch;
   try {

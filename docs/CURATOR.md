@@ -116,8 +116,16 @@ changes. No client-provided score, evidence or normalization reference is truste
 - Show the before/after entities, scores, statuses and the repair reason.
 
 No automatic retries are made after a Qloo failure. A failed repair does not commit
-partial changes to the authoritative run. Initial live calls can take several
-minutes because requests run sequentially. Private query caches expire after
+partial changes to the authoritative run. Matching, candidate retrieval and repair lookups use a bounded pool of three
+concurrent operations. Phase barriers keep matching ahead of recommendation
+retrieval; results retain deterministic ordering. Progress writes are serialized.
+A failure stops queued work and drains in-flight calls before the job lock is
+released. Cancellation is cooperative; already-started calls may still finish.
+The preloaded real Qloo snapshot is the default. Live execution requires the
+Run live confirmation dialog, which displays a workload-based estimate (typically
+~1–3 min for 12 titles/3 selected books), quota use and cold-run warnings. This
+estimate assumes 10 seconds per lookup plus a two-minute margin; it is not a
+measured provider SLA. Cold or slow requests can exceed it. Private query caches expire after
 30 minutes; recommendation timestamps retain their original retrieval time.
 
 ## Boundaries

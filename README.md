@@ -14,8 +14,11 @@ Built with Astro, TypeScript, React and React Flow. Local development uses Node.
 SQLite; the Netlify demo target uses Postgres, isolated anonymous visitor workspaces
 and Background Functions. See [Netlify deployment](docs/NETLIFY.md) for runtime
 secrets, database provisioning, usage limits and the required online smoke test.
-The public deployment has been checked for Qloo planning, what-if repair,
-persistence and visitor isolation. The current update adds Gemini demo support and optional personal-provider settings. Hosted Gemini availability requires the server environment variables described below. Local Gemini authentication, a minimal structured-output test and full validated genre/theme suggestions for 12 books have passed with a privately configured key; the hosted update still requires its own runtime configuration and live verification.
+This release includes the redesigned Overview and Cultural Map, real preloaded
+Qloo music/film evidence, measured comparisons and reviewed Planner transfers.
+Deployment verification is a separate step from the local checks. Local verification is recorded in
+[Security and functional review](docs/SECURITY_REVIEW_2026-10-30.md).
+
 
 ## Quick start
 
@@ -35,10 +38,11 @@ and AI actions require their respective private server configuration or an expli
 | Area | Current behaviour |
 | --- | --- |
 | Catalogue | Validated Excel (.xlsx), CSV and JSON import, title/author/tag search, stock editing, 3–5 hidden-gem selections, distinct-title and total-copy counts. Desktop layout gives 80% to the collection and 20% to categories; larger covers/text, wrapped tags, manual tag removal and Undo. |
-| Discovery Studio | Compact, proportionate cover cards, an internally scrolling hidden-gem shelf, a sticky connection explainer, session-level kept directions and clear links to Cultural Map and real Qloo Event Studio. Demo directions remain explicitly labelled. |
+| Cultural Map | Real cover nodes, music/film reference cards, book/type filters, top 2 active links per book/type, affinity labels and selectable request provenance. Filters recenter the graph. |
 | Category cards | At most 8 broad thematic groups, distinct-book counts, category filtering and a local SVG for every group. Refine with Gemini explicitly updates tag assignments and artwork choices, saved per visitor. Detailed book tags remain intact. |
-| Overview | Stock-first totals and a Qloo indicator based on server credential configuration and saved evidence; no connectivity probe or quota usage on page load. |
-| Event Studio | Focused tabs for setup, book matches, cultural graph, event ideas, AI editorial and what-if changes. Bounded scroll areas, compact event cards, centred graph filters and an evidence dialog; no model calls just to browse. |
+| Overview | Original hero plus an editorial evening showcase with covers, snapshot counts, music/cinema candidates and a branching cultural thread. Compact stock and Qloo/LLM summaries use pale yellow backgrounds. Film candidates are not automatically part of the selected listening event. No provider calls on page load. |
+| Event Studio | Focused tabs for setup, book matches, cultural graph, event ideas, AI editorial, agent trace and what-if changes. Music & reading and Cinema & books use selection cards; Mixed is removed from the UI but historical mixed runs remain readable. Bounded scroll areas, compact event cards, centred graph filters and an evidence dialog; no model calls just to browse. |
+| Compare Results | Saved, measured Qloo-vs-LLM-only table on the exact same run/revision/input, with matched proposal counts. Distinct references, supporting links, stock errors and common constraint checks. Stale or legacy baselines stay unmeasured. |
 | Ranking | Hard-constraint validation, fixed-context affinity normalization, R/N/U/F scoring and diverse selection of eligible proposals. |
 | What-if | Exclude a cultural node or change stock, repair affected proposals, keep normalization references fixed and explain before/after changes. |
 | Evening programme | Plan this event transfers a selected, validated Event Studio proposal into an editable draft with the exact books, cultural evidence snapshot and total duration. Larger readable text. Five editable segments with clock times, durations, linked books, several activity suggestions and host preparation notes. Add/remove segments, detect gaps/overlaps and arrange consecutively. |
@@ -48,7 +52,7 @@ and AI actions require their respective private server configuration or an expli
 | Help | Five concise practical steps in styled cards, plus expandable troubleshooting notes. |
 | Storage | SQLite locally; Postgres with isolated visitor workspaces on Netlify. Catalogue, profile, drafts, runs, revisions and query caches persist server-side. |
 
-The app uses the Planner’s readable typography scale across screens: 16 px body text, 14 px secondary text and 13 px minimum helper labels, with larger section headings. Cover artwork keeps its own miniature lettering.
+The app uses the Planner’s readable typography scale across screens: 16 px body text, 14 px secondary text and compact helper labels, with larger section headings. The Overview editorial showcase uses smaller labels for reference types and provenance. Cover artwork keeps its own miniature lettering.
 
 The Event Planner places **Your event drafts** and **Shape your evening** in the
 left column, with **Evening programme** on the right on desktop. Narrow layouts
@@ -171,11 +175,12 @@ based on selected books and supplied tags. They are not additional Qloo evidence
 or claims about passages the system has read. Owners choose excerpts, cultural
 references, permissions and operational arrangements themselves.
 
-The original Discovery Studio and Cultural Map retain labeled demo connections.
+Discovery Studio is available as a separate sidebar destination again. Its map,
+and the maps in Overview and Cultural Map, use recorded Qloo edges.
 Event Planner sample drafts are editable, but their presence does not establish
 live Qloo provenance. Use Event Studio exports for actual API-backed evidence.
-Compare Results still contains demonstration layout; measured optional baseline
-results appear only after an actual baseline execution. No metrics are prefilled.
+Compare Results reads real saved measurements; no metrics are prefilled. A missing,
+stale or incompatible baseline remains unmeasured until explicitly run.
 
 ## Storage, jobs and privacy
 
@@ -239,9 +244,22 @@ Do not run it as part of ordinary CI or publish its raw results.
 
 ## Artwork and licensing
 
-The selected logo in `public/folioecho-logo.png` is preserved. The book/music atlas
-in `public/discovery-artwork.png` consists of illustrative concept artwork, not
-official publisher covers. The sample owner avatar is a small SVG illustration.
+The selected logo in `public/folioecho-logo.png` is preserved. All 12 current
+sample books and the 3 additional legacy demo titles use real published covers,
+cached locally in `public/book-covers/` (about 143 KB total). Gemini suggested
+edition ISBNs; Open Library title/author records independently verified matches,
+including cases where Gemini suggested an incorrect ISBN. Cover lookup uses
+title and author, never a reusable book ID. Images preserve their aspect ratio
+and fall back to a neutral title/author card if unavailable. Browsing makes no
+model calls or external image requests. Sources and rights attribution are in
+[public/book-covers/SOURCES.md](public/book-covers/SOURCES.md).
+
+The remaining music artwork in `public/discovery-artwork.png` is illustrative.
+To refresh covers locally, run `node --experimental-strip-types scripts/fetch-book-covers.mjs`.
+On its first run this maintenance command uses the configured Gemini credential
+for one metered metadata request, followed by rate-limited Open Library lookups.
+Its ignored suggestion cache prevents repeated AI calls; public assets contain
+no credentials.
 
 Category backgrounds use locally stored **Tabler Icons under the MIT license**.
 The required copyright/license and pinned source revision are included in
@@ -303,3 +321,140 @@ Workspace notifications show completed saves, imports, AI results, Event Studio 
 Settings includes separate browser-persisted controls to mute new bell notifications or only their sound. The sound toggle stays synchronized with the notification menu. Existing history and inline workspace messages remain available.
 
 The app uses a compact horizontal SVG wordmark, tagline and favicon. The browser title is FolioEcho. Container publishing automation has been removed; the existing v1.1.0 release remains available.
+
+## Local comparison update (not deployed)
+
+The original eleven sidebar destinations are restored: Overview, Catalogue,
+Discovery Studio, Event Studio, Event Planner, Cultural Map, Compare Results,
+Reports & Exports, Settings, Usage & Billing and Help. Discovery Studio and
+Cultural Map use saved real Qloo evidence; illustrative matches are not restored. Reports use the latest saved Qloo evidence.
+
+`GET /api/comparison` is owner-scoped and makes no provider calls. It uses the latest
+saved run and only accepts a baseline with the exact same input/revision and
+`cultural-events-v2` protocol. The baseline gets the same output count, catalogue,
+genres, curator preferences and constraints, with no Qloo IDs, affinities, evidence
+or competing proposals. Both results pass through the same structural validator.
+Running a baseline is explicit and consumes one AI request. The previous legacy
+baseline protocol is intentionally not presented as a matched comparison.
+
+A live local Gemini measurement on 2026-10-30 used run `7da852c3`, revision 1,
+snapshot `f87fe4bd82a1aaef`: 12 titles, 44 copies, 5 proposals per method. Qloo's
+selected proposals used 6 distinct references and 6 recorded supporting links;
+the baseline suggested 10 distinct names with zero externally verified links.
+Both had zero stock errors and zero other constraint violations. The complete
+saved graph had 30 active links; the table counts only links supporting selected
+events. This single measurement demonstrates a provenance difference, not superior
+event quality. Zero baseline evidence is a consequence of its no-lookup design;
+zero stock errors are also influenced by structured catalogue IDs. Current
+catalogue edits are labelled separately from the frozen comparison snapshot.
+The raw local measurement is retained in ignored `artifacts/evaluation/` and is
+not bundled into public source or shared between visitors.
+
+## Agent execution trace (local update)
+
+FolioEcho is a bounded, tool-using cultural planning agent. Its constraint-guided
+orchestration calls Qloo search and insights tools, confirms or defers book
+entities, validates proposals, ranks eligible results and selects diverse events.
+Owner-triggered what-if actions invalidate affected evidence, retrieve alternatives
+only where necessary and repair/rerank proposals against fixed reference pools.
+It does not book events or independently grant screening rights. Gemini remains
+optional editorial assistance, not a substitute for Qloo evidence.
+
+Event Studio has an Agent trace tab. New jobs persist timestamped structured
+execution events on the run; partial events also appear in job progress and remain
+available on failures. Entries distinguish app-cache hits from Qloo tool invocations,
+record uncertain matches, actual rejections and repair decisions, and exclude
+credentials, raw provider diagnostics and hidden model reasoning. A cache miss
+records an application-level Qloo invocation, not an assertion about every
+internal network operation performed by the CLI transport. Up to 1,000 recent
+steps are retained. Legacy runs display a labelled snapshot summary rather than
+fabricated execution history. Adding tracing does not rewrite the saved baseline
+or change the comparison snapshot.
+
+## Preloaded real Qloo sample (local update)
+
+A real run generated on 2026-10-30 is bundled server-side in
+`src/data/sample-qloo-run.json`: 12 sample titles, 5 selected event ideas, 60
+recorded evidence links (30 artist and 30 film links), 6 new Qloo tool invocations
+and 12 cached book searches. Screening rights remain unconfirmed, so cinema
+proposals are unverified and do not enter the ranked eligible selection.
+The snapshot includes original retrieval timestamps, query provenance and the
+recorded agent trace. It contains only the public sample catalogue and Qloo data.
+
+Untouched visitor workspaces receive independent, owner-scoped copies with new
+run IDs under a bootstrap lease. Existing workspaces/catalogues/runs are never
+overwritten. Page loads never regenerate the snapshot or call a provider.
+Overview shows an event showcase and recorded cultural candidates; Event Studio opens its
+Event ideas tab with the preloaded results. A visible label identifies this as a
+saved real sample, with generation date and an explicit regenerate option.
+Comparison baselines are not invented or copied into new visitors' accounts.
+To deliberately refresh the bundled seed, run
+`node --experimental-strip-types scripts/generate-sample-run.mjs` locally; this
+calls Qloo and writes the snapshot only after evidence-backed proposals exist.
+
+## Bounded Qloo concurrency and live-run warning (local update)
+
+Qloo matching, recommendation retrieval and repair use a pool of three concurrent
+operations. Progress/checkpoint writes are serialized, search results retain input
+order and evidence edges have deterministic order. On failure the pool stops
+scheduling and drains in-flight work before releasing the planner lock. Existing
+provider timeouts, caching, quotas and no-retry behavior remain in force.
+
+Saved sample evidence remains the default. Starting a live run requires a separate
+confirmation dialog with a workload-based estimate, Qloo allowance warning and
+explicit cold-run/slow-provider caveat. The 12-title/3-gem listening example shows
+`Run live (~1–3 min)`. This is a planning estimate, not a measured benchmark or
+latency guarantee; cache hits can make it faster and provider delays can make it
+slower. Dismissing the warning makes no provider request.
+
+## Selected sample hidden gems
+
+The default sample now promotes **Fair Play — Tove Jansson**, **The Tanners —
+Robert Walser**, and **The Peregrine — J. A. Baker**, replacing the earlier
+Invisible Cities / Book of Disquiet / The Waves selection. This is an editorial
+choice of less obvious titles, not a quantitative claim about book popularity.
+Real Qloo searches confirmed each exact title/author match before the change.
+The real preloaded run and downloadable CSV/JSON samples have been regenerated
+and agree with the new catalogue. Verified title/author cover matching avoids
+reusing the previous books' illustrations. [Match IDs and publisher sources](docs/SAMPLE_CATALOGUE.md)
+are recorded for review. Existing visitor workspaces and earlier measured
+comparison snapshots are preserved, not silently migrated.
+
+Overview count tooltips distinguish distinct titles, in-stock titles, physical copies, thematic groups, saved Planner drafts and Qloo-selected event ideas. Explanations use current counts, support pointer/keyboard focus, and clarify that calendar drafts are not bookings or generated-idea counts.
+
+Navigation design restored at the owner’s request: all eleven destinations are visible in the sidebar again. The measured comparison, real preloaded sample, agent trace, bounded concurrency and count tooltips are retained.
+
+## Per-context Qloo failures and layout alignment (local update)
+
+The City & the City was confirmed by Qloo search, but its entity was rejected by
+insights as an invalid signal. A direct diagnostic returned HTTP 400 with an
+invalid `signal.interests.entities` validation error. Such search-to-insights
+mismatches are now isolated as unverified recommendation contexts instead of
+aborting every other book. No fabricated links or automatic retries are added;
+credential, quota and network errors still fail normally. CLI QLOO_CONTRACT
+rejections are labelled as rejected contexts without claiming a specific cause.
+A real isolated verification completed with 40 music links, 40 film links and
+5 selected proposals; the two rejected contexts remained explicitly warned.
+Film ranking still requires owner confirmation of screening rights.
+Book matching now uses fixed status columns and the header metrics use aligned
+number/label rows with inline tooltips. The report destination is named Reports and appears below Usage & Billing in the sidebar.
+
+Sidebar label: Reports, placed immediately below Usage & Billing.
+
+## Local security and functional review — 2026-10-30
+
+See [the review report](docs/SECURITY_REVIEW_2026-10-30.md) for verified checks,
+fixes and remaining limits. Workspace writes now validate complete event drafts,
+unique IDs, dates/times, capacity, programme and source structure before saving;
+invalid writes preserve the previous workspace. Catalogue fields are bounded
+(id 200, title 300, author 200, at most 64 tags of 80 characters, stock 100000).
+The Qloo HTTP client rejects redirects. Netlify headers deny framing and object
+embedding and restrict the document base URL; they take effect only after a
+future deployment. This review does not publish or certify the hosted app.
+
+Final local recheck on **2026-10-31** includes the smaller Overview typography,
+12 cached Qloo artist/film thumbnails (about 57 KB), and Planner source-freshness
+indicators. Reopening the same Studio proposal keeps edits and moves its draft
+to the top without duplicating it. Older run IDs cannot create drafts after a
+newer run exists. Existing independent drafts remain explicitly labelled.
+See the final-check addendum in the review report.

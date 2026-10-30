@@ -98,9 +98,15 @@ test('editorial routes preserve actual Gemini provenance without changing Qloo s
   const narrated=(await post('narrate',run.revision)).run;
   const proposal=narrated.proposals.find((p:any)=>p.id===run.selected[0]);
   assert.equal(proposal.narrativeSource,'Gemini');assert.equal(proposal.narrativeModel,'gemini-3.5-flash-lite');assert.equal(proposal.score,run.proposals.find(p=>p.id===proposal.id)!.score);assert.deepEqual(narrated.input.constraints,run.input.constraints);
-  globalThis.fetch=(async()=>response('STOP',tokens,JSON.stringify({events:[{title:'A baseline',idea:'Read and discuss.',bookIds:['a'],curator:'listening',duration:60,culturalReferences:['Unverified song']}]}))) as typeof fetch;
+  globalThis.fetch=(async(_url,options)=>{
+   const body=JSON.parse(String(options?.body)),input=JSON.parse(body.contents[0].parts[0].text);
+   assert.deepEqual(input.catalogue,narrated.input.catalogue);assert.deepEqual(input.constraints,narrated.input.constraints);
+   assert.equal(input.edges,undefined);assert.equal(input.matches,undefined);assert.equal(input.proposals,undefined);
+   assert.match(body.systemInstruction.parts[0].text,/actual music artists/);
+   return response('STOP',tokens,JSON.stringify({events:narrated.selected.map((_id:string,index:number)=>({title:`Baseline ${index}`,idea:'Read and discuss.',bookIds:['a'],curator:'listening',duration:60,culturalReferences:['Unverified artist']}))}));
+  }) as typeof fetch;
   const baseline=(await post('baseline',narrated.revision)).baseline;
-  assert.equal(baseline.provider,'Gemini');assert.equal(baseline.model,'gemini-3.5-flash-lite');assert.match(baseline.source,/Gemini/);assert.equal(baseline.events[0].valid,true);assert.equal(baseline.metrics.externalEvidenceCoverage,0);
+  assert.equal(baseline.provider,'Gemini');assert.equal(baseline.model,'gemini-3.5-flash-lite');assert.match(baseline.source,/Gemini/);assert.equal(baseline.events[0].valid,true);assert.equal(baseline.metrics.externalEvidenceCoverage,0);assert.equal(baseline.protocolVersion,'cultural-events-v2');assert.equal(baseline.targetCount,narrated.selected.length);assert.equal(baseline.events.length,narrated.selected.length);
  }finally{globalThis.fetch=original;}
 }));
 

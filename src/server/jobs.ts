@@ -3,8 +3,8 @@ import { createRun, parseInput, repairRun, InputError } from './planner.ts';
 import { get, put, acquire, release, consume } from './store.ts';
 import { hosted, owner } from './context.ts';
 import { sign } from './session.ts';
-import type { Run } from '../lib/curator.ts';
-export interface Job { id:string; status:'running'|'done'|'error'|'cancelled'; message:string; completed:number; total:number; run?:Run; error?:string; createdAt?:number; startedAt?:number }
+import type { Run, AgentTraceEvent } from '../lib/curator.ts';
+export interface Job { trace?:AgentTraceEvent[]; id:string; status:'running'|'done'|'error'|'cancelled'; message:string; completed:number; total:number; run?:Run; error?:string; createdAt?:number; startedAt?:number }
 type SavedJob = Job & { body?:any; lease?:string };
 const active = new Set<string>();
 const lifetime = 13 * 60_000;
@@ -31,12 +31,13 @@ export async function executeJob(id:string) {
     globalClaim = await acquire('provider-planner',claim);
     if (!globalClaim) throw new InputError('The shared demo planner is busy. Please try again shortly.');
     const body = saved.body; saved.startedAt=Date.now(); await put('job',id,saved);
-    const checkpoint = async () => {
+    const checkpoint = async (trace?:AgentTraceEvent[]) => {
       if (Date.now() - saved!.createdAt! > lifetime) throw new InputError('Demo planning time limit reached. Completed queries are cached.');
       if ((await get<Job>('job',id))?.status === 'cancelled') throw new InputError('Job cancelled.');
+      if(trace){saved!.trace=structuredClone(trace);saved!.message=trace.at(-1)?.summary??saved!.message;await put('job',id,saved);}
     };
     const run = body.action === 'create'
-      ? await createRun(parseInput(body.input),undefined,async (message,completed,total) => { await checkpoint(); Object.assign(saved!,{message,completed,total}); await put('job',id,saved); })
+      ? await createRun(parseInput(body.input),undefined,async (message,completed,total,trace) => { await checkpoint(); Object.assign(saved!,{message,completed,total,...(trace?{trace:structuredClone(trace)}:{})}); await put('job',id,saved); })
       : await repairRun(String(body.runId),String(body.exclude ?? ''),Number(body.revision),body.stock,undefined,checkpoint);
     await checkpoint(); Object.assign(saved,{status:'done',message:'Ready',completed:saved.total,run});
   } catch(e) {

@@ -18,6 +18,7 @@ export function parseCatalogue(value: unknown): Book[] {
  return value.map((raw,i)=>{
   if(!raw || typeof raw!=='object') throw new Error('Invalid book at row '+(i+1));
   const b=raw as Record<string,unknown>;
+  if ((typeof b.id==='string'&&b.id.length>200)||(typeof b.title==='string'&&b.title.length>300)||(typeof b.author==='string'&&b.author.length>200)||(Array.isArray(b.tags)&&(b.tags.length>64||b.tags.some(t=>typeof t==='string'&&t.length>80)))||(typeof b.stock==='number'&&b.stock>100000)) throw new Error('Row '+(i+1)+': catalogue field limits exceeded (id 200, title 300, author 200, 64 tags of 80 characters, stock 100000).');
   if(typeof b.id!=='string'||!b.id.trim()||ids.has(b.id)||typeof b.title!=='string'||!b.title.trim()||typeof b.author!=='string'||!b.author.trim()||!Number.isSafeInteger(b.stock)||(b.stock as number)<0||!Array.isArray(b.tags)||!b.tags.every(t=>typeof t==='string'&&t.trim())||typeof b.hiddenGem!=='boolean') throw new Error('Row '+(i+1)+': unique id, title, author, integer stock >= 0, tags and hiddenGem are required.');
   ids.add(b.id); return {id:b.id,title:b.title.trim(),author:b.author.trim(),stock:b.stock as number,tags:[...new Set((b.tags as string[]).map(t=>t.trim().toLowerCase()))],hiddenGem:b.hiddenGem};
  });

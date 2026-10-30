@@ -1,21 +1,11 @@
+import DraftSourceStatus from './DraftSourceStatus';
+import OverviewShowcase from './OverviewShowcase';
 import { useEffect, useMemo, useState, useRef, type ReactNode } from "react";
-import {
-  ReactFlow,
-  Background,
-  Controls,
-  Handle,
-  Position,
-  type NodeProps,
-  type Node,
-  type Edge,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import {
-  demoBridges,
-  plan,
-  type Book,
-} from "../lib/catalogue";
-import { sampleBooks, initialEvents, bookNotes } from "../lib/workspace";
+import { type Book } from "../lib/catalogue";
+import { bookCover } from '../lib/book-covers';
+import ComparisonResults from './ComparisonResults';
+import EvidenceMap from './EvidenceMap';
+import { sampleBooks, initialEvents } from "../lib/workspace";
 import Icon from "./Icon";
 import NotificationCenter from "./NotificationCenter";
 import NotificationSettings from "./NotificationSettings";
@@ -37,8 +27,8 @@ type Page =
   | "overview"
   | "catalogue"
   | "discovery"
-  | "planner"
   | "map"
+  | "planner"
   | "compare"
   | "reports"
   | "settings"
@@ -49,10 +39,10 @@ const pageNames: Record<Page, string> = {
   overview: "Overview",
   catalogue: "Catalogue",
   discovery: "Discovery Studio",
-  planner: "Event Planner",
   map: "Cultural Map",
+  planner: "Event Planner",
   compare: "Compare Results",
-  reports: "Reports & Exports",
+  reports: "Reports",
   settings: "Settings",
   usage: "Usage & Billing",
   help: "Help & guide",
@@ -78,9 +68,9 @@ const navGroups: { label: string; items: { page: Page; icon: string }[] }[] = [
   {
     label: "Manage",
     items: [
-      { page: "reports", icon: "file" },
       { page: "settings", icon: "settings" },
       { page: "usage", icon: "billing" },
+      { page: "reports", icon: "file" },
     ],
   },
 ];
@@ -91,16 +81,20 @@ function Artwork({
   book?: Book;
   className?: string;
 }) {
-  const index = book ? ["b1", "b2", "b3"].indexOf(book.id) : 3;
-  return index >= 0 ? (
+  const cover = book ? bookCover(book) : undefined;
+  const [failedSrc, setFailedSrc] = useState<string>();
+  if (cover && failedSrc !== cover.src) return (
+    <div className={'artwork actual-cover ' + className}>
+      <img src={cover.src} alt={`Cover of ${book!.title} by ${book!.author}`} loading="lazy" decoding="async" onError={() => setFailedSrc(cover.src)} />
+    </div>
+  );
+  return !book ? (
     <div
       role="img"
       aria-label={
-        book
-          ? "Illustrative cover for " + book.title
-          : "Illustrative music artwork"
+        "Illustrative music artwork"
       }
-      className={"artwork art-" + index + " " + className}
+      className={"artwork art-3 " + className}
     />
   ) : (
     <div className={"fallback-cover " + className}>
@@ -114,27 +108,6 @@ function Artwork({
 function Chip({ children, tone = "" }: { children: ReactNode; tone?: string }) {
   return <span className={"chip " + tone}>{children}</span>;
 }
-function CulturalNode({ data }: NodeProps) {
-  const book = data.book as Book | undefined;
-  return (
-    <div className={"cultural-node " + (book ? "book-node" : "music-node")}>
-      <Handle type="target" position={Position.Left} />
-      {book ? (
-        <Artwork book={book} />
-      ) : (
-        <div className="node-music-art">
-          <Icon name="music" size={20} />
-        </div>
-      )}
-      <div>
-        <strong>{String(data.label)}</strong>
-        <small>{book ? "Catalogue title" : "Demo music direction"}</small>
-      </div>
-      <Handle type="source" position={Position.Right} />
-    </div>
-  );
-}
-const nodeTypes = { cultural: CulturalNode };
 function Panel({
   title,
   subtitle,
@@ -142,7 +115,7 @@ function Panel({
   children,
   className = "",
 }: {
-  title: string;
+  title: ReactNode;
   subtitle?: string;
   action?: ReactNode;
   children: ReactNode;
@@ -167,18 +140,6 @@ function saveFile(name: string, value: unknown) {
 
 export default function Catalogue() {
   const [page, setPage] = useState<Page>("overview");
-  const [qlooStatus,setQlooStatus]=useState<{configured:boolean;evidenceAvailable:boolean}|null>(null);
-  const [qlooStatusError,setQlooStatusError]=useState(false);
-  useEffect(()=>{
-    if(page!=='overview')return;
-    let active=true;
-    const refresh=async()=>{
-      try{const response=await fetch('/api/qloo-status',{cache:'no-store'});if(!response.ok)throw new Error('Status unavailable');const data=await response.json();if(active){setQlooStatus(data);setQlooStatusError(false);}}
-      catch{if(active)setQlooStatusError(true);}
-    };
-    void refresh();window.addEventListener('focus',refresh);
-    return()=>{active=false;window.removeEventListener('focus',refresh);};
-  },[page]);
   const [books, setBooks] = useState<Book[]>(sampleBooks);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
@@ -192,8 +153,6 @@ export default function Catalogue() {
     void fetch('/api/categories',{cache:'no-store'}).then(async response=>{if(!response.ok)throw new Error('Could not load category grouping');return response.json();}).then(data=>{if(active)setCategoryMapping(data.mapping);}).catch(()=>{if(active)setCategoryNotice('Saved grouping is unavailable. Default thematic groups are shown.');});
     return()=>{active=false;};
   },[]);
-  const [rejected, setRejected] = useState<string[]>([]);
-  const [selectedId, setSelectedId] = useState("b1");
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   useEffect(() => { if (notice && !/preparing|exported/i.test(notice)) notify('Workspace updated', notice, 'success', notice); }, [notice]);
@@ -255,8 +214,6 @@ export default function Catalogue() {
     } catch (e) { setError(e instanceof Error ? e.message : 'Invalid image.'); }
   }
 
-  const [kept, setKept] = useState<string[]>([]);
-  const results = useMemo(() => plan(books, rejected), [books, rejected]);
   const gems = books.filter((b) => b.hiddenGem);
   const totalCopies = books.reduce((sum, book) => sum + book.stock, 0);
   const available = books.filter((b) => b.stock > 0);
@@ -300,39 +257,8 @@ export default function Catalogue() {
     finally{setCategoryBusy(false);}
   }
   const ready = gems.length >= 3 && gems.length <= 5;
-  const selected = results.find((r) => r.book.id === selectedId) ?? results[0];
   const selectedEvent = events.find((e) => e.id === eventId) ?? events[0] ?? initialEvents[0];
-  const selectedProgramme = selectedEvent.programme ?? createProgramme(results.map(row => row.book));
-  const flowNodes: Node[] = [
-    ...results.map((r, i) => ({
-      id: "book:" + r.book.id,
-      type: "cultural",
-      position: { x: 20, y: 15 + i * 95 },
-      data: { label: r.book.title, book: r.book },
-    })),
-    ...demoBridges
-      .filter((m) => results.some((r) => r.match?.bridge.id === m.id))
-      .map((m, i) => ({
-        id: "music:" + m.id,
-        type: "cultural",
-        position: { x: 420, y: 45 + i * 125 },
-        data: { label: m.name },
-      })),
-  ];
-  const flowEdges: Edge[] = results.flatMap((r) =>
-    r.match
-      ? [
-          {
-            id: "edge:" + r.book.id,
-            source: "book:" + r.book.id,
-            target: "music:" + r.match.bridge.id,
-            label: r.match.shared.join(" · "),
-            style: { stroke: "#749e7c" },
-            labelStyle: { fontSize: 13, fill: "#566b5b" },
-          },
-        ]
-      : [],
-  );
+  const selectedProgramme = selectedEvent.programme ?? createProgramme(books.filter(book=>book.hiddenGem&&book.stock>0));
   function go(next: Page) {
     setPage(next);
     setError("");
@@ -356,9 +282,6 @@ export default function Catalogue() {
     try {
       const next = await readCatalogueFile(file);
       setBooks(next);
-      setRejected([]);
-      setKept([]);
-      setSelectedId(next[0].id);
       setError("");
       setNotice(
         "Imported " +
@@ -379,7 +302,7 @@ export default function Catalogue() {
   }
   function planStudioEvent(draft:EventDraft){
     const exists=events.some(event=>event.id===draft.id);
-    setEvents(current=>current.some(event=>event.id===draft.id)?current:[...current,draft]);
+    setEvents(current=>{const existing=current.find(event=>event.id===draft.id);return [existing??draft,...current.filter(event=>event.id!==draft.id)];});
     setEventId(draft.id);go('planner');
     setNotice(exists?'Opened the existing Event Studio draft. Your edits were kept.':'Event Studio proposal added to your drafts. Choose a date and review the programme.');
   }
@@ -420,210 +343,6 @@ export default function Catalogue() {
     if (deletedDraft.selected || !events.length) setEventId(deletedDraft.event.id);
     setDeletedDraft(null);
   }
-  function rejectDirection() {
-    if (!selected?.match) return;
-    setRejected([...rejected, selected.match.bridge.id]);
-    setNotice(
-      "Music direction excluded. Affected demo connections have been recalculated.",
-    );
-  }
-  function graph(compact = false) {
-    return (
-      <div
-        className={"flow " + (compact ? "compact-flow" : "")}
-        aria-label="Illustrative book to music connections"
-      >
-        {results.length ? (
-          <ReactFlow
-            key={results
-              .map((r) => r.book.id + (r.match?.bridge.id ?? ""))
-              .join()}
-            nodeTypes={nodeTypes}
-            nodes={flowNodes}
-            edges={flowEdges}
-            fitView
-            fitViewOptions={{ padding: 0.22 }}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            minZoom={0.25}
-            maxZoom={1.5}
-            proOptions={{ hideAttribution: false }}
-          >
-            <Background gap={18} color="#dae1d7" />
-            {!compact && <Controls />}
-          </ReactFlow>
-        ) : (
-          <div className="empty-state">
-            <Icon name="network" size={30} />
-            <h3>No available hidden gems</h3>
-            <p>Select books with stock to build connections.</p>
-            <button onClick={() => go("catalogue")}>Open catalogue</button>
-          </div>
-        )}
-      </div>
-    );
-  }
-  const bookCards = (
-    <div className="book-grid">
-      {gems.length ? (
-        gems.map((book) => (
-          <article
-            key={book.id}
-            className={
-              "book-card " + (selected?.book.id === book.id ? "inspected" : "")
-            }
-          >
-            <button
-              className="cover-button"
-              disabled={!book.stock}
-              aria-pressed={selected?.book.id===book.id}
-              onClick={() => setSelectedId(book.id)}
-              aria-label={"Explain connection for " + book.title}
-            >
-              <span className="cover-check">
-                <Icon name="check" size={14} />
-              </span>
-              <Artwork book={book} />
-              <span className={"stock-badge " + (!book.stock ? "out" : "")}>
-                {book.stock} in stock
-              </span>
-              <span className="gem-mark">
-                <Icon name="gem" size={17} />
-              </span>
-            </button>
-            <button
-              className="book-title"
-              disabled={!book.stock}
-              onClick={() => setSelectedId(book.id)}
-            >
-              {book.title}
-            </button>
-            <p className="author">{book.author}</p>
-            <div className="tags">
-              {book.tags.slice(0, 3).map((t) => (
-                <Chip key={t}>{t}</Chip>
-              ))}
-            </div>
-            <small className="field-label">Discovery angle</small>
-            <p className="angle">
-              {bookNotes[book.id] ??
-                "Explore connections through " +
-                  book.tags.slice(0, 2).join(" and ") +
-                  "."}
-            </p>
-            <button className="discovery-open-direction" disabled={!book.stock} onClick={()=>setSelectedId(book.id)}>{selected?.book.id===book.id?'Viewing direction':'Explore this book'}<Icon name="arrow" size={14}/></button>
-            {!book.stock && (
-              <small className="warning-text">
-                Excluded from the event plan
-              </small>
-            )}
-          </article>
-        ))
-      ) : (
-        <div className="empty-state">
-          <h3>Your next discovery starts here</h3>
-          <p>Choose 3–5 hidden gems from your catalogue.</p>
-          <button onClick={() => go("catalogue")}>Choose books</button>
-        </div>
-      )}
-    </div>
-  );
-  const inspector = (
-    <Panel
-      key={selected?.book.id??"no-connection"}
-      title="Connection explained"
-      action={<Chip tone="gold">Demo example</Chip>}
-      className="inspector"
-    >
-      {selected?.match ? (
-        <>
-          <Artwork className="jazz-art" />
-          <h3 className="connection-title">
-            {selected.book.title} <span>→</span> {selected.match.bridge.name}
-          </h3>
-          <p className="muted">Music direction · illustrative match</p>
-          <ol className="explanations">
-            <li>
-              <span className="number">1</span>
-              <div>
-                <h4>Catalogue signals</h4>
-                <div className="tags">
-                  {selected.match.shared.map((t) => (
-                    <Chip key={t}>{t}</Chip>
-                  ))}
-                </div>
-                <p>
-                  Shared tags from your catalogue and the demo music fixture.
-                </p>
-              </div>
-            </li>
-            <li>
-              <span className="number">2</span>
-              <div>
-                <h4>Editorial interpretation</h4>
-                <p>{selected.match.bridge.interpretation}</p>
-              </div>
-            </li>
-            <li>
-              <span className="number blue">3</span>
-              <div>
-                <h4>External evidence</h4>
-                <div className="evidence-note">
-                  <Icon name="info" size={17} />
-                  <span>
-                    <b>Illustrative connection</b>This direction comes from shared tags. Open Event Studio for Qloo-backed evidence.
-                  </span>
-                </div>
-              </div>
-            </li>
-          </ol>
-          <div className="owner-controls">
-            <h4>Owner controls</h4>
-            <div className="button-row">
-              <button
-                className="primary"
-                onClick={() => {
-                  setKept([
-                    ...new Set([
-                      ...kept,
-                      selected.book.id + ":" + selected.match!.bridge.id,
-                    ]),
-                  ]);
-                  setNotice(
-                    "Demo direction kept for " + selected.book.title + ".",
-                  );
-                }}
-              >
-                {kept.includes(
-                  selected.book.id + ":" + selected.match.bridge.id,
-                )
-                  ? "Direction kept ✓"
-                  : "Keep direction"}
-              </button>
-              <button onClick={rejectDirection}>Find alternative</button>
-            </div>
-          </div>
-        </>
-      ) : (
-        <div className="empty-state">
-          <Icon name="compass" size={30} />
-          <h3>No supported connection</h3>
-          <p>
-            Choose available books with useful tags or restore demo directions.
-          </p>
-          <button
-            onClick={() => {
-              setRejected([]);
-              setNotice("Demo music directions restored.");
-            }}
-          >
-            Restore directions
-          </button>
-        </div>
-      )}
-    </Panel>
-  );
-
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -657,18 +376,14 @@ export default function Catalogue() {
                 >
                   <Icon name={item.icon} />
                   <span>{pageNames[item.page]}</span>
-                  {item.page === "catalogue" && <small title="Total copies in stock" aria-label={`${totalCopies} total copies in stock`}>{totalCopies}</small>}
+                  {item.page === "catalogue" && <small title="Physical copies in stock across all titles; different from the distinct title count." aria-label={`${totalCopies} total copies in stock`}>{totalCopies}</small>}
                   {item.page === "discovery" && <small title="Selected hidden gems" aria-label={`${gems.length} selected hidden gems`}>{gems.length}</small>}
                   {item.page === "planner" && <small>{events.length}</small>}
                 </button>
               ))}
             </div>
           ))}
-          <button className="help-button" onClick={() => go("help")}>
-            <Icon name="help" size={17} />
-            Help & guide
-            <Icon name="arrow" size={14} />
-          </button>
+          <button className="help-button" onClick={()=>go('help')}><Icon name="help" size={17}/>Help &amp; guide<Icon name="arrow" size={14}/></button>
         </nav>
         <div className="profile-zone">
           <p className="nav-label">Your bookshop</p>
@@ -686,7 +401,7 @@ export default function Catalogue() {
           </span>
           <div className="profile-stats">
             <span>
-              Catalogue<strong>{totalCopies} copies · {books.length} titles</strong>
+              Catalogue<strong title={`${totalCopies} physical copies across ${books.length} distinct titles. ${available.length} titles have stock; ${books.length-available.length} have none.`}>{totalCopies} copies · {books.length} titles</strong>
             </span>
             <span>
               Workspace<strong>Local</strong>
@@ -706,7 +421,7 @@ export default function Catalogue() {
             <b>{pageNames[page]}</b>
           </div>
           <div className="top-actions">
-            <Chip tone="gold">{page === "live" ? "Local Qloo pilot" : "Demo workspace"}</Chip>
+            <Chip tone="gold">{page === "live" ? "Qloo Event Studio" : "Demo workspace"}</Chip>
             <NotificationCenter />
             <label className="upload-button catalogue-import-button" role="button" tabIndex={0} aria-disabled={importing} onKeyDown={event => { if (!importing && ['Enter', ' '].includes(event.key)) { event.preventDefault(); event.currentTarget.querySelector('input')?.click(); } }}>
               <Icon name="upload" size={17} />
@@ -732,8 +447,6 @@ export default function Catalogue() {
               <p>
                 {page === "usage"
                   ? "Manage connected services, personal API keys and your app usage."
-                  : page === "discovery"
-                  ? "Understand your shelves. Build cultural connections. Plan better events."
                   : page === "catalogue"
                     ? "Your inventory is the starting point for every discovery."
                     : page === "planner"
@@ -761,21 +474,17 @@ export default function Catalogue() {
               {error}
             </div>
           )}
-          <div hidden={page !== "live"}><LiveStudio books={books} setBooks={setBooks} onPlanEvent={planStudioEvent} active={page==='live'} /></div>
-          {page === "discovery" && (
-            <div className="discovery-workspace">
-              <nav className="discovery-breadcrumbs" aria-label="Discovery workflow"><button onClick={()=>go('catalogue')}>Catalogue</button><Icon name="arrow" size={13}/><span aria-current="step">Hidden gems</span><Icon name="arrow" size={13}/><button onClick={()=>go('map')}>Cultural map</button><Icon name="arrow" size={13}/><button onClick={()=>go('planner')}>Event Planner</button></nav>
-              <section className="discovery-summary" aria-label="Your discovery selection"><div><span className="discovery-eyebrow">CURATE YOUR NEXT DISCOVERY</span><h2>A small selection. New possibilities.</h2><p>Choose a book to explore an editorial direction.</p></div><div className="discovery-totals"><span><b>{gems.length}</b>hidden gems</span><span><b>{gems.reduce((sum,book)=>sum+book.stock,0)}</b>copies in stock</span><span><b>{kept.length}</b>directions kept</span></div></section>
-              {!ready&&<div className="error">Choose 3–5 hidden gems in the catalogue to complete your selection.</div>}
-              <div className="discovery-grid">
-                <Panel className="discovery-collection" title="Your hidden gems" subtitle="A focused shelf of books worth another look." action={<button className="small-button" onClick={()=>go('catalogue')}><Icon name="edit" size={14}/>Edit selection</button>}>
-                  <div className="discovery-selection-list" role="region" aria-label="Selected hidden gems" tabIndex={0}>{bookCards}</div>
-                </Panel>
-                {inspector}
-              </div>
-              <div className="discovery-next"><div><Icon name="network" size={22}/><span><b>Explore with real cultural evidence</b><small>These directions are demo examples. Event Studio connects your books to Qloo.</small></span></div><div><button onClick={()=>go('map')}>View cultural map</button><button className="primary" onClick={()=>go('live')}>Open Event Studio<Icon name="arrow" size={16}/></button></div></div>
+          <div hidden={page !== "live"}><LiveStudio books={books} setBooks={setBooks} onPlanEvent={planStudioEvent} onCompare={()=>go("compare")} active={page==='live'} /></div>
+          {page === "discovery" && <div className="discovery-workspace">
+            <section className="discovery-summary"><div><span className="discovery-eyebrow">CURATE YOUR NEXT DISCOVERY</span><h2>A small selection. New possibilities.</h2><p>Your hidden gems, connected through saved Qloo evidence.</p></div><div className="discovery-totals"><span><b>{gems.length}</b>hidden gems</span><span><b>{gems.reduce((sum,book)=>sum+book.stock,0)}</b>copies in stock</span></div></section>
+            <div className="discovery-grid">
+              <Panel className="discovery-collection" title="Your hidden gems" subtitle="Books you want more readers to discover." action={<button className="small-button" onClick={()=>go('catalogue')}><Icon name="edit" size={14}/>Edit selection</button>}>
+                <div className="discovery-selection-list" role="region" aria-label="Selected hidden gems" tabIndex={0}><div className="book-grid">{gems.map(book=><article className="book-card" key={book.id}><div className="cover-button"><Artwork book={book}/><span className="stock-badge">{book.stock} in stock</span></div><b className="book-title">{book.title}</b><p className="author">{book.author}</p><div className="tags">{book.tags.slice(0,3).map(tag=><Chip key={tag}>{tag}</Chip>)}</div><button className="discovery-open-direction" onClick={()=>go('live')}>Explore in Event Studio<Icon name="arrow" size={14}/></button></article>)}</div>{!gems.length&&<p>Select hidden gems in Catalogue to begin.</p>}</div>
+              </Panel>
+              <EvidenceMap onStudio={()=>go('live')}/>
             </div>
-          )}
+          </div>}
+          {page === "map" && <EvidenceMap onStudio={()=>go('live')}/>}
           {page === "catalogue" && (
             <div className="catalogue-layout">
               <Panel
@@ -911,7 +620,7 @@ export default function Catalogue() {
                   <button
                     className="primary"
                     disabled={!ready}
-                    onClick={() => go("discovery")}
+                    onClick={() => go("live")}
                   >
                     Explore connections
                     <Icon name="arrow" size={16} />
@@ -976,8 +685,8 @@ export default function Catalogue() {
                     <br />
                     Start with a hidden gem and build an evening around it.
                   </p>
-                  <button className="primary" onClick={() => go("discovery")}>
-                    Open Discovery Studio
+                  <button className="primary" onClick={() => go("live")}>
+                    Open Event Studio
                     <Icon name="arrow" size={17} />
                   </button>
                 </div>
@@ -987,94 +696,7 @@ export default function Catalogue() {
                   ))}
                 </div>
               </div>
-              <div className="overview-metrics">
-                {[
-                  [totalCopies, "Total copies in stock", "inventory"],
-                  [books.length, "Catalogue titles", "book"],
-                  [available.length, "Available titles", "check"],
-                  [clusters.length, "Category signals", "network"],
-                  [events.length, "Event drafts", "calendar"],
-                ].map(([n, label, icon]) => (
-                  <div key={label}>
-                    <Icon name={String(icon)} size={25} />
-                    <strong>{n}</strong>
-                    <span>{label}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="two-col">
-                <Panel
-                  title="Next on your calendar"
-                  subtitle="Saved drafts · sample and Event Studio proposals"
-                >
-                  {events.map((e) => (
-                    <button
-                      className="event-list-row"
-                      key={e.id}
-                      onClick={() => {
-                        setEventId(e.id);
-                        go("planner");
-                      }}
-                    >
-                      <div className="date-tile">
-                        <b>{e.date.slice(-2)}</b>
-                        <small>
-                          {[
-                            "JAN",
-                            "FEB",
-                            "MAR",
-                            "APR",
-                            "MAY",
-                            "JUN",
-                            "JUL",
-                            "AUG",
-                            "SEP",
-                            "OCT",
-                            "NOV",
-                            "DEC",
-                          ][Number(e.date.slice(5, 7)) - 1] ?? "—"}
-                        </small>
-                      </div>
-                      <span>
-                        <strong>{e.title}</strong>
-                        <small>
-                          {e.theme} · {e.time}
-                        </small>
-                      </span>
-                      <Chip>{e.status}</Chip>
-                    </button>
-                  ))}
-                </Panel>
-                <Panel
-                  title="Your next steps"
-                  subtitle="A practical checklist for your sample workspace"
-                >
-                  <div className="checklist">
-                    <p>
-                      <Icon name="check" />
-                      Review your catalogue and stock{" "}
-                      <Chip tone="green">Ready</Chip>
-                    </p>
-                    <p>
-                      <Icon name="gem" />
-                      Choose 3–5 hidden gems{" "}
-                      <Chip tone="green">{gems.length} selected</Chip>
-                    </p>
-                    <p>
-                      <Icon name="music" />
-                      Review cultural directions <Chip>Demo</Chip>
-                    </p>
-                    <p title="Shows credential configuration and saved evidence from your latest run. No live connectivity probe is performed.">
-                      <Icon name="info" />
-                      Qloo evidence <Chip tone={!qlooStatusError&&(qlooStatus?.configured||qlooStatus?.evidenceAvailable)?'green':''}>{qlooStatusError?'Unavailable':!qlooStatus?'Checking…':qlooStatus.evidenceAvailable?'Evidence available':qlooStatus.configured?'Configured':'Not configured'}</Chip>
-                    </p>
-                  </div>
-                  <button onClick={() => go("help")}>
-                    Read the workspace guide
-                    <Icon name="arrow" size={16} />
-                  </button>
-                </Panel>
-              </div>
+              <OverviewShowcase copies={totalCopies} titles={books.length} available={available.length} drafts={events.length} onNavigate={go}/>
             </>
           )}
           {page === "planner" && (
@@ -1224,7 +846,7 @@ export default function Catalogue() {
                   subtitle="A practical, editable running order for your bookshop"
                 >
                   <div className="planner-programme-scroll" role="region" aria-label="Evening programme content" tabIndex={0}>
-                  {selectedEvent.source&&<div className="planner-source"><b>From Event Studio · revision {selectedEvent.source.revision}</b><p>{selectedEvent.source.duration} minutes in source proposal · {selectedEvent.source.references.map(reference=>reference.name).join(' · ')}</p><small>Saved Qloo evidence snapshot. Review availability and permissions before the event.</small></div>}
+                  <DraftSourceStatus key={selectedEvent.id} event={selectedEvent} books={books} onStudio={()=>{go('live');window.dispatchEvent(new CustomEvent('folioecho-studio-tab',{detail:'events'}));}}/>
                   <EveningProgramme event={{ ...selectedEvent, programme: selectedProgramme }} books={books} onChange={programme => setEvents(events.map(event => event.id === selectedEvent.id ? { ...event, programme } : event))} />
                   </div>
                   <div className="panel-footer">
@@ -1252,152 +874,7 @@ export default function Catalogue() {
               )}
             </div>
           )}
-          {page === "map" && (
-            <>
-              <Panel
-                title="Explore your cultural map"
-                subtitle="Every edge is supported by shared demo tags. No Qloo affinity is implied."
-                action={
-                  <button
-                    onClick={() => {
-                      setRejected([]);
-                      setNotice("All demo directions restored.");
-                    }}
-                  >
-                    <Icon name="reset" size={15} />
-                    Reset directions
-                  </button>
-                }
-              >
-                {graph()}
-              </Panel>
-              <div className="bridge-grid">
-                {results.map((r) => (
-                  <Panel
-                    key={r.book.id}
-                    title={r.book.title}
-                    subtitle={r.book.stock + " copies available"}
-                  >
-                    <h3>{r.match?.bridge.name ?? "No supported connection"}</h3>
-                    <p>
-                      {r.match?.bridge.interpretation ??
-                        "Restore demo directions or review catalogue tags."}
-                    </p>
-                    <div className="tags">
-                      {r.match?.shared.map((t) => (
-                        <Chip key={t}>{t}</Chip>
-                      ))}
-                    </div>
-                    <p className="muted">
-                      Source: local demo fixture · External evidence pending
-                    </p>
-                    <button
-                      onClick={() => {
-                        setSelectedId(r.book.id);
-                        go("discovery");
-                      }}
-                    >
-                      View explanation
-                      <Icon name="arrow" size={15} />
-                    </button>
-                  </Panel>
-                ))}
-              </div>
-            </>
-          )}
-          {page === "compare" && (
-            <>
-              <div className="info-banner">
-                <Icon name="info" />
-                <div>
-                  <b>Comparison workspace · illustrative layout</b>
-                  <p>
-                    A real Qloo-backed run and an LLM-only baseline have not
-                    run. Results are deliberately left unmeasured.
-                  </p>
-                </div>
-              </div>
-              <div className="two-col">
-                {["FolioEcho + Qloo", "LLM-only baseline"].map((name, i) => (
-                  <Panel
-                    key={name}
-                    title={name}
-                    subtitle={
-                      i
-                        ? "Same catalogue, same stock constraints"
-                        : "Evidence-supported cultural discovery"
-                    }
-                    action={<Chip>Not run</Chip>}
-                  >
-                    <div className="comparison-placeholder">
-                      <Icon name={i ? "compass" : "network"} size={38} />
-                      <h3>
-                        {i ? "Baseline waiting" : "Evidence connection pending"}
-                      </h3>
-                      <p>
-                        {i
-                          ? "The baseline must use the exact same inventory snapshot and task."
-                          : "Connect Qloo server-side to collect provenance and real affinity data."}
-                      </p>
-                    </div>
-                    <dl className="metric-list">
-                      <div>
-                        <dt>Inventory validity</dt>
-                        <dd>Not measured</dd>
-                      </div>
-                      <div>
-                        <dt>Hidden-gem coverage</dt>
-                        <dd>Not measured</dd>
-                      </div>
-                      <div>
-                        <dt>Evidence coverage</dt>
-                        <dd>Not measured</dd>
-                      </div>
-                      <div>
-                        <dt>Owner assessment</dt>
-                        <dd>Not reviewed</dd>
-                      </div>
-                    </dl>
-                  </Panel>
-                ))}
-              </div>
-              <Panel
-                title="Evaluation protocol"
-                subtitle="The comparison must be fair, reproducible and transparent."
-              >
-                <div className="protocol-grid">
-                  {[
-                    [
-                      "01",
-                      "Freeze the catalogue",
-                      "Use one snapshot of titles, stock and owner-selected hidden gems.",
-                    ],
-                    [
-                      "02",
-                      "Apply identical constraints",
-                      "Require available catalogue titles in both approaches.",
-                    ],
-                    [
-                      "03",
-                      "Separate facts from interpretation",
-                      "Show external evidence, shared tags and editorial reasoning separately.",
-                    ],
-                    [
-                      "04",
-                      "Review with the bookseller",
-                      "Evaluate usefulness and discovery potential alongside validity.",
-                    ],
-                  ].map(([n, title, detail]) => (
-                    <div key={n}>
-                      <b>{n}</b>
-                      <h3>{title}</h3>
-                      <p>{detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-            </>
-          )}
+          {page === "compare" && <ComparisonResults onStudio={()=>go('live')} />}
           {page === "reports" && (
             <>
               <div className="report-grid">
@@ -1410,15 +887,9 @@ export default function Catalogue() {
                   },
                   {
                     icon: "network",
-                    title: "Discovery report",
-                    detail:
-                      "Demo matches with shared tags and editorial explanations.",
-                    action: () =>
-                      saveFile("folioecho-discovery.json", {
-                        mode: "demo",
-                        qlooEvidence: null,
-                        matches: results,
-                      }),
+                    title: "Qloo evidence report",
+                    detail: "Recorded cultural references from your latest Qloo run.",
+                    action: async () => {try { const response=await fetch('/api/workspace');if(!response.ok)throw new Error('Saved run unavailable.');const data=await response.json();if(!data.run)throw new Error('Generate a Qloo run in Event Studio first.');await downloadPDF('folioecho-cultural-report.pdf',undefined,data.run.id); } catch(error){setError(error instanceof Error?error.message:'Export failed.');}},
                   },
                   {
                     icon: "calendar",
@@ -1598,9 +1069,7 @@ export default function Catalogue() {
                         email: "anna@example.com",
                         photo: "",
                       });
-                      setRejected([]);
-                      setKept([]);
-                      setNotice("Sample workspace restored.");
+                                                      setNotice("Sample workspace restored.");
                     }}
                   >
                     Restore sample data
@@ -1633,7 +1102,7 @@ export default function Catalogue() {
           <footer className="page-footer">
             <span>
               <i />
-              {page === "live" ? "Local Qloo evidence · review recommendations before use" : "Sample workspace · illustrative artwork & connections"}
+              {page === "live" ? "Qloo evidence · review recommendations before use" : "Saved workspace · recorded Qloo evidence is labelled"}
             </span>
             <span>FolioEcho · Where books find their audience.</span>
           </footer>

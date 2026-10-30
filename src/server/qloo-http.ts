@@ -1,12 +1,19 @@
 import { consume } from './store.ts';
+import { QlooContextError } from './qloo-errors.ts';
 const endpoint='https://hackathon.api.qloo.com';
 export async function qlooRequest(path:string,query:Record<string,string|number|boolean>,transport:typeof fetch=fetch):Promise<any> {
   const key=process.env.QLOO_API_KEY;
   if (!key) throw new Error('Qloo server credentials are not configured.');
   if (!await consume(`qloo:${new Date().toISOString().slice(0,10)}`,Number(process.env.FOLIOECHO_QLOO_DAILY_LIMIT ?? 300))) throw new Error('The shared daily Qloo demo allowance has been reached.');
   const url=new URL(path,endpoint); for (const [name,value] of Object.entries(query)) url.searchParams.set(name,String(value));
-  const response=await transport(url,{headers:{'X-Api-Key':key},signal:AbortSignal.timeout(15_000)});
-  if (!response.ok) throw new Error('Qloo request failed. Check server credentials and quota.');
+  const response=await transport(url,{redirect:'error',headers:{'X-Api-Key':key},signal:AbortSignal.timeout(15_000)});
+  if (!response.ok) {
+    if (response.status === 400 && path === '/v2/insights') {
+      try { const failure=await response.json();if(failure.errors?.some((item:any)=>item.path==='signal.interests.entities'&&typeof item.message==='string'&&item.message.includes('invalid')))throw new QlooContextError(); }
+      catch(error){if(error instanceof QlooContextError)throw error;}
+    }
+    throw new Error('Qloo request failed. Check server credentials and quota.');
+  }
   const text=await response.text();
   if (text.length>4_000_000 || text.includes(key)) throw new Error('Qloo returned an unsafe or oversized response.');
   const data=JSON.parse(text);

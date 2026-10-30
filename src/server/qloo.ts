@@ -4,9 +4,10 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import type { Evidence, Resolution } from '../lib/curator.ts';
+import type { Evidence, Resolution, ToolAudit } from '../lib/curator.ts';
 import type { Book } from '../lib/catalogue.ts';
 import { get, put } from './store.ts';
+import { QlooContextError } from './qloo-errors.ts';
 
 const endpoint = 'https://hackathon.api.qloo.com';
 const cache = new Map<string, { expires: number; data: unknown }>();
@@ -41,6 +42,9 @@ async function cli(args: string[], input?: unknown): Promise<any> {
       child.on('error', () => { clearTimeout(timer); reject(new QlooFailure('Qloo CLI could not start. Check the server installation.')); });
       child.on('close', code => {
         clearTimeout(timer);
+        if (!oversized && code !== 0 && args[0] === 'exec' && args[1] === 'recommend') {
+          try { if (JSON.parse(stdout)?.error?.code === 'QLOO_CONTRACT') return reject(new QlooContextError()); } catch {}
+        }
         if (code !== 0 || oversized) return reject(new QlooFailure('Qloo request failed or timed out. Check credentials, quota and network. No automatic retry was made.'));
         try {
           const data = JSON.parse(stdout);
@@ -57,17 +61,18 @@ async function cli(args: string[], input?: unknown): Promise<any> {
     }
   }
 }
-async function cached(key: string, work: () => Promise<unknown>): Promise<any> {
+async function cached(key: string, work: () => Promise<unknown>, audit?: (cacheHit:boolean)=>void): Promise<any> {
   const prior = cache.get(key) ?? await get<{ expires: number; data: unknown }>('qloo-cache', key);
-  if (prior && prior.expires > Date.now()) return structuredClone(prior.data);
-  const data = await work();
+  if (prior && prior.expires > Date.now()) { audit?.(true); return structuredClone(prior.data); }
+  const data = await work(); audit?.(false);
   if (cache.size >= 500) cache.delete(cache.keys().next().value!);
   const record = { expires: Date.now() + (key.startsWith('search:') ? 7 * 24 * 60 : 30) * 60_000, data };
   cache.set(key, record); await put('qloo-cache', key, record);
   return structuredClone(data);
 }
-export async function resolveBook(book: Book, chosen?: string): Promise<{ resolution: Resolution; tags: string[] }> {
-  const raw = await cached(`search:${book.title}:${book.author}`, () => hosted() ? hostedSearch(book.title) : cli(['api', 'search', '--query', `${book.title}`, '--type', 'book', '--take', '3', '--json']));
+export async function resolveBook(book: Book, chosen?: string): Promise<{ resolution: Resolution; tags: string[]; tool?: ToolAudit }> {
+  let cacheHit=false;
+  const raw = await cached(`search:${book.title}:${book.author}`, () => hosted() ? hostedSearch(book.title) : cli(['api', 'search', '--query', `${book.title}`, '--type', 'book', '--take', '3', '--json']), hit=>{cacheHit=hit;});
   if (!Array.isArray(raw)) throw new QlooFailure('Unexpected Qloo search response.');
   const candidates = raw.filter(value => {
     const row = object(value);
@@ -80,12 +85,14 @@ export async function resolveBook(book: Book, chosen?: string): Promise<{ resolu
   if (chosen && match) await put('entity-choice', `${book.title}:${book.author}`, match.id);
   const matched = match ? raw.find(row => row.entity_id === match.id) : undefined;
   const tags = Array.isArray(matched?.tags) ? matched.tags.flatMap((t: any) => typeof t?.name === 'string' ? [t.name.toLowerCase()] : []) : [];
-  return { resolution: { bookId: book.id, status: match ? 'confirmed' : candidates.length ? 'needs_input' : 'missing', candidates, ...(match ? { entityId: match.id } : {}) }, tags };
+  return { tool:{name:'qloo.search',endpoint:'/search',cacheHit}, resolution: { bookId: book.id, status: match ? 'confirmed' : candidates.length ? 'needs_input' : 'missing', candidates, ...(match ? { entityId: match.id } : {}) }, tags };
 }
-export async function recommend(bookId: string, entityId: string, type: Evidence['type'], take = 10): Promise<{ edges: Evidence[]; warning?: string }> {
-  const cachedResult = await cached(`recommend:${entityId}:${type}:${take}`, async () => ({ data: hosted() ? await hostedRecommend(entityId,type,take) : await cli(['exec', 'recommend'], { target_type: type, signals: [entityId], limit: take, explain: true }), retrievedAt: new Date().toISOString() }));
+export async function recommend(bookId: string, entityId: string, type: Evidence['type'], take = 10): Promise<{ edges: Evidence[]; warning?: string; tool?: ToolAudit }> {
+  let cacheHit=false;
+  const cachedResult = await cached(`recommend:${entityId}:${type}:${take}`, async () => ({ data: hosted() ? await hostedRecommend(entityId,type,take) : await cli(['exec', 'recommend'], { target_type: type, signals: [entityId], limit: take, explain: true }), retrievedAt: new Date().toISOString() }), hit=>{cacheHit=hit;});
+  const tool:ToolAudit={name:'qloo.insights',endpoint:'/v2/insights',cacheHit};
   const data = cachedResult.data;
-  if (data.status === 'needs_input') return { edges: [], warning: 'Qloo requires clarification for the supplied entity.' };
+  if (data.status === 'needs_input') return { tool, edges: [], warning: 'Qloo requires clarification for the supplied entity.' };
   if (!['ok', 'empty', 'partial', 'degraded'].includes(data.status) || !Array.isArray(data.results)) throw new QlooFailure('Unexpected Qloo recommendation response.');
   const request = data.provenance?.requests?.find((r: any) => r.path === '/v2/insights');
   if (!request || !request.query || typeof request.query !== 'object') throw new QlooFailure('Qloo recommendation provenance is unavailable.');
@@ -98,5 +105,5 @@ export async function recommend(bookId: string, entityId: string, type: Evidence
       affinity: row.affinity, ...(Number.isFinite(row.popularity) && row.popularity >= 0 && row.popularity <= 1 ? { popularity: row.popularity } : {}),
       context: `${bookId}:${type}`, retrievedAt: now, active: true, request: { endpoint: '/v2/insights', query: Object.fromEntries(Object.entries(request.query).filter(([key]) => ['filter.type', 'take', 'signal.interests.entities', 'feature.explainability'].includes(key))) } }];
   });
-  return { edges, ...(data.status === 'partial' || data.status === 'degraded' || edges.length !== data.results.length ? { warning: 'Qloo returned partial/degraded data or unsupported records; review the evidence.' } : {}) };
+  return { tool, edges, ...(data.status === 'partial' || data.status === 'degraded' || edges.length !== data.results.length ? { warning: 'Qloo returned partial/degraded data or unsupported records; review the evidence.' } : {}) };
 }

@@ -1,6 +1,13 @@
 id,title,author,stock,tags,hiddenGem
-b1,Invisible Cities,Italo Calvino,4,cities;imagination;travel,true
-b2,The Book of Disquiet,Fernando Pessoa,3,introspection;cities;solitude,true
-b3,The Waves,Virginia Woolf,2,memory;nature;introspection,true
-b4,A Room of One's Own,Virginia Woolf,5,identity;creativity,false
-b5,The Odyssey,Homer,0,travel;memory,false
+"hg-fair-play","Fair Play","Tove Jansson","4","art;creativity;travel","true"
+"hg-the-tanners","The Tanners","Robert Walser","3","family;identity;travel","true"
+"hg-the-peregrine","The Peregrine","J. A. Baker","2","nature;introspection;identity","true"
+"b4","A Room of One’s Own","Virginia Woolf","5","identity;creativity","false"
+"b5","The Odyssey","Homer","0","travel;memory","false"
+"b6","The Summer Book","Tove Jansson","6","nature;memory;family","false"
+"b7","Ways of Seeing","John Berger","4","art;identity;creativity","false"
+"b8","The City & the City","China Miéville","2","cities;imagination;mystery","false"
+"b9","A Field Guide to Getting Lost","Rebecca Solnit","3","travel;nature;identity","false"
+"b10","Bluets","Maggie Nelson","0","art;introspection;memory","false"
+"b11","Just Kids","Patti Smith","7","music;cities;creativity","false"
+"b12","The Little Prince","Antoine de Saint-Exupéry","8","imagination;travel;friendship","false"
