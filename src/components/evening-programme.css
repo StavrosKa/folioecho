@@ -1,5 +1,5 @@
 .programme-summary { display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:18px; background:#e9efdf; border:1px solid #d6dfc9; border-radius:12px; color:#3a5236; }
-.programme-summary b { display:block; font-family:Georgia,serif; font-size:25px; font-weight:400; }
+.programme-summary b { display:block; font-family:Georgia,serif; font-size:22px; font-weight:400; }
 .programme-summary small { display:block; margin-top:5px; }
 .programme-summary > span:nth-child(2) { flex:1; font-size:12px; }
 .programme-summary button { font-size:11px; background:#fbfcf7; }
@@ -11,9 +11,9 @@
 .programme-segment-top { display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .programme-kicker { font-size:11px; font-weight:700; letter-spacing:1px; color:#788565; }
 .programme-title { display:flex; justify-content:space-between; gap:12px; align-items:center; margin:13px 0; }
-.programme-title h3 { margin:0; font-family:Georgia,serif; font-size:24px; font-weight:400; color:#2e492f; }
+.programme-title h3 { margin:0; font-family:Georgia,serif; font-size:21px; font-weight:400; color:#2e492f; }
 .programme-title button { display:flex; align-items:center; gap:6px; font-size:11px; padding:6px 10px; background:#ffffffa0; }
-.programme-description { font-size:13px; line-height:1.75; color:#5a6751; }
+.programme-description { font-size:12px; line-height:1.75; color:#5a6751; }
 .programme-books { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0; }
 .programme-books span { background:#ffffffb0; border:1px solid #dfe5d4; border-radius:7px; padding:8px 10px; font-size:11px; color:#48633c; }
 .programme-books small { display:block; margin-top:4px; color:#879176; font-size:10px; }
@@ -41,4 +41,4 @@
 .planner-sidebar > .panel { margin-bottom:0; }
 .planner-sidebar .form-grid { grid-template-columns:1fr; }
 .planner-programme { min-width:0; }
-@media(max-width:700px) { .programme-track { padding-left:19px; margin-left:12px; } .programme-marker { left:-35px; width:28px; height:28px; } .programme-segment { padding:16px; } .programme-title h3 { font-size:21px; } .programme-editor { grid-template-columns:1fr; } }
+@media(max-width:700px) { .programme-track { padding-left:19px; margin-left:12px; } .programme-marker { left:-35px; width:28px; height:28px; } .programme-segment { padding:16px; } .programme-title h3 { font-size:19px; } .programme-editor { grid-template-columns:1fr; } }
