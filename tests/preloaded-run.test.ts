@@ -5,6 +5,7 @@ import { currentOrPreloadedRun } from '../src/server/preloaded-run.ts';
 import { withOwner } from '../src/server/context.ts';
 import { get, put, saveRun } from '../src/server/store.ts';
 import { sampleBooks } from '../src/lib/workspace.ts';
+import { demoBooks } from '../src/lib/catalogue.ts';
 import { validateAndScore } from '../src/lib/curator.ts';
 
 test('fresh visitors receive isolated real Qloo sample runs once, with no provider request and valid evidence-backed events', async () => {
@@ -28,3 +29,18 @@ test('concurrent initial requests converge on the same copied run', async () => 
   const results = await Promise.all([currentOrPreloadedRun(), currentOrPreloadedRun(), currentOrPreloadedRun()]);
   assert.equal(new Set(results.map(run => run!.id)).size, 1);
 }));
+
+test('saved demo workspaces recover evidence without overwriting stock, tags, profile or drafts', async () => {
+  for (const books of [sampleBooks, [...demoBooks.slice(0, 3), ...sampleBooks.filter(book => !book.id.startsWith('hg-'))]]) {
+    await withOwner(randomUUID(), async () => {
+      const workspace = { books: structuredClone(books), events: [{ id: 'keep-my-draft' }], profile: { shop: 'Keep my shop' } };
+      workspace.books[0].stock = 17; workspace.books[0].tags.push('my-tag');
+      await put('workspace', 'local', workspace);
+      const run = await currentOrPreloadedRun();
+      assert.ok(run?.preloaded); assert.ok(run.selected.length); assert.ok(run.edges.length);
+      assert.deepEqual(await get('workspace', 'local'), workspace);
+      assert.deepEqual(run.input.catalogue, sampleBooks);
+      assert.equal((await currentOrPreloadedRun())!.id, run.id);
+    });
+  }
+});
